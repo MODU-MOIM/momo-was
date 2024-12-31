@@ -17,7 +17,6 @@ public enum ExceptionCode {
     private final String code;
     private final String message;
 
-    @Builder
     ExceptionCode(int status, String code, String message) {
         this.status = status;
         this.code = code;
