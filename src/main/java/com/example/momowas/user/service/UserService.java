@@ -1,5 +1,7 @@
 package com.example.momowas.user.service;
 
+import com.example.momowas.error.BusinessException;
+import com.example.momowas.error.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.UserDto;
 import com.example.momowas.user.repository.UserRepository;
@@ -16,7 +18,10 @@ public class UserService {
     }
 
     public UserDto read(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
         return UserDto.fromEntity(user);
+    }
+    public boolean isEmailExists(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

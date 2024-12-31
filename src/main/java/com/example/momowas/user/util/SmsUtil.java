@@ -1,14 +1,16 @@
 package com.example.momowas.user.util;
 
+import com.example.momowas.error.BusinessException;
+import com.example.momowas.error.ExceptionCode;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import net.nurigo.sdk.message.model.Message;
 
 import java.util.Random;
 
@@ -24,29 +26,48 @@ public class SmsUtil {
     @Value("${coolsms.api.number}")
     private String fromNumber;
 
-    DefaultMessageService messageService;
+    private DefaultMessageService messageService;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
     }
 
-    public SingleMessageSentResponse sendOne(String toPhoneNumber, String verificationCode) {
+    public SingleMessageSentResponse sendOne(String toPhoneNumber, HttpSession session) {
+        String verificationCode = generateRandomNumber();
         Message message = new Message();
-        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
         message.setFrom(fromNumber);
         message.setTo(toPhoneNumber);
-        message.setText("[모두의 모임,momo] 아래의 인증번호를 입력해주세요\n" + verificationCode);
+        message.setText("[모두의 모임, momo] 인증번호: " + verificationCode);
+
+        // 세션에 인증 코드 저장
+        session.setAttribute("validation", verificationCode);
+        session.setAttribute("phoneNumber", toPhoneNumber);
+        session.setMaxInactiveInterval(180);
 
         return this.messageService.sendOne(new SingleMessageSendingRequest(message));
     }
 
-    public String validationCode(String validation, HttpSession ss) {
-        if(ss.getAttribute("message_id") == null || ss.getAttribute("validation") == null) return "인증번호 만료, 처음부터 다시 시도해주세요";
-        else {
-            if(ss.getAttribute("validation").equals(validation)) return "인증 완료";
-            else return "인증 실패";
+    public boolean validateCode(String inputCode, HttpSession session) {
+        String storedCode = (String) session.getAttribute("validation");
+        String phoneNumber = (String) session.getAttribute("phoneNumber");
+
+        if (storedCode == null || phoneNumber == null) {
+            throw new BusinessException(ExceptionCode.EXPIRED_VERIFICATION_CODE);
         }
+
+        if (storedCode.equals(inputCode)) {
+            // 인증 성공
+            session.setAttribute("isAuthenticated", true);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isAuthenticated(HttpSession session) {
+        Boolean isAuthenticated = (Boolean) session.getAttribute("isAuthenticated");
+        return isAuthenticated != null && isAuthenticated;
     }
 
     public String generateRandomNumber() {
@@ -57,5 +78,4 @@ public class SmsUtil {
         }
         return numStr.toString();
     }
-
 }
