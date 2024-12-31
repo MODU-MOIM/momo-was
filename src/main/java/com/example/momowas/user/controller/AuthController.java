@@ -1,9 +1,9 @@
 package com.example.momowas.user.controller;
 
 import com.example.momowas.user.domain.User;
-import com.example.momowas.user.dto.SignUpReq;
+import com.example.momowas.user.dto.SignUpReqDto;
 import com.example.momowas.user.dto.SmsReqDto;
-import com.example.momowas.user.dto.ValidationCodeReq;
+import com.example.momowas.user.dto.ValidationCodeReqDto;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
@@ -22,8 +22,8 @@ public class AuthController {
     private final SmsUtil smsUtil;
 
     @PostMapping("/sign-up")
-    public Long signUp(@RequestBody SignUpReq signUpReq) {
-        User user = authService.signUp(signUpReq);
+    public Long signUp(@RequestBody SignUpReqDto signUpReqDto) {
+        User user = authService.signUp(signUpReqDto);
         userService.create(user);
         return user.getId();
     }
@@ -40,8 +40,8 @@ public class AuthController {
     }
 
     @PostMapping("/verify-code")
-    public String validationCode(@RequestBody ValidationCodeReq validationCodeReq, HttpSession ss) {
-        String verificationCode = validationCodeReq.getVerificationCode();
+    public String validationCode(@RequestBody ValidationCodeReqDto validationCodeReqDto, HttpSession ss) {
+        String verificationCode = validationCodeReqDto.getVerificationCode();
         return smsUtil.validationCode(verificationCode, ss);
     }
 }
