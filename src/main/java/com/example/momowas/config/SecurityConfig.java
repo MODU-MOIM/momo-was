@@ -20,12 +20,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private static final String[] publicEndpoints = {
             "/auth/sign-up",
+            "/auth/send-sms",
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/swagger-resources/**",
