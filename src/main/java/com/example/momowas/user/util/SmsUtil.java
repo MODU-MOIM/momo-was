@@ -1,6 +1,7 @@
 package com.example.momowas.user.util;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -38,6 +39,14 @@ public class SmsUtil {
         message.setText("[모두의 모임,momo] 아래의 인증번호를 입력해주세요\n" + verificationCode);
 
         return this.messageService.sendOne(new SingleMessageSendingRequest(message));
+    }
+
+    public String validationCode(String validation, HttpSession ss) {
+        if(ss.getAttribute("message_id") == null || ss.getAttribute("validation") == null) return "인증번호 만료, 처음부터 다시 시도해주세요";
+        else {
+            if(ss.getAttribute("validation").equals(validation)) return "인증 완료";
+            else return "인증 실패";
+        }
     }
 
     public String generateRandomNumber() {

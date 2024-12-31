@@ -2,13 +2,14 @@ package com.example.momowas.user.controller;
 
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.SignUpReq;
+import com.example.momowas.user.dto.SmsReqDto;
+import com.example.momowas.user.dto.ValidationCodeReq;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,19 @@ public class AuthController {
     }
 
     @PostMapping("/send-sms")
-    public SingleMessageSentResponse sendSMS(@RequestParam String toPhoneNumber, HttpSession ss) {
+    public SingleMessageSentResponse sendSMS(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession ss) {
         String verificationCode = smsUtil.generateRandomNumber();
+        String toPhoneNumber = smsReqDto.getToPhoneNumber();
         SingleMessageSentResponse response = smsUtil.sendOne(toPhoneNumber, verificationCode);
         ss.setAttribute("validation", verificationCode);
         ss.setAttribute("message_id", response.getMessageId());
         ss.setMaxInactiveInterval(180);
         return response;
+    }
+
+    @PostMapping("/verify-code")
+    public String validationCode(@RequestBody ValidationCodeReq validationCodeReq, HttpSession ss) {
+        String verificationCode = validationCodeReq.getVerificationCode();
+        return smsUtil.validationCode(verificationCode, ss);
     }
 }
