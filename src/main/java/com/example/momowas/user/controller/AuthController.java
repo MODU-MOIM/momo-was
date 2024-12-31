@@ -19,9 +19,9 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Long> signUp(@RequestBody SignUpReq signUpReq) {
+    public Long signUp(@RequestBody SignUpReq signUpReq) {
         User user = authService.signUp(signUpReq);
         userService.create(user);
-        return ResponseEntity.ok(user.getId());
+        return user.getId();
     }
 }
