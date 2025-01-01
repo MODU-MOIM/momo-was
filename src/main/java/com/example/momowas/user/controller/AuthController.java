@@ -33,10 +33,10 @@ public class AuthController {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
         }
 
-        // 인증 여부 확인
-        if (!smsUtil.isAuthenticated(session)) {
-            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
-        }
+        // 인증 여부 확인 -> sms 유료라서 일단 주석하겠습니다!
+//        if (!smsUtil.isAuthenticated(session)) {
+//            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
+//        }
 
         User user = authService.signUp(signUpReqDto);
         userService.create(user);
