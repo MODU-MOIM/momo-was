@@ -44,6 +44,13 @@ public class User {
     @Column
     private String profileImage;
 
+
+    @Column(name = "provider", nullable = false, length = 10)
+    private String provider;
+
+    @Column(name = "provider_id", nullable = false, length = 50)
+    private String providerId;
+
     @Builder
     public User(String email, String password, String nickname, String cp, double score, LocalDateTime createdAt, Gender gender, int age, String profileImage) {
         this.email = email;
