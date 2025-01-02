@@ -1,6 +1,8 @@
 package com.example.momowas.config;
 
 import com.example.momowas.jwt.filter.JwtAuthenticationFilter;
+import com.example.momowas.oauth2.handler.OAuthSignInFailureHandler;
+import com.example.momowas.oauth2.handler.OAuthSignInSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuthSignInSuccessHandler oAuthSignInSuccessHandler;
+    private final OAuthSignInFailureHandler oAuthSignInFailureHandler;
     private static final String[] publicEndpoints = {
             "/auth/sign-up",
             "/auth/send-sms",
@@ -61,7 +65,13 @@ public class SecurityConfig {
                                 .requestMatchers(publicEndpoints).permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth ->
+                        oauth
+                                .successHandler(oAuthSignInSuccessHandler)
+                                .failureHandler(oAuthSignInFailureHandler)
+                );
+
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

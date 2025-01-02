@@ -22,6 +22,10 @@ public enum ExceptionCode {
     INVALID_PHONE_NUMBER(400, "A003", "유효하지 않은 전화번호입니다."),
     ALREADY_AUTHENTICATED(400, "A004", "이미 인증된 사용자입니다."),
 
+    INVALID_TOKEN(401, "T001", "유효하지 않은 토큰입니다."),
+    TOKEN_EXPIRED(401, "T002", "토큰이 만료되었습니다."),
+    TOKEN_MISSING(401, "T003", "토큰이 존재하지 않습니다."),
+
     // 사용자 관련 예외
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
     ALREADY_EXISTS(409, "U002", "이미 존재하는 정보입니다."),
