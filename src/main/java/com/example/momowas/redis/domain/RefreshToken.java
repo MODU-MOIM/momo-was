@@ -6,21 +6,22 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @RedisHash(value = "Token")
 public class RefreshToken {
 
     @Id
     private String id;
 
+    private String refreshToken;
+
     @Indexed
     private String accessToken;
 
-    private String refreshToken;
+    private long expirationTime;
 
-    @Builder
-    public RefreshToken(String accessToken, String refreshToken) {
+    public void updateAccessToken(String accessToken) {
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
     }
+
 }

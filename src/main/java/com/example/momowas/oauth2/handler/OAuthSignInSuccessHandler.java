@@ -1,5 +1,6 @@
 package com.example.momowas.oauth2.handler;
 
+import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.oauth2.helper.NaverUserInfo;
 import com.example.momowas.oauth2.helper.OAuth2UserInfo;
@@ -7,7 +8,9 @@ import com.example.momowas.redis.domain.RefreshToken;
 import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,8 @@ import java.util.Map;
 public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 //    @Value("${jwt.redirect}")
 //    private String REDIRECT_URI;
+    @Value("${jwt.refreshExpiration}")
+    private long REFRESH_TOKEN_EXPIRATION_TIME;
 
     private OAuth2UserInfo oAuth2UserInfo = null;
 
@@ -93,20 +98,23 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("PROVIDER : {}", provider);
         log.info("PROVIDER_ID : {}", providerId);
 
-        // 액세스 토큰 발급
+        // 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(user.getId());
-
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
 
         //redis refresh Token 저장
-        RefreshToken refreshToken1 = RefreshToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-        refreshTokenService.create(refreshToken1);
+        refreshTokenService.saveTokenInfo(String.valueOf(user.getId()), refreshToken, accessToken);
 
-        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        Map<String, String> tokens = Map.of(
+                "grantType","Bearer",
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
+
+        response.setContentType("application/json");
         response.setStatus(HttpStatus.OK.value());
+        new ObjectMapper().writeValue(response.getWriter(), tokens);
+
 
 // 리다이렉트 -> 프론트 파싱 방식
 //        String encodedName = URLEncoder.encode(name, "UTF-8");

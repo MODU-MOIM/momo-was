@@ -41,10 +41,6 @@ public class JwtUtil {
         this.userService = userService;
     }
 
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
 
     public String generateAccessToken(Long userId) {
         return Jwts.builder()
@@ -52,7 +48,7 @@ public class JwtUtil {
                 .setIssuer(issuer)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + accessExpiration))
-                .signWith(this.getSigningKey())
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
     public String generateRefreshToken(Long userId){
@@ -61,7 +57,7 @@ public class JwtUtil {
                 .setIssuer(issuer)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(this.getSigningKey())
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
     public boolean validateToken(String token) {
@@ -74,9 +70,11 @@ public class JwtUtil {
                 return false;
             }
             return !claims.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            throw new BusinessException(ExceptionCode.TOKEN_EXPIRED);
         } catch (Exception e) {
+            throw new BusinessException(ExceptionCode.INVALID_TOKEN);
         }
-        return false;
     }
 
     public String resolveToken(HttpServletRequest request) {
