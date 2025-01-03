@@ -1,5 +1,6 @@
 package com.example.momowas.config;
 
+import com.example.momowas.jwt.filter.JwtAuthenticationFilter;
 import com.example.momowas.oauth2.handler.OAuthSignInFailureHandler;
 import com.example.momowas.oauth2.handler.OAuthSignInSuccessHandler;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,7 +29,11 @@ public class SecurityConfig {
 
     private final OAuthSignInSuccessHandler oAuthSignInSuccessHandler;
     private final OAuthSignInFailureHandler oAuthSignInFailureHandler;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private static final String[] publicEndpoints = {
+            "/auth/sign-in",
             "/auth/sign-up",
             "/auth/send-sms",
             "/auth/verify-code",
@@ -61,16 +67,16 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-                                .requestMatchers("/**").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers(publicEndpoints).permitAll() // 공개 엔드포인트 설정
+                                .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
                 .oauth2Login(oauth ->
                         oauth
                                 .successHandler(oAuthSignInSuccessHandler)
                                 .failureHandler(oAuthSignInFailureHandler)
-                );
-
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                .defaultSuccessUrl("/home", true) // 로그인 성공 후 리디렉션 URL 설정
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         return httpSecurity.build();
     }

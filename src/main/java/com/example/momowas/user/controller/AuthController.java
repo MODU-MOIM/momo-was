@@ -6,6 +6,7 @@ import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
+import com.example.momowas.user.dto.SignInReqDto;
 import com.example.momowas.user.dto.SignUpReqDto;
 import com.example.momowas.user.dto.SmsReqDto;
 import com.example.momowas.user.dto.ValidationCodeReqDto;
@@ -82,6 +83,11 @@ public class AuthController {
     public JwtTokenDto reissueAccessToken(
             @RequestHeader("Authorization") String authorizationHeader) {
         return tokenService.reissueAccessToken(jwtUtil.getTokenFromHeader(authorizationHeader));
+    }
+
+    @PostMapping("/sign-in")
+    public JwtTokenDto reissueAccessToken(@RequestBody SignInReqDto signInReqDto) {
+        return authService.signIn(signInReqDto);
     }
 
 
