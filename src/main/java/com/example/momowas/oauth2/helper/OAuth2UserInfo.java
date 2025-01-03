@@ -5,10 +5,4 @@ public interface OAuth2UserInfo {
     String getProvider();
     String getName();
 
-    String getCp();
-
-    String getGender();
-
-
-
 }

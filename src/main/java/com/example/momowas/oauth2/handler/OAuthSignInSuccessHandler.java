@@ -2,6 +2,7 @@ package com.example.momowas.oauth2.handler;
 
 import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
+import com.example.momowas.oauth2.helper.GoogleUserInfo;
 import com.example.momowas.oauth2.helper.NaverUserInfo;
 import com.example.momowas.oauth2.helper.OAuth2UserInfo;
 import com.example.momowas.redis.domain.RefreshToken;
@@ -52,6 +53,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         switch (provider) {
             case "google" -> {
                 log.info("구글 로그인 요청");
+                oAuth2UserInfo = new GoogleUserInfo(token.getPrincipal().getAttributes());
             }
             case "kakao" -> {
                 log.info("카카오 로그인 요청");
@@ -66,7 +68,6 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String providerId = oAuth2UserInfo.getProviderId();
         String name = oAuth2UserInfo.getName();
         String email = oAuth2UserInfo.getName();
-        String cp = oAuth2UserInfo.getCp();
 
         User existUser = userService.findUserByProviderId(providerId);
         User user;
@@ -78,7 +79,6 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .email(email)
                     .nickname(name)
                     .score(0)
-                    .cp(cp)
                     .createdAt(LocalDateTime.now())
                     .gender(null)
                     .age(0)
