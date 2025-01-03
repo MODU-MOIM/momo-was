@@ -18,13 +18,13 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
-    @Column(nullable = false)
+    @Column
     private String cp;
 
     @Column
@@ -52,7 +52,8 @@ public class User {
     private String providerId;
 
     @Builder
-    public User(String email, String password, String nickname, String cp, double score, LocalDateTime createdAt, Gender gender, int age, String profileImage) {
+
+    public User(String email, String password, String nickname, String cp, double score, LocalDateTime createdAt, Gender gender, int age, String profileImage, String provider, String providerId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -62,5 +63,7 @@ public class User {
         this.gender = gender;
         this.age = age;
         this.profileImage = profileImage;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 }

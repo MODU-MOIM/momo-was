@@ -24,4 +24,14 @@ public class NaverUserInfo implements OAuth2UserInfo {
         return (String) attributes.get("name");
     }
 
+    @Override
+    public String getCp() {
+        return (String) attributes.get("cp");
+    }
+
+    @Override
+    public String getGender() {
+        return (String) attributes.get("gender");
+    }
+
 }

@@ -21,6 +21,7 @@ spring:
               - birth_date
               - gender
               - cp
+              - profile_image
             client-name: Naver
             authorization-grant-type: authorization_code
             redirect-uri: ${NAVER_REDIRECT_URI}
@@ -37,9 +38,12 @@ spring:
     url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?serverTimezone=Asia/Seoul
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
+  main:
+    allow-circular-references: true
 
 jwt:
   secret: ${JWT_SECRET}
+  redirect: ${JWT_REDIRECT_URI}
   accessExpiration: ${JWT_ACCESS_EXPIRATION}
   refreshExpiration: ${JWT_REFRESH_EXPIRATION}
   issuer: ${JWT_ISSUER}
