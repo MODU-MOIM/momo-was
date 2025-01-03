@@ -3,6 +3,7 @@ package com.example.momowas.oauth2.handler;
 import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.oauth2.helper.GoogleUserInfo;
+import com.example.momowas.oauth2.helper.KakaoUserInfo;
 import com.example.momowas.oauth2.helper.NaverUserInfo;
 import com.example.momowas.oauth2.helper.OAuth2UserInfo;
 import com.example.momowas.redis.domain.RefreshToken;
@@ -57,6 +58,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             }
             case "kakao" -> {
                 log.info("카카오 로그인 요청");
+                oAuth2UserInfo = new KakaoUserInfo(token.getPrincipal().getAttributes());
             }
             case "naver" -> {
                 log.info("네이버 로그인 요청");
