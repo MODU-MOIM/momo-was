@@ -3,6 +3,8 @@ package com.example.momowas.oauth2.handler;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.oauth2.helper.NaverUserInfo;
 import com.example.momowas.oauth2.helper.OAuth2UserInfo;
+import com.example.momowas.redis.domain.RefreshToken;
+import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import jakarta.servlet.ServletException;
@@ -35,6 +37,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -92,6 +95,15 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         // 액세스 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(user.getId());
+
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId());
+
+        //redis refresh Token 저장
+        RefreshToken refreshToken1 = RefreshToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+        refreshTokenService.create(refreshToken1);
 
         response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         response.setStatus(HttpStatus.OK.value());
