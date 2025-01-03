@@ -41,12 +41,26 @@ spring:
   main:
     allow-circular-references: true
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 6000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 30
+          min-idle: 10
+          max-wait: 10000ms
+        shutdown-timeout: 200ms
+
 jwt:
   secret: ${JWT_SECRET}
   redirect: ${JWT_REDIRECT_URI}
   accessExpiration: ${JWT_ACCESS_EXPIRATION}
   refreshExpiration: ${JWT_REFRESH_EXPIRATION}
   issuer: ${JWT_ISSUER}
+
 
 coolsms:
   api:
