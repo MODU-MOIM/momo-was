@@ -1,4 +1,4 @@
-package com.example.momowas.error;
+package com.example.momowas.response;
 
 import lombok.Getter;
 

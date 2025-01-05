@@ -1,9 +1,9 @@
 package com.example.momowas.user.controller;
 
-import com.example.momowas.error.BusinessException;
-import com.example.momowas.error.ExceptionCode;
+
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
-import com.example.momowas.jwt.util.JwtUtil;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.SignInReqDto;
@@ -27,7 +27,6 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final RefreshTokenService tokenService;
-    private final JwtUtil jwtUtil;
     private final SmsUtil smsUtil;
 
     @PostMapping("/sign-up")

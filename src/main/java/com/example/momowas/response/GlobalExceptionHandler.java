@@ -1,4 +1,4 @@
-package com.example.momowas.error;
+package com.example.momowas.response;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,17 +15,15 @@ public class GlobalExceptionHandler {
 
     private final HttpStatus HTTP_STATUS_OK = HttpStatus.OK;
 
-    //비즈니스 로직의 예외처리(Unchecked Exception 발생시 처리)
-    @ExceptionHandler(BusinessException.class) // 만들어준 커스텀익셉션 발생시 처리해주는 곳
-    public ResponseEntity<ErrorResponse> handleCustomException(BusinessException ex) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse<Void>> handleCustomException(BusinessException ex) {
         log.error("Business Exception Error", ex);
-
-        final ErrorResponse errorResponse = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
-
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));
-
+        final ErrorResponse<Void> errorResponse = ErrorResponse.of(ex.getExceptionCode());
+        return ResponseEntity
+                .status(ex.getExceptionCode().getStatus())
+                .body(errorResponse);
     }
+
 
     //여기부턴 클라이언트 측의 잘못된 요청에 의한 에러를 처리해줌.
     @ExceptionHandler(NullPointerException.class) // nullPointerException 발생시

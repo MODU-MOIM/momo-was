@@ -1,11 +1,9 @@
 package com.example.momowas.jwt.filter;
 
-import com.example.momowas.error.BusinessException;
-import com.example.momowas.error.ExceptionCode;
 import com.example.momowas.jwt.util.JwtUtil;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

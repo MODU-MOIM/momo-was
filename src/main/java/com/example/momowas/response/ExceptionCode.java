@@ -1,16 +1,18 @@
-package com.example.momowas.error;
+package com.example.momowas.response;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public enum ExceptionCode {
     /* HTTP 상태 코드: 적절한 HTTP 상태 코드를 매핑
+    200: 성공
     400: 클라이언트 입력 오류
     401: 인증 실패
     403: 권한 부족
     404: 리소스 없음*/
 
+    //성공
+    SUCCESS(200, "G000", "요청이 성공적으로 처리되었습니다."),
 
     // 일반적인 예외
     NULL_POINT_ERROR(404, "G010", "NullPointerException 발생"),
