@@ -14,11 +14,13 @@ import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
 import com.nimbusds.oauth2.sdk.TokenResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,14 +82,14 @@ public class AuthController {
 
     // 액세스 토큰을 재발행하는 API
     @PostMapping("/reissue")
-    public JwtTokenDto reissueAccessToken(
-            @RequestHeader("Authorization") String authorizationHeader) {
-        return tokenService.reissueAccessToken(jwtUtil.getTokenFromHeader(authorizationHeader));
+    public void reissueAccessToken(
+            @RequestHeader("Authorization") String authorizationHeader, HttpServletResponse response) {
+        tokenService.reissueAccessToken(jwtUtil.getTokenFromHeader(authorizationHeader), response);
     }
 
     @PostMapping("/sign-in")
-    public JwtTokenDto reissueAccessToken(@RequestBody SignInReqDto signInReqDto) {
-        return authService.signIn(signInReqDto);
+    public void reissueAccessToken(@RequestBody SignInReqDto signInReqDto, HttpServletResponse response) {
+        authService.signIn(signInReqDto, response);
     }
 
 

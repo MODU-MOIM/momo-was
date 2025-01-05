@@ -35,8 +35,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-//    @Value("${jwt.redirect}")
-//    private String REDIRECT_URI;
     @Value("${jwt.refreshExpiration}")
     private long REFRESH_TOKEN_EXPIRATION_TIME;
 
@@ -107,20 +105,14 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         //redis refresh Token 저장
         refreshTokenService.saveTokenInfo(String.valueOf(user.getId()), refreshToken, accessToken);
 
-        Map<String, String> tokens = Map.of(
-                "grantType","Bearer",
-                "accessToken", accessToken,
-                "refreshToken", refreshToken
-        );
+        response.setHeader("Authorization", "Bearer " + accessToken);
 
-        response.setContentType("application/json");
-        response.setStatus(HttpStatus.OK.value());
-        new ObjectMapper().writeValue(response.getWriter(), tokens);
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
 
-
-// 리다이렉트 -> 프론트 파싱 방식
-//        String encodedName = URLEncoder.encode(name, "UTF-8");
-//        String redirectUri = String.format(REDIRECT_URI, encodedName, accessToken);
-//        getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
+
 }

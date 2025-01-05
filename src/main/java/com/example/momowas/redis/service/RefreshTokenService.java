@@ -6,9 +6,12 @@ import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.redis.domain.RefreshToken;
 import com.example.momowas.redis.repository.RefreshTokenRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
@@ -32,8 +35,7 @@ public class RefreshTokenService {
         refreshTokenRepository.delete(token);
     }
 
-    public JwtTokenDto reissueAccessToken(String accessToken) {
-        // redis에 저장되어있는 토큰 정보를 만료된 access token으로 찾아온다.
+    public void reissueAccessToken(String accessToken, HttpServletResponse response) {
         RefreshToken foundTokenInfo  = refreshTokenRepository.findByAccessToken(accessToken).orElseThrow(() -> new BusinessException(ExceptionCode.TOKEN_MISSING));
         log.info(foundTokenInfo.getRefreshToken());
         String refreshToken = foundTokenInfo.getRefreshToken();
@@ -45,12 +47,13 @@ public class RefreshTokenService {
             foundTokenInfo.updateAccessToken(newAccessToken);
             refreshTokenRepository.save(foundTokenInfo);
 
-            return JwtTokenDto.builder()
-                    .grantType("Bearer")
-                    .accessToken(newAccessToken)
-                    .refreshToken(refreshToken)
-                    .build();
+            response.setHeader("Authorization", "Bearer " + accessToken);
+            Cookie cookie = new Cookie("refreshToken", refreshToken);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
+
         }
-        return null;
     }
 }
