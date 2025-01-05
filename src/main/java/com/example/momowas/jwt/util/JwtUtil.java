@@ -53,20 +53,25 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
-    public boolean validateToken(String token) {
+    public ExceptionCode validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey.getBytes())
                     .build()
                     .parseClaimsJws(token);
-            if (userService.read(claims.getBody().get("userId", Long.class)) == null) {
-                return false;
+
+            Long userId = claims.getBody().get("userId", Long.class);
+            if (userService.read(userId) == null) {
+                return ExceptionCode.TOKEN_MISSING;
             }
-            return !claims.getBody().getExpiration().before(new Date());
+
+            return null;
         } catch (ExpiredJwtException e) {
-            throw new BusinessException(ExceptionCode.TOKEN_EXPIRED);
+            log.warn("Token expired: {}", e.getMessage());
+            return ExceptionCode.TOKEN_EXPIRED;
         } catch (Exception e) {
-            throw new BusinessException(ExceptionCode.INVALID_TOKEN);
+            log.error("Invalid token: {}", e.getMessage());
+            return ExceptionCode.INVALID_TOKEN;
         }
     }
 

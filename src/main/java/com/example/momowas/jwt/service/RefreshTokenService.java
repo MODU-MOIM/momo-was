@@ -39,7 +39,7 @@ public class RefreshTokenService {
         log.info(foundTokenInfo.getRefreshToken());
         String refreshToken = foundTokenInfo.getRefreshToken();
 
-        if(jwtUtil.validateToken(refreshToken)){
+        if(jwtUtil.validateToken(refreshToken)==null){
             Long userId = Long.valueOf(foundTokenInfo.getId());
 
             String newAccessToken = jwtUtil.generateAccessToken(userId);
