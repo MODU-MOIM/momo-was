@@ -2,9 +2,8 @@ package com.example.momowas.user.service;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
-import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
-import com.example.momowas.redis.service.RefreshTokenService;
+import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.dto.SignInReqDto;
 import com.example.momowas.user.dto.SignUpReqDto;
 import com.example.momowas.user.domain.User;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

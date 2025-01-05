@@ -1,18 +1,16 @@
-package com.example.momowas.redis.service;
+package com.example.momowas.jwt.service;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
-import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
-import com.example.momowas.redis.domain.RefreshToken;
-import com.example.momowas.redis.repository.RefreshTokenRepository;
+import com.example.momowas.jwt.domain.RefreshToken;
+import com.example.momowas.jwt.repository.RefreshTokenRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 

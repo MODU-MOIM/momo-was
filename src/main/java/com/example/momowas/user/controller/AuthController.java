@@ -2,10 +2,9 @@ package com.example.momowas.user.controller;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
-import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
-import com.example.momowas.redis.service.RefreshTokenService;
+import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.SignInReqDto;
 import com.example.momowas.user.dto.SignUpReqDto;
@@ -14,15 +13,11 @@ import com.example.momowas.user.dto.ValidationCodeReqDto;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
-import com.nimbusds.oauth2.sdk.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

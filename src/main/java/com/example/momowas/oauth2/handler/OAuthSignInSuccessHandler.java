@@ -1,16 +1,13 @@
 package com.example.momowas.oauth2.handler;
 
-import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.oauth2.helper.GoogleUserInfo;
 import com.example.momowas.oauth2.helper.KakaoUserInfo;
 import com.example.momowas.oauth2.helper.NaverUserInfo;
 import com.example.momowas.oauth2.helper.OAuth2UserInfo;
-import com.example.momowas.redis.domain.RefreshToken;
-import com.example.momowas.redis.service.RefreshTokenService;
+import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,16 +15,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Map;
 

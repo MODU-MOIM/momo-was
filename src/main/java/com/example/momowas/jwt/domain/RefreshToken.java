@@ -1,4 +1,4 @@
-package com.example.momowas.redis.domain;
+package com.example.momowas.jwt.domain;
 
 import jakarta.persistence.Id;
 import lombok.*;

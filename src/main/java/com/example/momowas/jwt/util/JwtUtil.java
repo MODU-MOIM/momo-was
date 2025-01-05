@@ -2,21 +2,14 @@ package com.example.momowas.jwt.util;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
-import com.example.momowas.redis.domain.RefreshToken;
-import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.service.UserService;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.sql.Ref;
 import java.util.Date;
-import java.util.UUID;
 
 @Slf4j
 @Component
