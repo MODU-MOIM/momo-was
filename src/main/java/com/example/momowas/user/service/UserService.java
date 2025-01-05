@@ -24,4 +24,12 @@ public class UserService {
     public boolean isEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findUserByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    public User findUserByProviderId(String providerId){
+        return userRepository.findByProviderId(providerId);
+    }
 }

@@ -2,21 +2,25 @@ package com.example.momowas.user.controller;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
+import com.example.momowas.jwt.dto.JwtTokenDto;
+import com.example.momowas.jwt.util.JwtUtil;
+import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
+import com.example.momowas.user.dto.SignInReqDto;
 import com.example.momowas.user.dto.SignUpReqDto;
 import com.example.momowas.user.dto.SmsReqDto;
 import com.example.momowas.user.dto.ValidationCodeReqDto;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
+import com.nimbusds.oauth2.sdk.TokenResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
+    private final RefreshTokenService tokenService;
+    private final JwtUtil jwtUtil;
     private final SmsUtil smsUtil;
 
     @PostMapping("/sign-up")
@@ -65,4 +71,24 @@ public class AuthController {
             throw new BusinessException(ExceptionCode.INVALID_VERIFICATION_CODE);
         }
     }
+
+    @PostMapping("/sign-out")
+    public void logout(@RequestHeader("Authorization") final String accessToken) {
+        // 엑세스 토큰으로 현재 Redis 정보 삭제
+        tokenService.removeRefreshToken(accessToken);
+    }
+
+    // 액세스 토큰을 재발행하는 API
+    @PostMapping("/reissue")
+    public JwtTokenDto reissueAccessToken(
+            @RequestHeader("Authorization") String authorizationHeader) {
+        return tokenService.reissueAccessToken(jwtUtil.getTokenFromHeader(authorizationHeader));
+    }
+
+    @PostMapping("/sign-in")
+    public JwtTokenDto reissueAccessToken(@RequestBody SignInReqDto signInReqDto) {
+        return authService.signIn(signInReqDto);
+    }
+
+
 }

@@ -45,6 +45,12 @@ dependencies {
 
     //sms
     implementation 'net.nurigo:sdk:4.3.0'
+
+    //oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
