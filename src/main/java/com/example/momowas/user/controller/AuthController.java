@@ -3,6 +3,7 @@ package com.example.momowas.user.controller;
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
 import com.example.momowas.jwt.dto.JwtTokenDto;
+import com.example.momowas.jwt.dto.ReIssueTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
@@ -80,11 +81,10 @@ public class AuthController {
         tokenService.removeRefreshToken(accessToken);
     }
 
-    // 액세스 토큰을 재발행하는 API
     @PostMapping("/reissue")
     public void reissueAccessToken(
-            @RequestHeader("Authorization") String authorizationHeader, HttpServletResponse response) {
-        tokenService.reissueAccessToken(jwtUtil.getTokenFromHeader(authorizationHeader), response);
+            @RequestBody ReIssueTokenDto reIssueTokenDto, HttpServletResponse response) {
+        tokenService.reissueAccessToken(reIssueTokenDto, response);
     }
 
     @PostMapping("/sign-in")

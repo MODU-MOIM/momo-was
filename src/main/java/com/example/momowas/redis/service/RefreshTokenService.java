@@ -3,6 +3,7 @@ package com.example.momowas.redis.service;
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
 import com.example.momowas.jwt.dto.JwtTokenDto;
+import com.example.momowas.jwt.dto.ReIssueTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.redis.domain.RefreshToken;
 import com.example.momowas.redis.repository.RefreshTokenRepository;
@@ -35,8 +36,8 @@ public class RefreshTokenService {
         refreshTokenRepository.delete(token);
     }
 
-    public void reissueAccessToken(String accessToken, HttpServletResponse response) {
-        RefreshToken foundTokenInfo  = refreshTokenRepository.findByAccessToken(accessToken).orElseThrow(() -> new BusinessException(ExceptionCode.TOKEN_MISSING));
+    public void reissueAccessToken(ReIssueTokenDto reIssueTokenDto, HttpServletResponse response) {
+        RefreshToken foundTokenInfo  = refreshTokenRepository.findByAccessToken(reIssueTokenDto.getExpiredAccessToken()).orElseThrow(() -> new BusinessException(ExceptionCode.TOKEN_MISSING));
         log.info(foundTokenInfo.getRefreshToken());
         String refreshToken = foundTokenInfo.getRefreshToken();
 
@@ -47,7 +48,7 @@ public class RefreshTokenService {
             foundTokenInfo.updateAccessToken(newAccessToken);
             refreshTokenRepository.save(foundTokenInfo);
 
-            response.setHeader("Authorization", "Bearer " + accessToken);
+            response.setHeader("Authorization", "Bearer " + newAccessToken);
             Cookie cookie = new Cookie("refreshToken", refreshToken);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
