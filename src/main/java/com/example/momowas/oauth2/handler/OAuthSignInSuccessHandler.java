@@ -2,10 +2,10 @@ package com.example.momowas.oauth2.handler;
 
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.oauth2.helper.GoogleUserInfo;
-import com.example.momowas.oauth2.helper.KakaoUserInfo;
 import com.example.momowas.oauth2.helper.NaverUserInfo;
 import com.example.momowas.oauth2.helper.OAuth2UserInfo;
 import com.example.momowas.jwt.service.RefreshTokenService;
+import com.example.momowas.user.domain.Gender;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import jakarta.servlet.ServletException;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -47,20 +48,21 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 log.info("구글 로그인 요청");
                 oAuth2UserInfo = new GoogleUserInfo(token.getPrincipal().getAttributes());
             }
-            case "kakao" -> {
-                log.info("카카오 로그인 요청");
-                oAuth2UserInfo = new KakaoUserInfo(token.getPrincipal().getAttributes());
-            }
             case "naver" -> {
                 log.info("네이버 로그인 요청");
                 oAuth2UserInfo = new NaverUserInfo((Map<String, Object>) token.getPrincipal().getAttributes().get("response"));
+
             }
         }
-
-        // 정보 추출
         String providerId = oAuth2UserInfo.getProviderId();
         String name = oAuth2UserInfo.getName();
         String email = oAuth2UserInfo.getName();
+        String profileImage = oAuth2UserInfo.getProfileImage();
+
+        String gender = oAuth2UserInfo.getGender().orElse(null);
+        String cp = oAuth2UserInfo.getMobile().orElse(null);
+        String birthYear = oAuth2UserInfo.getBirthYear().orElse(null);
+
 
         User existUser = userService.findUserByProviderId(providerId);
         User user;
@@ -73,9 +75,10 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .nickname(name)
                     .score(0)
                     .createdAt(LocalDateTime.now())
-                    .gender(null)
-                    .age(0)
-                    .profileImage(null)
+                    .gender(enumGender(gender))
+                    .age(calculateAge(birthYear))
+                    .cp(cp.replaceAll("-",""))
+                    .profileImage(profileImage)
                     .provider(provider)
                     .providerId(providerId)
                     .build();
@@ -106,6 +109,20 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         cookie.setPath("/");
         cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
 
+    }
+    private Gender enumGender(String gender){
+        Map<String, Gender> genderMap = Map.of(
+                "F", Gender.F,
+                "M", Gender.M
+        );
+
+        return Optional.ofNullable(gender)
+                .filter(genderMap::containsKey)
+                .map(genderMap::get)
+                .orElse(null);
+    }
+    private int calculateAge(String birthYear){
+        return LocalDateTime.now().getYear()-Integer.parseInt(birthYear);
     }
 
 }
