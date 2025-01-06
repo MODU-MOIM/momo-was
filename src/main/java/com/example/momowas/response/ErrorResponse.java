@@ -1,11 +1,13 @@
 package com.example.momowas.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@JsonPropertyOrder({"status", "code", "message", "data"})
 public class ErrorResponse<T> {
     private int status;
     private String code;
