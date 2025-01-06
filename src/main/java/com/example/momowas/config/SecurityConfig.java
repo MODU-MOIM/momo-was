@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -35,6 +35,7 @@ public class SecurityConfig {
     private static final String[] publicEndpoints = {
             "/auth/sign-in",
             "/auth/sign-up",
+            "/auth/reissue",
             "/auth/send-sms",
             "/auth/verify-code",
             "/swagger-ui.html",
@@ -74,7 +75,6 @@ public class SecurityConfig {
                         oauth
                                 .successHandler(oAuthSignInSuccessHandler)
                                 .failureHandler(oAuthSignInFailureHandler)
-                                .defaultSuccessUrl("/home", true) // 로그인 성공 후 리디렉션 URL 설정
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 

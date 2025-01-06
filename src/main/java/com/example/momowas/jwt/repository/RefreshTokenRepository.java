@@ -1,6 +1,6 @@
-package com.example.momowas.redis.repository;
+package com.example.momowas.jwt.repository;
 
-import com.example.momowas.redis.domain.RefreshToken;
+import com.example.momowas.jwt.domain.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

@@ -2,13 +2,15 @@ package com.example.momowas.user.service;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
-import com.example.momowas.jwt.dto.JwtTokenDto;
 import com.example.momowas.jwt.util.JwtUtil;
-import com.example.momowas.redis.service.RefreshTokenService;
+import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.dto.SignInReqDto;
 import com.example.momowas.user.dto.SignUpReqDto;
 import com.example.momowas.user.domain.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,11 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    @Value("${jwt.refreshExpiration}")
+    private long REFRESH_TOKEN_EXPIRATION_TIME;
+
+
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final JwtUtil jwtUtil;
@@ -41,7 +48,7 @@ public class AuthService {
                 .build();
     }
 
-    public JwtTokenDto signIn(SignInReqDto signInReqDto){
+    public void signIn(SignInReqDto signInReqDto, HttpServletResponse response){
         String email = signInReqDto.getEmail();
         User user = userService.findUserByEmail(email);
 
@@ -55,11 +62,13 @@ public class AuthService {
         //redis refresh Token 저장
         refreshTokenService.saveTokenInfo(String.valueOf(user.getId()), refreshToken, accessToken);
 
-        return JwtTokenDto.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        response.setHeader("Authorization", "Bearer " + accessToken);
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
+
     }
 
 }

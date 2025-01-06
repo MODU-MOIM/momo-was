@@ -2,21 +2,14 @@ package com.example.momowas.jwt.util;
 
 import com.example.momowas.error.BusinessException;
 import com.example.momowas.error.ExceptionCode;
-import com.example.momowas.redis.domain.RefreshToken;
-import com.example.momowas.redis.service.RefreshTokenService;
 import com.example.momowas.user.service.UserService;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.sql.Ref;
 import java.util.Date;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -60,20 +53,25 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
-    public boolean validateToken(String token) {
+    public ExceptionCode validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey.getBytes())
                     .build()
                     .parseClaimsJws(token);
-            if (userService.read(claims.getBody().get("userId", Long.class)) == null) {
-                return false;
+
+            Long userId = claims.getBody().get("userId", Long.class);
+            if (userService.read(userId) == null) {
+                return ExceptionCode.TOKEN_MISSING;
             }
-            return !claims.getBody().getExpiration().before(new Date());
+
+            return null;
         } catch (ExpiredJwtException e) {
-            throw new BusinessException(ExceptionCode.TOKEN_EXPIRED);
+            log.warn("Token expired: {}", e.getMessage());
+            return ExceptionCode.TOKEN_EXPIRED;
         } catch (Exception e) {
-            throw new BusinessException(ExceptionCode.INVALID_TOKEN);
+            log.error("Invalid token: {}", e.getMessage());
+            return ExceptionCode.INVALID_TOKEN;
         }
     }
 
