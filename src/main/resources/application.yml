@@ -18,7 +18,6 @@ spring:
             scope:
               - email
               - profile
-              - picture
             redirect-uri: ${GOOGLE_REDIRECT_URI}
 
           naver:
