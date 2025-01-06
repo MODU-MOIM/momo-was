@@ -1,10 +1,12 @@
 package com.example.momowas.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@JsonPropertyOrder({"status", "code", "message", "data"})
 public class CommonResponse<T> {
     private int status;
     private String code;

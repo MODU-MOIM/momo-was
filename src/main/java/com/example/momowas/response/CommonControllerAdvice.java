@@ -28,7 +28,7 @@ public class CommonControllerAdvice implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        if (body instanceof ErrorResponse || body instanceof Map) {
+        if (body instanceof ErrorResponse || body instanceof CommonResponse) {
             return body;
         }
 

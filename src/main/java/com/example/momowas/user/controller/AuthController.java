@@ -3,6 +3,7 @@ package com.example.momowas.user.controller;
 
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
 import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
@@ -70,20 +71,23 @@ public class AuthController {
     }
 
     @PostMapping("/sign-out")
-    public void logout(@RequestHeader("Authorization") final String accessToken) {
+    public  CommonResponse<String> logout(@RequestHeader("Authorization") final String accessToken) {
         // 엑세스 토큰으로 현재 Redis 정보 삭제
         tokenService.removeRefreshToken(accessToken);
+        return CommonResponse.of(ExceptionCode.SUCCESS, "로그아웃 성공");
     }
 
     @PostMapping("/reissue")
-    public void reissueAccessToken(
+    public CommonResponse<String> reissueAccessToken(
             @RequestBody ReIssueTokenDto reIssueTokenDto, HttpServletResponse response) {
         tokenService.reissueAccessToken(reIssueTokenDto, response);
+        return CommonResponse.of(ExceptionCode.SUCCESS, "토큰 재발행 성공");
     }
 
     @PostMapping("/sign-in")
-    public void reissueAccessToken(@RequestBody SignInReqDto signInReqDto, HttpServletResponse response) {
+    public CommonResponse<String> signIn(@RequestBody SignInReqDto signInReqDto, HttpServletResponse response) {
         authService.signIn(signInReqDto, response);
+        return CommonResponse.of(ExceptionCode.SUCCESS, "로그인 성공");
     }
 
 

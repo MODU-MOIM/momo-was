@@ -1,14 +1,8 @@
 package com.example.momowas.jwt.service;
 
-<<<<<<< HEAD:src/main/java/com/example/momowas/jwt/service/RefreshTokenService.java
-import com.example.momowas.error.BusinessException;
-import com.example.momowas.error.ExceptionCode;
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
-=======
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
-import com.example.momowas.jwt.dto.JwtTokenDto;
->>>>>>> 3e1a5dd (fix: 성공 응답):src/main/java/com/example/momowas/redis/service/RefreshTokenService.java
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.jwt.domain.RefreshToken;
 import com.example.momowas.jwt.repository.RefreshTokenRepository;
