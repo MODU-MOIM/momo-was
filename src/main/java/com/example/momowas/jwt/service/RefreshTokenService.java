@@ -1,8 +1,8 @@
 package com.example.momowas.jwt.service;
 
-import com.example.momowas.error.BusinessException;
-import com.example.momowas.error.ExceptionCode;
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.jwt.domain.RefreshToken;
 import com.example.momowas.jwt.repository.RefreshTokenRepository;

@@ -1,20 +1,33 @@
-package com.example.momowas.error;
+package com.example.momowas.response;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public enum ExceptionCode {
     /* HTTP 상태 코드: 적절한 HTTP 상태 코드를 매핑
+    200: 성공
     400: 클라이언트 입력 오류
     401: 인증 실패
     403: 권한 부족
     404: 리소스 없음*/
 
+    //성공
+    SUCCESS(200, "G000", "요청이 성공적으로 처리되었습니다."),
 
     // 일반적인 예외
     NULL_POINT_ERROR(404, "G010", "NullPointerException 발생"),
     NOT_VALID_ERROR(404, "G011", "Validation Exception 발생"),
+    BAD_REQUEST_ERROR(400, "G001", "Bad Request Exception"),
+    REQUEST_BODY_MISSING_ERROR(400, "G002", "Required request body is missing"),
+    INVALID_TYPE_VALUE(400, "G003", " Invalid Type Value"),
+    MISSING_REQUEST_PARAMETER_ERROR(400, "G004", "Missing Servlet RequestParameter Exception"),
+    IO_ERROR(400, "G005", "I/O Exception"),
+    JSON_PARSE_ERROR(400, "G006", "JsonParseException"),
+    JACKSON_PROCESS_ERROR(400, "G007", "com.fasterxml.jackson.core Exception"),
+    FORBIDDEN_ERROR(403, "G008", "Forbidden Exception"),
+    NOT_FOUND_ERROR(404, "G009", "Not Found Exception"),
+    NOT_VALID_HEADER_ERROR(404, "G012", "Header에 데이터가 존재하지 않는 경우 "),
+    INTERNAL_SERVER_ERROR(500, "G999", "Internal Server Error Exception"),
 
     // 인증 관련 예외
     INVALID_AUTHENTICATION(401, "A001", "인증에 실패했습니다."),

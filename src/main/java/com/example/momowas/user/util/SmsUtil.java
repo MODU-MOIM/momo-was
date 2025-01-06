@@ -1,7 +1,7 @@
 package com.example.momowas.user.util;
 
-import com.example.momowas.error.BusinessException;
-import com.example.momowas.error.ExceptionCode;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import net.nurigo.sdk.NurigoApp;

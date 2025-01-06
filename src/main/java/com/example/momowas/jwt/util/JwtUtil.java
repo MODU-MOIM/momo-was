@@ -1,7 +1,7 @@
 package com.example.momowas.jwt.util;
 
-import com.example.momowas.error.BusinessException;
-import com.example.momowas.error.ExceptionCode;
+
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.service.UserService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
