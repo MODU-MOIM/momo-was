@@ -34,6 +34,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private static final String[] publicEndpoints = {
+            "/ws/**",
             "/auth/sign-in",
             "/auth/sign-up",
             "/auth/reissue",
