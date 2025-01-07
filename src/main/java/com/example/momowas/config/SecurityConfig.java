@@ -35,6 +35,7 @@ public class SecurityConfig {
 
     private static final String[] publicEndpoints = {
             "/ws/**",
+            "/stomp/**",
             "/auth/sign-in",
             "/auth/sign-up",
             "/auth/reissue",
