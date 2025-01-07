@@ -45,6 +45,7 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**",
             "/error",
+            "/chat",
     };
     //비밀번호 암호화
     @Bean
