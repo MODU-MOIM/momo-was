@@ -1,4 +1,5 @@
 name: Continuous Deployment
+
 on:
   push:
     branches: [ "dev" ]
@@ -21,19 +22,17 @@ on:
         description: 'Environment to run tests against'
         type: environment
         required: false
-
-permissions:
-  contents: read
-
+        
 jobs:
-  deployment:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
       # 1. Compare branch 코드 내려 받기
       - name: Checkout PR
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.push.base_ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       # 2. 자바 환경 설정
       - name: Set up JDK 17
@@ -42,56 +41,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. Build Gradle
-      - name: Build Gradle
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build --stacktrace --info -x test
-        shell: bash
-
-      # 4. .env 파일 생성
-      - name: Create .env file
-        run: |
-          echo "COOLSMS_API_KEY=${{ secrets.COOLSMS_API_KEY }}" >> .env
-          echo "COOLSMS_FROM_NUMBER=${{ secrets.COOLSMS_FROM_NUMBER }}" >> .env
-          echo "COOLSMS_SECRET_KEY=${{ secrets.COOLSMS_SECRET_KEY }}" >> .env
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
-          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
-          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
-          echo "JWT_ACCESS_EXPIRATION=${{ secrets.JWT_ACCESS_EXPIRATION }}" >> .env
-          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
-          echo "JWT_REDIRECT_URI=${{ secrets.JWT_REDIRECT_URI }}" >> .env
-          echo "JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-          echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> .env
-          echo "NAVER_REDIRECT_URI=${{ secrets.NAVER_REDIRECT_URI }}" >> .env
-          echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> .env
-          echo "BUCKET_ACCESS=${{ secrets.BUCKET_ACCESS }}" >> .env
-          echo "BUCKET_SECRET=${{ secrets.BUCKET_SECRET }}" >> .env
-
-      # 5. Docker 이미지 build 및 push
+      # 3. Docker 이미지 build 및 push
       - name: docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker buildx build --env-file .env -t chaechaepower/momo-was .
-          docker push chaechaepower/momo-was
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/momo-was .
+          docker push ${{ secrets.DOCKER_USERNAME }}/momo-wa
 
-      # 6. docker compose로 실행
+      # 4. ec2 pull
       - name: Deploy to server
         uses: appleboy/ssh-action@master
-        id: deploy
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
-            sudo docker rm -f $(docker ps -qa)
-            sudo docker pull chaechaepower/momo-was
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker system prune -a -f
+            docker-compose down
+            docker rmi ${{ secrets.DOCKER_USERNAME }}/momo-was
+            docker pull ${{ secrets.DOCKER_USERNAME }}/momo-was
             docker-compose up -d
-            docker image prune -f
