@@ -57,8 +57,9 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker system prune -a -f
-            docker-compose down
-            docker rmi ${{ secrets.DOCKER_USERNAME }}/momo-was
+            docker rm -f momo-app || true
+            docker rmi ${{ secrets.DOCKER_USERNAME }}/momo-was || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/momo-was
-            docker-compose up -d
+            docker run --env-file /home/ubuntu/momo-was/.env \
+              -d --name momo-app -p 8080:8080 \
+              ${{ secrets.DOCKER_USERNAME }}/momo-was
