@@ -3,17 +3,36 @@ name: Continuous Deployment
 on:
   push:
     branches: [ "dev" ]
-
-permissions:
-  contents: read
-
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      tags:
+        description: 'Test scenario tags'
+        required: false
+        type: boolean
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: false
+        
 jobs:
-  deployment:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      # 1. 코드 내려받기
-      - name: Checkout code
+      # 1. Compare branch 코드 내려 받기
+      - name: Checkout PR
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       # 2. 자바 환경 설정
       - name: Set up JDK 17
@@ -22,46 +41,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. Gradle 빌드
-      - name: Build Gradle
+      # 3. Docker 이미지 build 및 push
+      - name: docker build and push
         run: |
-          chmod +x ./gradlew
-          ./gradlew build --stacktrace --info -x test
-        shell: bash
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/momo-was .
+          docker push ${{ secrets.DOCKER_USERNAME }}/momo-was
 
-      # 4. Docker 이미지 빌드 및 푸시
-      - name: Build and Push Docker Image
-        env:
-          DOCKER_BUILDKIT: 0
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker build -t chaechaepower/momo-was \
-            --build-arg COOLSMS_API_KEY=${{ secrets.COOLSMS_API_KEY }} \
-            --build-arg COOLSMS_FROM_NUMBER=${{ secrets.COOLSMS_FROM_NUMBER }} \
-            --build-arg COOLSMS_SECRET_KEY=${{ secrets.COOLSMS_SECRET_KEY }} \
-            --build-arg DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
-            --build-arg DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
-            --build-arg DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
-            --build-arg DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
-            --build-arg DATABASE_USER=${{ secrets.DATABASE_USER }} \
-            --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-            --build-arg GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }} \
-            --build-arg JWT_ACCESS_EXPIRATION=${{ secrets.JWT_ACCESS_EXPIRATION }} \
-            --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} \
-            --build-arg JWT_REDIRECT_URI=${{ secrets.JWT_REDIRECT_URI }} \
-            --build-arg JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }} \
-            --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            --build-arg NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
-            --build-arg NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
-            --build-arg NAVER_REDIRECT_URI=${{ secrets.NAVER_REDIRECT_URI }} \
-            --build-arg BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
-            --build-arg BUCKET_ACCESS=${{ secrets.BUCKET_ACCESS }} \
-            --build-arg BUCKET_SECRET=${{ secrets.BUCKET_SECRET }} \
-            .
-          docker push chaechaepower/momo-was
-
-      # 5. 서버로 배포
+      # 4. ec2 pull
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -69,32 +56,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
-            cd /home/ubuntu/momo-was || exit 1
-            echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-            docker pull chaechaepower/momo-was
-            docker rm -f $(docker ps -qa) || true
-            docker run -d --name momo-app -p 8080:8080 \
-              -e COOLSMS_API_KEY=${{ secrets.COOLSMS_API_KEY }} \
-              -e COOLSMS_FROM_NUMBER=${{ secrets.COOLSMS_FROM_NUMBER }} \
-              -e COOLSMS_SECRET_KEY=${{ secrets.COOLSMS_SECRET_KEY }} \
-              -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
-              -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
-              -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
-              -e DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
-              -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
-              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-              -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-              -e GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }} \
-              -e JWT_ACCESS_EXPIRATION=${{ secrets.JWT_ACCESS_EXPIRATION }} \
-              -e JWT_ISSUER=${{ secrets.JWT_ISSUER }} \
-              -e JWT_REDIRECT_URI=${{ secrets.JWT_REDIRECT_URI }} \
-              -e JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }} \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
-              -e NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
-              -e NAVER_REDIRECT_URI=${{ secrets.NAVER_REDIRECT_URI }} \
-              -e BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
-              -e BUCKET_ACCESS=${{ secrets.BUCKET_ACCESS }} \
-              -e BUCKET_SECRET=${{ secrets.BUCKET_SECRET }} \
-              chaechaepower/momo-was
-            docker image prune -f
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker system prune -a -f
+            docker-compose down
+            docker rmi ${{ secrets.DOCKER_USERNAME }}/momo-was
+            docker pull ${{ secrets.DOCKER_USERNAME }}/momo-was
+            docker-compose up -d
