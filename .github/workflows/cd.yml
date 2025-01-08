@@ -79,7 +79,7 @@ jobs:
       - name: docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build --env-file .env -t chaechaepower/momo-was .
+          docker buildx build --env-file .env -t chaechaepower/momo-was .
           docker push chaechaepower/momo-was
 
       # 6. docker compose로 실행
