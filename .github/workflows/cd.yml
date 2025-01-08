@@ -58,6 +58,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker rm -f momo-app || true
+            sudo lsof -i :8080 | grep LISTEN | awk '{print $2}' | xargs -r sudo kill -9
             docker rmi ${{ secrets.DOCKER_USERNAME }}/momo-was || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/momo-was
             docker run --env-file /home/ubuntu/momo-was/.env \
