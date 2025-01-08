@@ -83,15 +83,15 @@ jobs:
           docker push chaechaepower/momo-was
       
       # 6. docker compose로 실행
-	   - name: Deploy to server
-	     uses: appleboy/ssh-action@master
-	     id: deploy
-	     with:
-	       host: ${{ secrets.HOST }}
-	       username: ubuntu
-	       key: ${{ secrets.KEY }}
-	     script: |
-	       sudo docker rm -f $(docker ps -qa)
-	       sudo docker pull chaechaepower/momo-was
-	       docker-compose up -d
-	       docker image prune -f
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        id: deploy
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull chaechaepower/momo-was
+            docker-compose up -d
+            docker image prune -f
