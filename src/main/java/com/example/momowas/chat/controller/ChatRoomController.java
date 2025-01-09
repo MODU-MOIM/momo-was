@@ -21,30 +21,23 @@ import java.util.List;
 public class ChatRoomController {
     private final ChatService chatService;
 
+    @GetMapping("/room/{roomId}/history")
+    public List<ChatDto> chatHistory(@PathVariable Long roomId) {
+        return chatService.findAllChatByRoomId(roomId);
+    }
+    @GetMapping("/room/{roomId}")
+    public ChatRoomDto joinRoom(@PathVariable Long roomId) {
+        return chatService.findRoomById(roomId);
+    }
 
-//    @GetMapping("/{roomId}")
-//    public String joinRoom(@PathVariable(required = false) Long roomId, Model model) {
-//        List<ChatDto> chatList = chatService.findAllChatByRoomId(roomId);
-//
-//        model.addAttribute("roomId", roomId);
-//        model.addAttribute("chatList", chatList);
-//        return "room";
-//    }
     @PostMapping("/room")
     public ChatRoomDto roomList(@RequestBody ChatRoomReqDto chatRoomReqDto) {
         return chatService.createRoom(chatRoomReqDto.getName());
     }
 
-    @GetMapping("/roomList")
-    public String roomList(Model model) {
-        List<ChatRoomDto> roomList = chatService.findAllRoom();
-        model.addAttribute("roomList", roomList);
-        return "roomList";
-    }
-
-    @GetMapping("/roomForm")
-    public String roomForm() {
-        return "roomForm";
+    @GetMapping("/rooms")
+    public List<ChatRoomDto> roomList() {
+        return chatService.findAllRoom();
     }
 
 }
