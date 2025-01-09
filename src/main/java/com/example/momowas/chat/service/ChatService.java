@@ -46,14 +46,14 @@ public class ChatService {
         return ChatRoomDto.fromEntity(chatRoom);
     }
 
-    public ChatDto createChat(Long roomId, ChatReqDto chatReqDto) {
+    public ChatDto createChat(Long roomId, ChatReqDto chatReqDto, Long userId) {
 
         ChatRoom chatRoom =  chatRoomRepository.findById(roomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
-        UserDto userDto  = userService.read(chatReqDto.getSenderId());
+        UserDto userDto  = userService.read(userId);
 
         Chat chat = Chat.builder()
                 .chatRoom(chatRoom)
-                .senderId(chatReqDto.getSenderId())
+                .senderId(userId)
                 .senderName(userDto.getNickname())
                 .type(MessageType.TALK)
                 .content(chatReqDto.getContent())
