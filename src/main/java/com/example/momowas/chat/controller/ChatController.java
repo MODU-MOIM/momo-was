@@ -1,28 +1,29 @@
 package com.example.momowas.chat.controller;
 
-import com.example.momowas.chat.dto.ChatMessageDTO;
+import com.example.momowas.chat.domain.Chat;
+import com.example.momowas.chat.dto.ChatDto;
+import com.example.momowas.chat.dto.ChatReqDto;
+import com.example.momowas.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/chat")
 public class ChatController {
 
-    private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+    private final ChatService chatService;
 
-    //Client가 SEND할 수 있는 경로
-    //stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨
-    //"/pub/chat/enter"
-    @MessageMapping(value = "/chat/enter")
-    public void enter(ChatMessageDTO message){
-        message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
-        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
-    }
-
-    @MessageMapping(value = "/chat/message")
-    public void message(ChatMessageDTO message){
-        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+    @MessageMapping("/{roomId}")
+    @SendTo("/room/{roomId}")
+    public ChatDto test(@DestinationVariable Long roomId, @RequestBody  ChatReqDto chatReqDto) {
+        return chatService.createChat(roomId, chatReqDto);
     }
 }

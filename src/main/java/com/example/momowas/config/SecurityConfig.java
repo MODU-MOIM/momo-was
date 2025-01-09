@@ -47,7 +47,7 @@ public class SecurityConfig {
             "/webjars/**",
             "/error",
             "/chat/**",
-            "/layout/**"
+            "/index.html"
     };
     //비밀번호 암호화
     @Bean

@@ -1,17 +1,15 @@
 package com.example.momowas.chat.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
+@AllArgsConstructor
 public class Chat {
 
     @Id
@@ -27,6 +25,9 @@ public class Chat {
     private Long senderId;
 
     @Column(nullable = false)
+    private String senderName;
+
+    @Column(nullable = false)
     private MessageType type;
 
     @Column(columnDefinition = "TEXT")
@@ -37,9 +38,10 @@ public class Chat {
     private LocalDateTime sendAt;
 
     @Builder
-    public Chat(ChatRoom chatRoom, Long senderId, MessageType type, String content, LocalDateTime sendAt) {
+    public Chat(ChatRoom chatRoom, Long senderId, String senderName,  MessageType type, String content, LocalDateTime sendAt) {
         this.chatRoom = chatRoom;
         this.senderId = senderId;
+        this.senderName = senderName;
         this.type = type;
         this.content = content;
         this.sendAt = sendAt;
