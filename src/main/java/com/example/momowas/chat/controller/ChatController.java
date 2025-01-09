@@ -2,15 +2,13 @@ package com.example.momowas.chat.controller;
 
 import com.example.momowas.chat.dto.ChatMessageDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequiredArgsConstructor
-public class StompChatController {
+public class ChatController {
 
     private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
 

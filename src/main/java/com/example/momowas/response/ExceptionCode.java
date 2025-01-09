@@ -47,8 +47,10 @@ public enum ExceptionCode {
     // SMS 관련 예외
     SMS_SEND_FAILED(500, "S001", "SMS 전송에 실패했습니다."),
     INVALID_VERIFICATION_CODE(400, "S002", "인증 코드가 유효하지 않습니다."),
-    EXPIRED_VERIFICATION_CODE(400, "S003", "인증 코드가 만료되었습니다.");
+    EXPIRED_VERIFICATION_CODE(400, "S003", "인증 코드가 만료되었습니다."),
 
+    //채팅방 예외
+    CHATROOM_NOT_FOUND(500, "C001", "채팅방을 찾을 수 없습니다.");
 
     private final int status;
     private final String code;
