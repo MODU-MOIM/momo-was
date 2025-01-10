@@ -1,5 +1,8 @@
 package com.example.momowas.schedule.service;
 
+import com.example.momowas.chat.dto.ChatDto;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleDto;
 import com.example.momowas.schedule.dto.ScheduleReqDto;
@@ -8,8 +11,11 @@ import com.example.momowas.user.dto.UserDto;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +45,15 @@ public class ScheduleService {
         return ScheduleDto.fromEntity(schedule);
     }
 
+    @Transactional
+    public void deleteSchedule(Long userId, Long scheduleId){
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
+        UserDto userDto  = userService.read(userId);
+
+        if(schedule.getUserId()!=userDto.getId()){
+            throw new BusinessException(ExceptionCode.USER_MISMATCH);
+        }
+        scheduleRepository.delete(schedule);
+    }
 
 }

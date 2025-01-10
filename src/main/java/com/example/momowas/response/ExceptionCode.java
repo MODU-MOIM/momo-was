@@ -43,6 +43,7 @@ public enum ExceptionCode {
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
     ALREADY_EXISTS(409, "U002", "이미 존재하는 정보입니다."),
     NOT_VERIFIED_YET(401, "U004", "아직 인증이 완료되지 않았습니다."),
+    USER_MISMATCH(403,"U005", "해당 작업을 허용할 수 없습니다."),
 
     // SMS 관련 예외
     SMS_SEND_FAILED(500, "S001", "SMS 전송에 실패했습니다."),
