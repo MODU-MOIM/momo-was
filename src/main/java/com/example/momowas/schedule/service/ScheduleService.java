@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,4 +92,17 @@ public class ScheduleService {
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    public List<ScheduleDto> getByThisMonth(Long userId, String yearMonth) {
+        UserDto userDto = userService.read(userId);
+
+        YearMonth yearMonthObj = YearMonth.parse(yearMonth); // "yyyy-MM" 형식이어야 함
+        LocalDate startDate = yearMonthObj.atDay(1);
+        LocalDate endDate = yearMonthObj.atEndOfMonth();
+
+        return scheduleRepository.findByUserIdAndScheduleDateBetween(userDto.getId(), startDate, endDate).stream()
+                .map(ScheduleDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -47,10 +47,16 @@ public class ScheduleController {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return scheduleService.getByScheduleId(userId, scheduleId);
     }
-    @GetMapping("")
+    @GetMapping("/daily")
     private List<ScheduleDto> getByScheduleId(HttpServletRequest request, @RequestParam LocalDate date){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return scheduleService.getByDate(userId, date);
+    }
+
+    @GetMapping("/monthly")
+    private List<ScheduleDto> getByThisMonth(HttpServletRequest request, @RequestParam String yearMonth){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return scheduleService.getByThisMonth(userId, yearMonth);
     }
 
 }
