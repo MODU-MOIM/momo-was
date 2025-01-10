@@ -40,4 +40,10 @@ public class ScheduleController {
         return scheduleService.updateSchedule(userId, scheduleId, scheduleReqDto);
     }
 
+    @GetMapping("/{scheduleId}")
+    private ScheduleDto getByScheduleId(HttpServletRequest request, @PathVariable Long scheduleId){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return scheduleService.getByScheduleId(userId, scheduleId);
+    }
+
 }

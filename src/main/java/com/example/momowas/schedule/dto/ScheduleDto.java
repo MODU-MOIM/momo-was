@@ -8,6 +8,7 @@ import java.time.*;
 
 @Data
 public class ScheduleDto {
+    private Long id;
     private LocalDate scheduleDate;
     private LocalTime scheduleTime;
     private String title;
@@ -20,7 +21,8 @@ public class ScheduleDto {
     private String detailAddress;
 
     @Builder
-    public ScheduleDto(LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId,Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isOnline, String detailAddress) {
+    public ScheduleDto(Long id, LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId,Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isOnline, String detailAddress) {
+        this.id = id;
         this.scheduleDate = scheduleDate;
         this.scheduleTime = scheduleTime;
         this.title = title;
@@ -34,6 +36,7 @@ public class ScheduleDto {
     }
     public static ScheduleDto fromEntity(Schedule schedule){
         return ScheduleDto.builder()
+                .id(schedule.getId())
                 .scheduleDate(schedule.getScheduleDate())
                 .scheduleTime(schedule.getScheduleTime())
                 .title(schedule.getTitle())

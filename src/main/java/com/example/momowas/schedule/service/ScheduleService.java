@@ -78,6 +78,10 @@ public class ScheduleService {
         return ScheduleDto.fromEntity(schedule);
     }
 
+    public ScheduleDto getByScheduleId(Long userId, Long scheduleId){
+        UserDto userDto  = userService.read(userId);
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
-
+        return ScheduleDto.fromEntity(schedule);
+    }
 }
