@@ -50,7 +50,14 @@ public enum ExceptionCode {
     EXPIRED_VERIFICATION_CODE(400, "S003", "인증 코드가 만료되었습니다."),
 
     //채팅방 예외
-    CHATROOM_NOT_FOUND(500, "C001", "채팅방을 찾을 수 없습니다.");
+    CHATROOM_NOT_FOUND(500, "C001", "채팅방을 찾을 수 없습니다."),
+
+    //크루 관련 예외
+    ALREADY_EXISTS_CREW(409, "C001", "이미 존재하는 크루입니다."),
+
+    //지역 관련 예외
+    NOT_FOUND_REGION(404, "R001", "해당 지역이 존재하지 않습니다.");
+
 
     private final int status;
     private final String code;
