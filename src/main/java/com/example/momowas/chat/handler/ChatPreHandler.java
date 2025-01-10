@@ -9,6 +9,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -25,11 +26,10 @@ public class ChatPreHandler implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String jwtToken = accessor.getFirstNativeHeader("Authorization");
             String token = jwtToken.substring(7);
-
-            log.info("Authorization Header: {}", jwtToken);
-            log.info(String.valueOf(jwtUtil.getUserIdFromToken(token)));
-            accessor.setNativeHeader("token", token);
-            jwtUtil.validateToken(token);
+            if(jwtUtil.validateToken(token)==null){
+                log.info("ㅇㅋ");
+                accessor.setNativeHeader("token", token);
+            }
         }
 
         return message;
