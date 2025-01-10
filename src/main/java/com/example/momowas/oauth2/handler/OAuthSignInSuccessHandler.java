@@ -56,7 +56,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
         String providerId = oAuth2UserInfo.getProviderId();
         String name = oAuth2UserInfo.getName();
-        String email = oAuth2UserInfo.getName();
+        String email = oAuth2UserInfo.getEmail();
         String profileImage = oAuth2UserInfo.getProfileImage();
 
         String gender = oAuth2UserInfo.getGender().orElse(null);
@@ -100,7 +100,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         //redis refresh Token 저장
         refreshTokenService.saveTokenInfo(String.valueOf(user.getId()), refreshToken, accessToken);
-
+        log.info("access : {}", accessToken);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
