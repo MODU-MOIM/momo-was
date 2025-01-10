@@ -16,20 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chat")
 @Slf4j
 public class ChatController {
 
     private final ChatService chatService;
     private final JwtUtil jwtUtil;
 
-    @MessageMapping("/room/{roomId}")
+    @MessageMapping("/room/{roomId}/message")
     @SendTo("/room/{roomId}")
-    public ChatDto test(
-            @DestinationVariable Long roomId,
-            @RequestBody ChatReqDto chatReqDto,
-            @Header("token") String token
-    ) {
+    public ChatDto sendChatMessage( @DestinationVariable Long roomId, @RequestBody ChatReqDto chatReqDto, @Header("token") String token) {
         Long userId = jwtUtil.getUserIdFromToken(token);
         log.info("UserId: {}", userId);
         log.info("Chat Request: {}", chatReqDto);

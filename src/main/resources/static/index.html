@@ -42,7 +42,7 @@
 <script>
     let stompClient = null;
     const roomId = 1; // 테스트용 Room ID (적절히 변경 필요)
-    const token = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJtb2R1bW9pbSIsImV4cCI6MTczNjQzNzQ1MCwidXNlcklkIjo0LCJpYXQiOjE3MzY0MzM4NTB9.U2bXl0pPuylJgUZ5FYbt4MNMlRlJsUnEwQ0An0yoxJ0"; // JWT 토큰
+    const token = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJtb2R1bW9pbSIsImV4cCI6MTczNjQ4NDI1MiwidXNlcklkIjo1LCJpYXQiOjE3MzY0ODA2NTJ9.vzIw-gghl4kQi5zjFI05iQMptYPxthYRk-WPpFvhECE"; // JWT 토큰
 
     function connect() {
         const socket = new SockJS('/stomp/chat');
@@ -71,7 +71,7 @@
         const messageContent = messageInput.value.trim();
 
         if (messageContent && stompClient) {
-            stompClient.send(`/send/room/${roomId}`, {token:token}, JSON.stringify({
+            stompClient.send(`/send/room/${roomId}/message`, {token:token}, JSON.stringify({
                 content: messageContent
             }));
         }
