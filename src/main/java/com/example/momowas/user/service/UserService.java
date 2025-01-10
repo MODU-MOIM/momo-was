@@ -32,4 +32,8 @@ public class UserService {
     public User findUserByProviderId(String providerId){
         return userRepository.findByProviderId(providerId);
     }
+
+    public User readById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
+    }
 }
