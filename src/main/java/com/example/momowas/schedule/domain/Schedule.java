@@ -1,5 +1,7 @@
 package com.example.momowas.schedule.domain;
 
+import com.example.momowas.chat.domain.ChatRoom;
+import com.example.momowas.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,6 +35,9 @@ public class Schedule {
     @Column
     private Long crewId;
 
+    @Column(nullable = false)
+    private Long userId;
+
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -44,15 +49,20 @@ public class Schedule {
     @Column(nullable = false)
     boolean isOnline;
 
+    @Column
+    String detailAddress;
+
     @Builder
-    public Schedule(LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isOnline) {
+    public Schedule(LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId, Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isOnline, String detailAddress) {
         this.scheduleDate = scheduleDate;
         this.scheduleTime = scheduleTime;
         this.title = title;
         this.description = description;
         this.crewId = crewId;
+        this.userId = userId;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
         this.isOnline = isOnline;
+        this.detailAddress = detailAddress;
     }
 }
