@@ -64,8 +64,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 4. Gradle Test 실행
-      - name: Test with Gradle
+      # 4. Gradle build 실행
+      - name: Build with Gradle
         env:
           COOLSMS_API_KEY: ${{ secrets.COOLSMS_API_KEY }}
           COOLSMS_FROM_NUMBER: ${{ secrets.COOLSMS_FROM_NUMBER }}
@@ -87,4 +87,4 @@ jobs:
           NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
         run: |
           chmod +x ./gradlew
-          ./gradlew --info --stacktrace test
+          ./gradlew build
