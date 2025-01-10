@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import retrofit2.http.Path;
 
 import java.net.http.HttpRequest;
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/schedules")
@@ -44,6 +46,11 @@ public class ScheduleController {
     private ScheduleDto getByScheduleId(HttpServletRequest request, @PathVariable Long scheduleId){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return scheduleService.getByScheduleId(userId, scheduleId);
+    }
+    @GetMapping("")
+    private List<ScheduleDto> getByScheduleId(HttpServletRequest request, @RequestParam LocalDate date){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return scheduleService.getByDate(userId, date);
     }
 
 }

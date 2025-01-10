@@ -84,4 +84,11 @@ public class ScheduleService {
 
         return ScheduleDto.fromEntity(schedule);
     }
+
+    public List<ScheduleDto> getByDate(Long userId, LocalDate date){
+        UserDto userDto  = userService.read(userId);
+        return scheduleRepository.findByUserIdAndScheduleDate(userDto.getId(), date).stream()
+                .map(ScheduleDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
