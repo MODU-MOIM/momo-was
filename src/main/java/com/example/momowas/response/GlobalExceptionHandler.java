@@ -175,5 +175,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    @ExceptionHandler(BusinessException.class) // 만들어준 커스텀익셉션 발생시 처리해주는 곳
+    public ResponseEntity<ErrorResponse> handleCustomException(BusinessException ex) {
+        log.error("Business Exception Error", ex);
+        final ErrorResponse errorResponse = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));
+
+    }
+
 
 }
