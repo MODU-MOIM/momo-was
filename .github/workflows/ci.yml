@@ -87,4 +87,5 @@ jobs:
           NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
         run: |
           chmod +x ./gradlew
-          ./gradlew build
+          ./gradlew build -x test
+

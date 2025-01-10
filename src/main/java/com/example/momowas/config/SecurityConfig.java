@@ -34,6 +34,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private static final String[] publicEndpoints = {
+            "/ws/**",
+            "/stomp/**",
             "/auth/sign-in",
             "/auth/sign-up",
             "/auth/reissue",
@@ -44,6 +46,7 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**",
             "/error",
+            "/chat/**",
     };
     //비밀번호 암호화
     @Bean
