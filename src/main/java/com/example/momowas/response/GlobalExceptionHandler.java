@@ -21,6 +21,19 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 public class GlobalExceptionHandler {
 
     /**
+     * [Exception] 비즈니스 로직에 예외가 발생하는 경우
+     *
+     * @param ex BusinessException
+     * @return ResponseEntity<ErrorResponse>
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(BusinessException ex) {
+        log.error("Business Exception Error", ex);
+        final ErrorResponse errorResponse = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));
+    }
+
+    /**
      * [Exception] API 호출 시 '객체' 혹은 '파라미터' 데이터 값이 유효하지 않은 경우
      *
      * @param ex MethodArgumentNotValidException
