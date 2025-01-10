@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class ScheduleService {
                 .userId(userDto.getId())
                 .createdAt(LocalDateTime.now())
                 .modifiedAt(null)
-                .isOnline(scheduleReqDto.isOnline())
+                .isOnline(scheduleReqDto.getIsOnline())
                 .detailAddress(scheduleReqDto.getDetailAddress())
                 .build();
 
@@ -55,5 +56,28 @@ public class ScheduleService {
         }
         scheduleRepository.delete(schedule);
     }
+
+    @Transactional
+    public ScheduleDto updateSchedule(Long userId, Long scheduleId, ScheduleReqDto scheduleReqDto){
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
+        UserDto userDto  = userService.read(userId);
+
+        if(schedule.getUserId()!=userDto.getId()){
+            throw new BusinessException(ExceptionCode.USER_MISMATCH);
+        }
+        schedule.updateSchedule(
+                scheduleReqDto.getDate() == null? schedule.getScheduleDate():scheduleReqDto.getDate(),
+                scheduleReqDto.getTime()==null? schedule.getScheduleTime() : scheduleReqDto.getTime(),
+                scheduleReqDto.getTitle()==null ? schedule.getTitle() : scheduleReqDto.getTitle(),
+                scheduleReqDto.getDescription(),
+                scheduleReqDto.getDetailAddress(),
+                scheduleReqDto.getCrewId(),
+                scheduleReqDto.getIsOnline() == null ? schedule.getIsOnline() : scheduleReqDto.getIsOnline()
+        );
+
+        return ScheduleDto.fromEntity(schedule);
+    }
+
+
 
 }

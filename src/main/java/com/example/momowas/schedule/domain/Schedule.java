@@ -47,13 +47,13 @@ public class Schedule {
     private LocalDateTime modifiedAt;
 
     @Column(nullable = false)
-    boolean isOnline;
+    Boolean isOnline;
 
     @Column
     String detailAddress;
 
     @Builder
-    public Schedule(LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId, Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isOnline, String detailAddress) {
+    public Schedule(LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId, Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isOnline, String detailAddress) {
         this.scheduleDate = scheduleDate;
         this.scheduleTime = scheduleTime;
         this.title = title;
@@ -64,5 +64,16 @@ public class Schedule {
         this.modifiedAt = modifiedAt;
         this.isOnline = isOnline;
         this.detailAddress = detailAddress;
+    }
+
+    public void updateSchedule(LocalDate date, LocalTime time, String title, String description, String detailAddress, Long crewId, Boolean isOnline){
+        this.scheduleDate = date;
+        this.scheduleTime = time;
+        this.title = title;
+        this.description = description;
+        this.crewId = crewId;
+        this.isOnline = isOnline;
+        this.detailAddress = detailAddress;
+        this.modifiedAt = LocalDateTime.now();
     }
 }

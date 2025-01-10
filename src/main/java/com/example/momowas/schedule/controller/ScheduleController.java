@@ -34,4 +34,10 @@ public class ScheduleController {
         return CommonResponse.of(ExceptionCode.SUCCESS, "일정 삭제 성공");
     }
 
+    @PutMapping("/{scheduleId}")
+    private ScheduleDto updateSchedule(HttpServletRequest request, @PathVariable Long scheduleId, @RequestBody ScheduleReqDto scheduleReqDto){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return scheduleService.updateSchedule(userId, scheduleId, scheduleReqDto);
+    }
+
 }

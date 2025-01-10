@@ -42,7 +42,7 @@ public class ScheduleDto {
                 .userId(schedule.getUserId())
                 .createdAt(schedule.getCreatedAt())
                 .modifiedAt(schedule.getModifiedAt())
-                .isOnline(schedule.isOnline())
+                .isOnline(schedule.getIsOnline())
                 .detailAddress(schedule.getDetailAddress())
                 .build();
     }
