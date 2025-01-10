@@ -10,6 +10,7 @@ import com.example.momowas.chat.repository.ChatRepository;
 import com.example.momowas.chat.repository.ChatRoomRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
+import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.UserDto;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -49,12 +50,12 @@ public class ChatService {
     public ChatDto createChat(Long roomId, ChatReqDto chatReqDto, Long userId) {
 
         ChatRoom chatRoom =  chatRoomRepository.findById(roomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
-        UserDto userDto  = userService.read(userId);
+        User user  = userService.readById(userId);
 
         Chat chat = Chat.builder()
                 .chatRoom(chatRoom)
                 .senderId(userId)
-                .senderName(userDto.getNickname())
+                .senderName(user.getNickname())
                 .type(MessageType.TALK)
                 .content(chatReqDto.getContent())
                 .sendAt(LocalDateTime.now())
