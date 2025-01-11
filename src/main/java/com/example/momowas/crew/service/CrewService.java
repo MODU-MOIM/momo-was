@@ -32,7 +32,7 @@ public class CrewService {
         crewRegionService.createCrewRegion(createCrewReqDto.regions(), crew); //크루-지역 저장
 
         User user = userService.readById(userId);
-        crewMemberService.createAdmin(user, crew); //크루 멤버 저장
+        crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
         return CrewResDto.fromEntity(crew);
     }

@@ -15,8 +15,9 @@ public class CrewMemberService {
 
     private final CrewMemberRepository crewMemberRepository;
 
+    /* 크루 멤버(리더) 생성 */
     @Transactional
-    public CrewMember createAdmin(User user, Crew crew) {
+    public CrewMember createLeader(User user, Crew crew) {
         CrewMember crewMember = CrewMember.of(crew, user, Role.LEADER);
         return crewMemberRepository.save(crewMember);
     }

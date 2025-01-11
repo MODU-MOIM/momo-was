@@ -18,6 +18,7 @@ public class CrewRegionService {
     private final CrewRegionRepository crewRegionRepository;
     private final RegionService regionService;
 
+    /* 크루-지역 생성 */
     public void createCrewRegion(List<RegionReqDto> regionReqDtos, Crew crew) {
 
         List<CrewRegion> crewRegions = regionReqDtos.stream()

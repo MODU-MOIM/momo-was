@@ -6,10 +6,7 @@ import com.example.momowas.crew.service.CrewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -18,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrewController {
     private final CrewService crewService;
 
+    /* 크루 생성 */
     @PostMapping("")
     @PreAuthorize("isAuthenticated()")
     public CrewResDto createCrew(@RequestBody CreateCrewReqDto createCrewReqDto, @AuthenticationPrincipal Long userId){
         return crewService.createCrew(createCrewReqDto, userId);
     }
+
 
 }
