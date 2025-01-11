@@ -4,6 +4,8 @@ import com.example.momowas.crew.dto.CreateCrewReqDto;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.service.CrewService;
+import com.example.momowas.response.CommonResponse;
+import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,4 +39,13 @@ public class CrewController {
     public CrewDetailResDto getCrewDetail(@PathVariable Long crewId) {
         return crewService.getCrewDetail(crewId);
     }
+
+    /* 특정 크루 삭제 */
+    @DeleteMapping("/{crewId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> deleteCrew(@PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
+        crewService.deleteCrew(crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
 }

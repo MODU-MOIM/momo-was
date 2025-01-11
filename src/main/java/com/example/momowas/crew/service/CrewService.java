@@ -6,7 +6,9 @@ import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
+import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.crewregion.service.CrewRegionService;
+import com.example.momowas.region.domain.Region;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -50,16 +52,26 @@ public class CrewService {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
             return CrewListResDto.of(crew,regionDtos);
         }).collect(Collectors.toList());
+
     }
 
     /* 특정 크루 조회 */
+    @Transactional(readOnly = true)
     public CrewDetailResDto getCrewDetail(Long crewId) {
         Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
         List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
         return CrewDetailResDto.of(crew,regionDtos);
     }
 
+    /* 특정 크루 삭제 */
+    @Transactional
+    public void deleteCrew(Long crewId) {
+        Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+        crewRepository.delete(crew);
+    }
+
     /* 크루명 중복 검증 */
+    @Transactional(readOnly = true)
     private void validateCrewName(String crewName) {
         if (crewRepository.existsByName(crewName)) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS_CREW);
