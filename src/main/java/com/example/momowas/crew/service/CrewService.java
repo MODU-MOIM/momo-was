@@ -10,9 +10,13 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +28,7 @@ public class CrewService {
 
     /* 크루 생성 */
     @Transactional
-    public CrewResDto createCrew(CreateCrewReqDto createCrewReqDto, Long userId) {
+    public Long createCrew(CreateCrewReqDto createCrewReqDto, Long userId) {
 
         validateCrewName(createCrewReqDto.name());
 
@@ -34,7 +38,7 @@ public class CrewService {
         User user = userService.readById(userId);
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
-        return CrewResDto.fromEntity(crew);
+        return crew.getId();
     }
 
     /* 크루명 중복 검증 */
