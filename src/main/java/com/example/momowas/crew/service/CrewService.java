@@ -2,10 +2,11 @@ package com.example.momowas.crew.service;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CreateCrewReqDto;
-import com.example.momowas.crew.dto.CrewResDto;
+import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
+import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +39,15 @@ public class CrewService {
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
         return crew.getId();
+    }
+
+    /* 전체 크루 조회 */
+    @Transactional(readOnly = true)
+    public List<CrewListResDto> getAllCrews() {
+        return crewRepository.findAll().stream().map(crew -> {
+            List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
+            return CrewListResDto.of(crew,regionDtos);
+        }).collect(Collectors.toList());
     }
 
     /* 크루명 중복 검증 */

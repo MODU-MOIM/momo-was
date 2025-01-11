@@ -19,7 +19,7 @@ public record CrewListResDto(Long crewId,
                          String bannerImage,
                          List<RegionDto> regions,
                          LocalDateTime createdAt) {
-    public static CrewListResDto fromEntity(Crew crew, List<RegionDto> regions) {
+    public static CrewListResDto of(Crew crew, List<RegionDto> regions) {
         return new CrewListResDto(
                 crew.getId(),
                 crew.getName(),
