@@ -35,6 +35,9 @@ public enum ExceptionCode {
     INVALID_PHONE_NUMBER(400, "A003", "유효하지 않은 전화번호입니다."),
     ALREADY_AUTHENTICATED(400, "A004", "이미 인증된 사용자입니다."),
 
+    // 인가 관련 예외
+    ACCESS_DENIED(403, "AU001", "권한이 없습니다."),
+
     INVALID_TOKEN(401, "T001", "유효하지 않은 토큰입니다."),
     TOKEN_EXPIRED(401, "T002", "토큰이 만료되었습니다."),
     TOKEN_MISSING(401, "T003", "토큰이 존재하지 않습니다."),
@@ -55,6 +58,9 @@ public enum ExceptionCode {
     //크루 관련 예외
     ALREADY_EXISTS_CREW(409, "C001", "이미 존재하는 크루입니다."),
     NOT_FOUND_CREW(404, "C002", "해당 크루를 찾을 수 없습니다."),
+
+    //크루 멤버 관련 예외
+    NOT_FOUND_CREW_MEMBER(404, "CM001", "해당 크루 멤버를 찾을 수 없습니다."),
 
     //지역 관련 예외
     NOT_FOUND_REGION(404, "R001", "해당 지역이 존재하지 않습니다.");
