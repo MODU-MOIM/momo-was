@@ -29,9 +29,12 @@ public class CrewController {
     /* 전체 크루 조회 */
     @GetMapping("")
     public List<CrewListResDto> getCrewList() {
-        return crewService.getAllCrews();
+        return crewService.getCrewList();
     }
 
-
-
+    /* 특정 크루 조회 */
+    @GetMapping("/{crewId}")
+    public CrewDetailResDto getCrewDetail(@PathVariable Long crewId) {
+        return crewService.getCrewDetail(crewId);
+    }
 }

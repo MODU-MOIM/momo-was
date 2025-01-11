@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +50,13 @@ public class CrewService {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
             return CrewListResDto.of(crew,regionDtos);
         }).collect(Collectors.toList());
+    }
+
+    /* 특정 크루 조회 */
+    public CrewDetailResDto getCrewDetail(Long crewId) {
+        Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+        List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
+        return CrewDetailResDto.of(crew,regionDtos);
     }
 
     /* 크루명 중복 검증 */

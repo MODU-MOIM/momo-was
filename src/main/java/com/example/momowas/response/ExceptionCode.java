@@ -54,6 +54,7 @@ public enum ExceptionCode {
 
     //크루 관련 예외
     ALREADY_EXISTS_CREW(409, "C001", "이미 존재하는 크루입니다."),
+    NOT_FOUND_CREW(404, "C002", "해당 크루를 찾을 수 없습니다."),
 
     //지역 관련 예외
     NOT_FOUND_REGION(404, "R001", "해당 지역이 존재하지 않습니다.");
