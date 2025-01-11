@@ -1,6 +1,7 @@
 package com.example.momowas.crew.domain;
 
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.user.domain.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -48,8 +49,11 @@ public class Crew {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CrewMember> crewMembers=new ArrayList<>();
+
+    @OneToMany(mappedBy = "crew", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CrewRegion> crewRegions = new ArrayList<>();
 
     @Builder
     private Crew(String name,

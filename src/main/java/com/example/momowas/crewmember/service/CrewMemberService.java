@@ -5,9 +5,9 @@ import com.example.momowas.crew.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.repository.CrewMemberRepository;
 import com.example.momowas.user.domain.User;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,4 +21,5 @@ public class CrewMemberService {
         CrewMember crewMember = CrewMember.of(crew, user, Role.LEADER);
         return crewMemberRepository.save(crewMember);
     }
+
 }
