@@ -26,10 +26,7 @@ public class CrewService {
     @Transactional
     public CrewResDto createCrew(CreateCrewReqDto createCrewReqDto, Long userId) {
 
-        //크루명 중복 검증
-        if (crewRepository.existsByName(createCrewReqDto.name())) {
-            throw new BusinessException(ExceptionCode.ALREADY_EXISTS_CREW);
-        }
+        validateCrewName(createCrewReqDto.name());
 
         Crew crew = crewRepository.save(createCrewReqDto.toEntity()); //크루 저장
         crewRegionService.createCrewRegion(createCrewReqDto.regions(), crew); //크루-지역 저장
@@ -38,5 +35,12 @@ public class CrewService {
         crewMemberService.createAdmin(user, crew); //크루 멤버 저장
 
         return CrewResDto.fromEntity(crew);
+    }
+
+    /* 크루명 중복 검증 */
+    private void validateCrewName(String crewName) {
+        if (crewRepository.existsByName(crewName)) {
+            throw new BusinessException(ExceptionCode.ALREADY_EXISTS_CREW);
+        }
     }
 }
