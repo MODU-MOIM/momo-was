@@ -1,6 +1,7 @@
 package com.example.momowas.crew.controller;
 
 import com.example.momowas.crew.dto.CreateCrewReqDto;
+import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.service.CrewService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class CrewController {
 
     /* 전체 크루 조회 */
     @GetMapping("")
-    public List<CrewListResDto> getCrews() {
+    public List<CrewListResDto> getCrewList() {
         return crewService.getAllCrews();
     }
 

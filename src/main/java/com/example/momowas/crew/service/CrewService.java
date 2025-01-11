@@ -2,6 +2,7 @@ package com.example.momowas.crew.service;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CreateCrewReqDto;
+import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
@@ -43,7 +44,7 @@ public class CrewService {
 
     /* 전체 크루 조회 */
     @Transactional(readOnly = true)
-    public List<CrewListResDto> getAllCrews() {
+    public List<CrewListResDto> getCrewList() {
         return crewRepository.findAll().stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
             return CrewListResDto.of(crew,regionDtos);
