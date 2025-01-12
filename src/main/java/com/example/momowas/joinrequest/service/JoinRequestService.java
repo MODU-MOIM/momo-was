@@ -65,6 +65,16 @@ public class JoinRequestService {
         return crewMember.getId();
     }
 
+    /* 크루 가입 요청 거절 */
+    @Transactional
+    public void rejectJoinRequest(Long joinRequestId) {
+        JoinRequest joinRequest = joinRequestRepository.findById(joinRequestId).orElseThrow(() -> {
+            throw new BusinessException(ExceptionCode.NOT_FOUND_JOIN_REQUEST);
+        });
+
+        joinRequest.updateRequestStatus(RequestStatus.REJECTED);
+    }
+
         /* 사용자가 크루에 가입 가능한지 검증 */
     @Transactional(readOnly = true)
     private void validateCrewJoinEligibility(User user, Crew crew) {

@@ -39,4 +39,11 @@ public class JoinRequestController {
         return Map.of("crewMemberId",joinRequestService.acceptJoinRequest(joinRequestId));
     }
 
+    /* 크루 가입 요청 거절 */
+    @PostMapping("/join-requests/{joinRequestId}/reject")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public void rejectJoinRequest(@PathVariable Long joinRequestId, @AuthenticationPrincipal Long userId) {
+        joinRequestService.rejectJoinRequest(joinRequestId);
+    }
+
 }
