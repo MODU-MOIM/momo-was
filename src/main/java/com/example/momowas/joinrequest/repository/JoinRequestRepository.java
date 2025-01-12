@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface JoinRequestRepository extends JpaRepository<JoinRequest,Long> {
     boolean existsByCrewIdAndUserId(Long crewId, Long userId);
-    List<JoinRequest> findByCrewId(Long crewId);
 }

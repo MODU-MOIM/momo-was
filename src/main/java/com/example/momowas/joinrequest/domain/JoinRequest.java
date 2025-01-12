@@ -32,7 +32,7 @@ public class JoinRequest {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    private RequestStatus requestStatus;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -41,7 +41,7 @@ public class JoinRequest {
     private JoinRequest(Crew crew, User user, RequestStatus requestStatus, LocalDateTime createdAt) {
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
         this.user=Objects.requireNonNull(user,"user는 null이 될 수 없습니다.");
-        this.status=Objects.requireNonNull(requestStatus,"requestStatus는 null이 될 수 없습니다.");
+        this.requestStatus=Objects.requireNonNull(requestStatus,"requestStatus는 null이 될 수 없습니다.");
         this.createdAt=Objects.requireNonNull(createdAt,"createdAt는 null이 될 수 없습니다.");}
 
     public static JoinRequest of(Crew crew, User user, RequestStatus requestStatus) {
@@ -51,5 +51,10 @@ public class JoinRequest {
                 .requestStatus(requestStatus)
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    /* 가입 요청 상태 변경 */
+    public void updateRequestStatus(RequestStatus requestStatus) {
+        this.requestStatus=requestStatus;
     }
 }

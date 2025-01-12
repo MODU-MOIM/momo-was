@@ -2,18 +2,22 @@ package com.example.momowas.joinrequest.service;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
+import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.joinrequest.domain.JoinRequest;
 import com.example.momowas.joinrequest.domain.RequestStatus;
 import com.example.momowas.joinrequest.dto.JoinRequestListResDto;
+import com.example.momowas.joinrequest.dto.JoinRequestReqDto;
 import com.example.momowas.joinrequest.repository.JoinRequestRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,12 +30,12 @@ public class JoinRequestService {
     private final CrewService crewService;
     private final CrewMemberService crewMemberService;
 
-    /* 크루 가입 요청  */
+    /* 크루 가입 요청 */
     @Transactional
-    public Long createJoinRequest(Long crewId, Long userId) {
+    public Long createJoinRequest(JoinRequestReqDto joinRequestReqDto, Long userId) {
 
         User user = userService.findUserById(userId);
-        Crew crew = crewService.findCrewById(crewId);
+        Crew crew = crewService.findCrewById(joinRequestReqDto.crewId());
 
         validateCrewJoinEligibility(user, crew);
 
@@ -49,16 +53,24 @@ public class JoinRequestService {
                 .collect(Collectors.toList());
     }
 
-    /* 사용자가 크루에 가입 가능한지 검증 */
+    /* 크루 가입 요청 수락 */
+    @Transactional
+    public Long acceptJoinRequest(Long joinRequestId) {
+        JoinRequest joinRequest = joinRequestRepository.findById(joinRequestId).orElseThrow(() -> {
+            throw new BusinessException(ExceptionCode.NOT_FOUND_JOIN_REQUEST);
+        });
+
+        joinRequest.updateRequestStatus(RequestStatus.ACCEPTED);
+        CrewMember crewMember = crewMemberService.createMember(joinRequest.getUser(), joinRequest.getCrew());
+        return crewMember.getId();
+    }
+
+        /* 사용자가 크루에 가입 가능한지 검증 */
     @Transactional(readOnly = true)
     private void validateCrewJoinEligibility(User user, Crew crew) {
         //이미 사용자가 크루에 가입 요청을 했는지 검증
         if (joinRequestRepository.existsByCrewIdAndUserId(crew.getId(), user.getId())) {
             throw new BusinessException(ExceptionCode.ALREADY_REQUESTED_TO_JOIN_CREW);
-        }
-        //이미 사용자가 크루에 가입했는지 검증
-        if(crewMemberService.isCrewMemberExists(user.getId(),crew.getId())){
-            throw new BusinessException(ExceptionCode.ALREADY_JOINED_CREW);
         }
         //크루 정원 초과인지 검증
         if(crew.isCrewFull()){

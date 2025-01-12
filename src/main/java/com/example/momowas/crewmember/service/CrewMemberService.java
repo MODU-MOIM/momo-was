@@ -24,6 +24,17 @@ public class CrewMemberService {
         return crewMemberRepository.save(crewMember);
     }
 
+    /* 크루 멤버(일반) 생성  */
+    @Transactional
+    public CrewMember createMember(User user, Crew crew) {
+        //이미 사용자가 크루에 가입했는지 검증
+        if (isCrewMemberExists(user.getId(), crew.getId())) {
+            new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
+        }
+        CrewMember crewMember = CrewMember.of(crew, user, Role.MEMBER);
+        return crewMemberRepository.save(crewMember);
+    }
+
     /* 크루 멤버 조회 */
     @Transactional(readOnly = true)
     public CrewMember findCrewMemberByCrewAndUser(Long userId, Long crewId) {

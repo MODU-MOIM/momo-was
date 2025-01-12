@@ -16,7 +16,7 @@ public record JoinRequestListResDto(String nickname,
                 user.getGender(),
                 user.getAge(),
                 user.getProfileImage(),
-                joinRequest.getStatus()
+                joinRequest.getRequestStatus()
         );
     }
 }
