@@ -17,10 +17,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserDto read(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
-        return UserDto.fromEntity(user);
-    }
     public boolean isEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }
