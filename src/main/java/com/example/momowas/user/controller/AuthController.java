@@ -46,9 +46,10 @@ public class AuthController {
     }
 
     @PostMapping("/send-sms")
-    public SingleMessageSentResponse sendSMS(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession session) {
+    public CommonResponse<String> sendSMS(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession session) {
         try {
-            return smsUtil.sendOne(smsReqDto.getToPhoneNumber(), session);
+            smsUtil.sendOne(smsReqDto.getToPhoneNumber(), session);
+            return CommonResponse.of(ExceptionCode.SUCCESS, "SMS 전송 성공");
         } catch (Exception e) {
             throw new BusinessException(ExceptionCode.SMS_SEND_FAILED);
         }
