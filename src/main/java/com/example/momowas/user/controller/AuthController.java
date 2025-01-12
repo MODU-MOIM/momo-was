@@ -7,10 +7,7 @@ import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
-import com.example.momowas.user.dto.SignInReqDto;
-import com.example.momowas.user.dto.SignUpReqDto;
-import com.example.momowas.user.dto.SmsReqDto;
-import com.example.momowas.user.dto.ValidationCodeReqDto;
+import com.example.momowas.user.dto.*;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
@@ -31,7 +28,7 @@ public class AuthController {
     private final SmsUtil smsUtil;
 
     @PostMapping("/sign-up")
-    public CommonResponse<Long> signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
+    public UserDto signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
         // 이메일 중복 체크
         if (userService.isEmailExists(signUpReqDto.getEmail())) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
@@ -45,7 +42,7 @@ public class AuthController {
         User user = authService.signUp(signUpReqDto);
         userService.create(user);
 
-        return CommonResponse.of(ExceptionCode.SUCCESS, user.getId());
+        return UserDto.fromEntity(user);
     }
 
     @PostMapping("/send-sms")
