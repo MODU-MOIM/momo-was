@@ -75,3 +75,13 @@ coolsms:
     key: ${COOLSMS_API_KEY}
     secret: ${COOLSMS_SECRET_KEY}
     number: ${COOLSMS_FROM_NUMBER}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${BUCKET_ACCESS}
+      secretKey: ${BUCKET_SECRET}
