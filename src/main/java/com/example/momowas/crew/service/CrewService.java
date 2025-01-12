@@ -14,6 +14,7 @@ import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CrewService {
     private final CrewRepository crewRepository;
     private final CrewMemberService crewMemberService;
@@ -72,6 +74,8 @@ public class CrewService {
     @Transactional
     public void updateCrew(CrewReqDto crewReqDto, Long crewId) {
         Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+
+        validateCrewName(crewReqDto.name());
 
         if (crewReqDto.regions()!=null) {
             crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReqDto.regions(), crew);//크루-지역 수정
