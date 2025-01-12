@@ -1,7 +1,6 @@
 package com.example.momowas.joinrequest.service;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.joinrequest.domain.JoinRequest;
@@ -45,7 +44,7 @@ public class JoinRequestService {
     public List<JoinRequestListResDto> getJoinRequestList(Long crewId) {
         Crew crew = crewService.findCrewById(crewId);
 
-        return joinRequestRepository.findByCrewId(crewId).stream()
+        return crew.getJoinRequests().stream()
                 .filter(joinRequest -> joinRequest.getStatus()==RequestStatus.PENDING)
                 .map(joinRequest -> JoinRequestListResDto.of(joinRequest.getUser()))
                 .collect(Collectors.toList());
