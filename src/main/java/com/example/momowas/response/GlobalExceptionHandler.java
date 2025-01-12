@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,9 +29,23 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(BusinessException ex) {
+        ExceptionCode errorCode = ex.getExceptionCode();
         log.error("Business Exception Error", ex);
-        final ErrorResponse errorResponse = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));
+        final ErrorResponse response = ErrorResponse.of(errorCode);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    /**
+     * [Exception] 인가 거부와 관련된 예외가 발생하는 경우
+     *
+     * @param ex AccessDeniedException
+     * @return ResponseEntity<ErrorResponse>
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        log.error("handleAccessDeniedException : {}", ex);
+        final ErrorResponse response = ErrorResponse.of(ExceptionCode.ACCESS_DENIED);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**

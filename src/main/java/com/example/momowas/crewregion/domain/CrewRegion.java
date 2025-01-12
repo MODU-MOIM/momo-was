@@ -5,12 +5,14 @@ import com.example.momowas.region.domain.Region;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class CrewRegion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
