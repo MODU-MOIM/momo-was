@@ -1,14 +1,13 @@
 package com.example.momowas.crew.service;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.dto.CreateCrewReqDto;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
+import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.crewregion.service.CrewRegionService;
-import com.example.momowas.region.domain.Region;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,12 +30,12 @@ public class CrewService {
 
     /* 크루 생성 */
     @Transactional
-    public Long createCrew(CreateCrewReqDto createCrewReqDto, Long userId) {
+    public Long createCrew(CrewReqDto crewReqDto, Long userId) {
 
-        validateCrewName(createCrewReqDto.name());
+        validateCrewName(crewReqDto.name());
 
-        Crew crew = crewRepository.save(createCrewReqDto.toEntity()); //크루 저장
-        crewRegionService.createCrewRegion(createCrewReqDto.regions(), crew); //크루-지역 저장
+        Crew crew = crewRepository.save(crewReqDto.toEntity()); //크루 저장
+        crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
 
         User user = userService.readById(userId);
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
@@ -68,6 +66,29 @@ public class CrewService {
     public void deleteCrew(Long crewId) {
         Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
         crewRepository.delete(crew);
+    }
+
+    /* 특정 크루 수정 */
+    @Transactional
+    public void updateCrew(CrewReqDto crewReqDto, Long crewId) {
+        Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+
+        if (crewReqDto.regions()!=null) {
+            crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReqDto.regions(), crew);//크루-지역 수정
+        }
+
+        crew.update(
+                crewReqDto.name() == null? crew.getName():crewReqDto.name(),
+                crewReqDto.category()==null? crew.getCategory() : crewReqDto.category(),
+                crewReqDto.description()==null ? crew.getDescription() : crewReqDto.description(),
+                crewReqDto.descriptionImage()==null ? crew.getDescriptionImage() : crewReqDto.descriptionImage(),
+                crewReqDto.minMembers()==null ? crew.getMinMembers() : crewReqDto.minMembers(),
+                crewReqDto.maxMembers()==null ? crew.getMaxMembers() : crewReqDto.maxMembers(),
+                crewReqDto.minAge() == null ? crew.getMinAge() : crewReqDto.minAge(),
+                crewReqDto.maxAge()==null ? crew.getMaxAge() : crewReqDto.maxAge(),
+                crewReqDto.genderRestriction()==null ? crew.getGenderRestriction() : crewReqDto.genderRestriction(),
+                crewReqDto.bannerImage()==null ? crew.getBannerImage() : crewReqDto.bannerImage()
+        );
     }
 
     /* 크루명 중복 검증 */

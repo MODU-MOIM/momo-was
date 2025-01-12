@@ -14,12 +14,12 @@ public class CrewManager {
 
     /* 크루 멤버인지 확인 */
     @Transactional(readOnly = true)
-    public boolean hasPermission(Long crewId, Long userId) {
+    public boolean hasCrewPermission(Long crewId, Long userId) {
         return crewMemberRepository.existsByCrewIdAndUserId(crewId, userId);
     }
 
     /* 크루 멤버가 리더 권한이 있는지 확인 */
-    public boolean hasLeaderPermission(Long crewId, Long userId) {
+    public boolean hasCrewLeaderPermission(Long crewId, Long userId) {
         return crewMemberRepository.findByCrewIdAndUserId(crewId, userId)
                 .map(crewMember -> crewMember.getRole().equals(Role.LEADER))
                 .orElse(false);

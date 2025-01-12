@@ -19,7 +19,7 @@ public class CrewRegionService {
     private final RegionService regionService;
 
     /* 크루-지역 생성 */
-    public void createCrewRegion(List<RegionDto> regionDtos, Crew crew) {
+    public List<CrewRegion> createCrewRegion(List<RegionDto> regionDtos, Crew crew) {
 
         List<CrewRegion> crewRegions = regionDtos.stream()
                 .map(regionDto -> {
@@ -27,7 +27,7 @@ public class CrewRegionService {
                     return CrewRegion.of(region, crew);
                 }).collect(Collectors.toList());
 
-        crewRegionRepository.saveAll(crewRegions);
+        return crewRegionRepository.saveAll(crewRegions);
     }
 
     /* 특정 크루의 지역 조회 */
@@ -38,6 +38,12 @@ public class CrewRegionService {
                     return RegionDto.fromEntity(region);
                 })
                 .collect(Collectors.toList());
+    }
+
+    /* 특정 크루의 지역 수정 */
+    public void updateCrewRegion(List<CrewRegion> crewRegions, List<RegionDto> regionDtos ,Crew crew) {
+        crewRegionRepository.deleteAll(crewRegions); //기존 crewRegion 다 지움
+        createCrewRegion(regionDtos, crew); //새로 추가
     }
 
 }

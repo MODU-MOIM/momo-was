@@ -8,7 +8,7 @@ import com.example.momowas.user.domain.Gender;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record CreateCrewReqDto(
+public record CrewReqDto(
         String name,
         Category category,
         String description,
