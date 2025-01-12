@@ -38,9 +38,9 @@ public class AuthController {
         }
 
         // 인증 여부 확인
-        if (!smsUtil.isAuthenticated(session)) {
-            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
-        }
+//        if (!smsUtil.isAuthenticated(session)) {
+//            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
+//        }
 
         User user = authService.signUp(signUpReqDto);
         userService.create(user);
