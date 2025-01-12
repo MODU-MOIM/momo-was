@@ -29,9 +29,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(BusinessException ex) {
+        ExceptionCode errorCode = ex.getExceptionCode();
         log.error("Business Exception Error", ex);
-        final ErrorResponse errorResponse = ErrorResponse.of(ex.getExceptionCode(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));
+        final ErrorResponse response = ErrorResponse.of(errorCode);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     /**
@@ -42,8 +43,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
-        log.warn("handleAccessDeniedException : {}", ex);
-        final ErrorResponse response = ErrorResponse.of(ExceptionCode.ACCESS_DENIED, ex.getMessage());
+        log.error("handleAccessDeniedException : {}", ex);
+        final ErrorResponse response = ErrorResponse.of(ExceptionCode.ACCESS_DENIED);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
