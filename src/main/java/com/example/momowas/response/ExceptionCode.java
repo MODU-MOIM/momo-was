@@ -46,6 +46,7 @@ public enum ExceptionCode {
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
     ALREADY_EXISTS(409, "U002", "이미 존재하는 정보입니다."),
     NOT_VERIFIED_YET(401, "U004", "아직 인증이 완료되지 않았습니다."),
+    USER_MISMATCH(403,"U005", "해당 작업을 허용할 수 없습니다."),
 
     // SMS 관련 예외
     SMS_SEND_FAILED(500, "S001", "SMS 전송에 실패했습니다."),
@@ -53,7 +54,10 @@ public enum ExceptionCode {
     EXPIRED_VERIFICATION_CODE(400, "S003", "인증 코드가 만료되었습니다."),
 
     //채팅방 예외
-    CHATROOM_NOT_FOUND(500, "C001", "채팅방을 찾을 수 없습니다."),
+    CHATROOM_NOT_FOUND(404, "C001", "채팅방을 찾을 수 없습니다."),
+
+    //일정 예외
+    SCHEDULE_NOT_FOUND(404, "SC001", "일정을 찾을 수 없습니다."),
 
     //크루 관련 예외
     ALREADY_EXISTS_CREW(409, "C001", "이미 존재하는 크루입니다."),
