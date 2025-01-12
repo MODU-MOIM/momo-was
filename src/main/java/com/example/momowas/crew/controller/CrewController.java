@@ -17,9 +17,8 @@ import java.util.Map;
 
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/crews")
-@Slf4j
+@RequiredArgsConstructor
 public class CrewController {
     private final CrewService crewService;
 

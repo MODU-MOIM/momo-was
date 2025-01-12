@@ -27,7 +27,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
     public ScheduleDto createSchedule(Long userId, ScheduleReqDto scheduleReqDto){
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
 
         //크루 검증 추가
 
@@ -51,7 +51,7 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(Long userId, Long scheduleId){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
 
         if(schedule.getUserId()!=user.getId()){
             throw new BusinessException(ExceptionCode.USER_MISMATCH);
@@ -62,7 +62,7 @@ public class ScheduleService {
     @Transactional
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, ScheduleReqDto scheduleReqDto){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
 
         if(schedule.getUserId()!=user.getId()){
             throw new BusinessException(ExceptionCode.USER_MISMATCH);
@@ -81,21 +81,21 @@ public class ScheduleService {
     }
 
     public ScheduleDto getByScheduleId(Long userId, Long scheduleId){
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
         return ScheduleDto.fromEntity(schedule);
     }
 
     public List<ScheduleDto> getByDate(Long userId, LocalDate date){
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
         return scheduleRepository.findByUserIdAndScheduleDate(user.getId(), date).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<ScheduleDto> getByThisMonth(Long userId, String yearMonth) {
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
 
         YearMonth yearMonthObj = YearMonth.parse(yearMonth); // "yyyy-MM" 형식이어야 함
         LocalDate startDate = yearMonthObj.atDay(1);

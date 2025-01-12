@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.util.StringUtils;
 
@@ -117,5 +118,10 @@ public class Crew {
         this.maxAge = maxAge;
         this.genderRestriction = genderRestriction;
         this.bannerImage = bannerImage;
+    }
+
+    /* 크루 정원이 초과했는지 */
+    public boolean isCrewFull() {
+        return Hibernate.size(crewRegions)>=maxMembers;
     }
 }

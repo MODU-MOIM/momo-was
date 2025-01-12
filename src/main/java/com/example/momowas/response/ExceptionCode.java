@@ -62,9 +62,13 @@ public enum ExceptionCode {
     //크루 관련 예외
     ALREADY_EXISTS_CREW(409, "C001", "이미 존재하는 크루입니다."),
     NOT_FOUND_CREW(404, "C002", "해당 크루를 찾을 수 없습니다."),
+    CREW_FULL(409, "C003","크루 정원이 꽉 찼습니다."),
 
     //크루 멤버 관련 예외
     NOT_FOUND_CREW_MEMBER(404, "CM001", "해당 크루 멤버를 찾을 수 없습니다."),
+    ALREADY_JOINED_CREW(409, "CM002", "이미 해당 크루에 가입한 사용자입니다."),
+    INVALID_CREW_JOIN_CONDITION(409, "CM004", "크루 가입 조건에 맞지 않습니다."),
+    ALREADY_REQUESTED_TO_JOIN_CREW(409, "CM002", "이미 해당 크루에 가입 요청을 했습니다."),
 
     //지역 관련 예외
     NOT_FOUND_REGION(404, "R001", "해당 지역이 존재하지 않습니다.");

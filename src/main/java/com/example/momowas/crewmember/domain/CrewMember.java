@@ -51,5 +51,4 @@ public class CrewMember {
                 .joinedAt(LocalDateTime.now())
                 .build();
     }
-
 }

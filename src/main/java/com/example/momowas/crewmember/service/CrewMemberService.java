@@ -4,6 +4,8 @@ import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.repository.CrewMemberRepository;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,5 +23,18 @@ public class CrewMemberService {
         CrewMember crewMember = CrewMember.of(crew, user, Role.LEADER);
         return crewMemberRepository.save(crewMember);
     }
+
+    /* 크루 멤버 조회 */
+    @Transactional(readOnly = true)
+    public CrewMember findCrewMemberByCrewAndUser(Long userId, Long crewId) {
+        return crewMemberRepository.findByCrewIdAndUserId(crewId, userId).orElseThrow(() ->
+            new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isCrewMemberExists(Long userId, Long crewId) {
+        return crewMemberRepository.existsByCrewIdAndUserId(crewId,userId);
+    }
+
 
 }

@@ -1,6 +1,6 @@
 package com.example.momowas.joinrequest.domain;
 
-public enum Status {
+public enum RequestStatus {
     PENDING,
     ACCEPTED,
     REJECTED
