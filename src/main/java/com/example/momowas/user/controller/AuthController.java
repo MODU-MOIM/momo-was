@@ -31,20 +31,21 @@ public class AuthController {
     private final SmsUtil smsUtil;
 
     @PostMapping("/sign-up")
-    public Long signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
+    public CommonResponse<Long> signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
         // 이메일 중복 체크
         if (userService.isEmailExists(signUpReqDto.getEmail())) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
         }
 
-        // 인증 여부 확인 -> sms 유료라서 일단 주석하겠습니다!
-//        if (!smsUtil.isAuthenticated(session)) {
-//            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
-//        }
+        // 인증 여부 확인
+        if (!smsUtil.isAuthenticated(session)) {
+            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
+        }
 
         User user = authService.signUp(signUpReqDto);
         userService.create(user);
-        return user.getId();
+
+        return CommonResponse.of(ExceptionCode.SUCCESS, user.getId());
     }
 
     @PostMapping("/send-sms")
@@ -57,14 +58,14 @@ public class AuthController {
     }
 
     @PostMapping("/verify-code")
-    public String validationCode(@RequestBody @Valid ValidationCodeReqDto validationCodeReqDto, HttpSession session) {
+    public CommonResponse<String> validationCode(@RequestBody @Valid ValidationCodeReqDto validationCodeReqDto, HttpSession session) {
         // 이미 인증됨
         if (smsUtil.isAuthenticated(session)) {
             throw new BusinessException(ExceptionCode.ALREADY_AUTHENTICATED);
         }
         boolean isValid = smsUtil.validateCode(validationCodeReqDto.getVerificationCode(), session);
         if (isValid) {
-            return "인증 완료";
+            return CommonResponse.of(ExceptionCode.SUCCESS, "인증 완료");
         } else {
             throw new BusinessException(ExceptionCode.INVALID_VERIFICATION_CODE);
         }
