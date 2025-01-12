@@ -1,11 +1,12 @@
 package com.example.momowas.joinrequest.service;
 
 import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.joinrequest.domain.JoinRequest;
 import com.example.momowas.joinrequest.domain.RequestStatus;
-import com.example.momowas.joinrequest.dto.JoinRequestReqDto;
+import com.example.momowas.joinrequest.dto.JoinRequestListResDto;
 import com.example.momowas.joinrequest.repository.JoinRequestRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -14,6 +15,9 @@ import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +40,19 @@ public class JoinRequestService {
         return joinRequest.getId();
     }
 
+    /* 크루 가입 요청 목록 조회 */
+    @Transactional(readOnly = true)
+    public List<JoinRequestListResDto> getJoinRequestList(Long crewId) {
+        Crew crew = crewService.findCrewById(crewId);
+
+        return joinRequestRepository.findByCrewId(crewId).stream()
+                .filter(joinRequest -> joinRequest.getStatus()==RequestStatus.PENDING)
+                .map(joinRequest -> JoinRequestListResDto.of(joinRequest.getUser()))
+                .collect(Collectors.toList());
+    }
+
     /* 사용자가 크루에 가입 가능한지 검증 */
+    @Transactional(readOnly = true)
     private void validateCrewJoinEligibility(User user, Crew crew) {
         //이미 사용자가 크루에 가입 요청을 했는지 검증
         if (joinRequestRepository.existsByCrewIdAndUserId(crew.getId(), user.getId())) {

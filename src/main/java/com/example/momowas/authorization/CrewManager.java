@@ -22,7 +22,7 @@ public class CrewManager {
 
     /* 크루 멤버가 리더 권한이 있는지 확인 */
     public boolean hasCrewLeaderPermission(Long crewId, Long userId) {
-        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(crewId, userId);
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         return crewMember.getRole().equals(Role.LEADER);
     }
 
