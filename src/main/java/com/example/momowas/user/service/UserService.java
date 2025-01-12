@@ -29,7 +29,7 @@ public class UserService {
         return userRepository.findByProviderId(providerId);
     }
 
-    public User readById(Long id) {
+    public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
     }
 }

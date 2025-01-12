@@ -61,7 +61,7 @@ public class JwtUtil {
                     .parseClaimsJws(token);
 
             Long userId = claims.getBody().get("userId", Long.class);
-            if (userService.readById(userId) == null) {
+            if (userService.findUserById(userId) == null) {
                 return ExceptionCode.TOKEN_MISSING;
             }
 
