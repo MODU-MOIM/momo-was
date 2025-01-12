@@ -30,4 +30,7 @@ public class JoinRequestController {
     public List<JoinRequestListResDto> getJoinRequestList(@PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
         return joinRequestService.getJoinRequestList(crewId);
     }
+
+    /* 크루 가입 요청 *//*
+    @PutMapping("")*/
 }

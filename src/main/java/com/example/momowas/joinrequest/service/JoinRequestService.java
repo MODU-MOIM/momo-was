@@ -45,8 +45,7 @@ public class JoinRequestService {
         Crew crew = crewService.findCrewById(crewId);
 
         return crew.getJoinRequests().stream()
-                .filter(joinRequest -> joinRequest.getStatus()==RequestStatus.PENDING)
-                .map(joinRequest -> JoinRequestListResDto.of(joinRequest.getUser()))
+                .map(joinRequest -> JoinRequestListResDto.of(joinRequest,joinRequest.getUser()))
                 .collect(Collectors.toList());
     }
 
