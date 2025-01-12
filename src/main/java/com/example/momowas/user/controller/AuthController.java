@@ -7,10 +7,7 @@ import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.domain.User;
-import com.example.momowas.user.dto.SignInReqDto;
-import com.example.momowas.user.dto.SignUpReqDto;
-import com.example.momowas.user.dto.SmsReqDto;
-import com.example.momowas.user.dto.ValidationCodeReqDto;
+import com.example.momowas.user.dto.*;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
@@ -31,40 +28,42 @@ public class AuthController {
     private final SmsUtil smsUtil;
 
     @PostMapping("/sign-up")
-    public Long signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
+    public UserDto signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
         // 이메일 중복 체크
         if (userService.isEmailExists(signUpReqDto.getEmail())) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
         }
 
-        // 인증 여부 확인 -> sms 유료라서 일단 주석하겠습니다!
+        // 인증 여부 확인
 //        if (!smsUtil.isAuthenticated(session)) {
 //            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
 //        }
 
         User user = authService.signUp(signUpReqDto);
         userService.create(user);
-        return user.getId();
+
+        return UserDto.fromEntity(user);
     }
 
     @PostMapping("/send-sms")
-    public SingleMessageSentResponse sendSMS(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession session) {
+    public CommonResponse<String> sendSMS(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession session) {
         try {
-            return smsUtil.sendOne(smsReqDto.getToPhoneNumber(), session);
+            smsUtil.sendOne(smsReqDto.getToPhoneNumber(), session);
+            return CommonResponse.of(ExceptionCode.SUCCESS, "SMS 전송 성공");
         } catch (Exception e) {
             throw new BusinessException(ExceptionCode.SMS_SEND_FAILED);
         }
     }
 
     @PostMapping("/verify-code")
-    public String validationCode(@RequestBody @Valid ValidationCodeReqDto validationCodeReqDto, HttpSession session) {
+    public CommonResponse<String> validationCode(@RequestBody @Valid ValidationCodeReqDto validationCodeReqDto, HttpSession session) {
         // 이미 인증됨
         if (smsUtil.isAuthenticated(session)) {
             throw new BusinessException(ExceptionCode.ALREADY_AUTHENTICATED);
         }
         boolean isValid = smsUtil.validateCode(validationCodeReqDto.getVerificationCode(), session);
         if (isValid) {
-            return "인증 완료";
+            return CommonResponse.of(ExceptionCode.SUCCESS, "인증 완료");
         } else {
             throw new BusinessException(ExceptionCode.INVALID_VERIFICATION_CODE);
         }
