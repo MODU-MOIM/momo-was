@@ -9,46 +9,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Compare branch 코드 내려받기
+      # 1. Compare branch 코드 내려 받기
       - name: Checkout PR
         uses: actions/checkout@v3
-
-      # 2. 빌드 아티팩트 다운로드
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          ref: ${{ github.event.pull_request.head.ref }}
 
-      # 3. Docker 빌드 및 푸시
-      - name: Docker build and push
-        env:
-          COOLSMS_API_KEY: ${{ secrets.COOLSMS_API_KEY }}
-          COOLSMS_FROM_NUMBER: ${{ secrets.COOLSMS_FROM_NUMBER }}
-          COOLSMS_SECRET_KEY: ${{ secrets.COOLSMS_SECRET_KEY }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-          DATABASE_USER: ${{ secrets.DATABASE_USER }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
-          JWT_ACCESS_EXPIRATION: ${{ secrets.JWT_ACCESS_EXPIRATION }}
-          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
-          JWT_REFRESH_EXPIRATION: ${{ secrets.JWT_REFRESH_EXPIRATION }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-          NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          BUCKET_ACCESS: ${{ secrets.BUCKET_ACCESS }}
-          BUCKET_SECRET: ${{ secrets.BUCKET_SECRET }}
+      # 2. 자바 환경 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Docker 이미지 build 및 push
+      - name: docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_USERNAME }}/momo-was .
           docker push ${{ secrets.DOCKER_USERNAME }}/momo-was
 
-      # 4. EC2 배포
+      # 4. ec2 pull
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -58,6 +39,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker rm -f momo-app || true
+            sudo lsof -i :8080 | grep LISTEN | awk '{print $2}' | xargs -r sudo kill -9
             docker rmi ${{ secrets.DOCKER_USERNAME }}/momo-was || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/momo-was
             docker run --env-file /home/ubuntu/momo-was/.env \
