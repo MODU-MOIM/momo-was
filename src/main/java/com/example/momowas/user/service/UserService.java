@@ -5,9 +5,11 @@ import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.UserDto;
+import com.example.momowas.user.dto.UserInfoUpdateReqDto;
 import com.example.momowas.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -51,6 +53,20 @@ public class UserService {
     public UserDto getMyInfo(Long userId){
         User user = findUserById(userId);
         return UserDto.fromEntity(user);
+    }
+
+    @Transactional
+    public UserDto updateMyInfo(Long userId, UserInfoUpdateReqDto userInfoUpdateReqDto){
+        User user = findUserById(userId);
+
+        user.updateUserInfo(
+                userInfoUpdateReqDto.getNickname(),
+                userInfoUpdateReqDto.getCp(),
+                userInfoUpdateReqDto.getGender(),
+                userInfoUpdateReqDto.getAge());
+
+        return UserDto.fromEntity(user);
+
     }
 
 
