@@ -40,6 +40,7 @@ jobs:
           BUCKET_NAME : ${{secrets.BUCKET_NAME}}
           BUCKET_ACCESS : ${{secrets.BUCKET_ACCESS}}
           BUCKET_SECRET : ${{secrets.BUCKET_SECRET}}
+          REDIS_HOST : ${{secrets.REDIS_HOST}}
         run: |
           echo "COOLSMS_API_KEY=$COOLSMS_API_KEY"
           echo "COOLSMS_FROM_NUMBER=$COOLSMS_FROM_NUMBER"
@@ -62,6 +63,7 @@ jobs:
           echo "BUCKET_NAME=$BUCKET_NAME"
           echo "BUCKET_ACCESS=$BUCKET_ACCESS"
           echo "BUCKET_SECRET=$BUCKET_SECRET"
+          echo "REDIS_HOST=$REDIS_HOST"
 
       # 3. 자바 환경 설정
       - name: Set up JDK 17
@@ -94,6 +96,7 @@ jobs:
           BUCKET_NAME: ${{secrets.BUCKET_NAME}}
           BUCKET_ACCESS: ${{secrets.BUCKET_ACCESS}}
           BUCKET_SECRET: ${{secrets.BUCKET_SECRET}}
+          REDIS_HOST: ${{secrets.REDIS_HOST}}
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
