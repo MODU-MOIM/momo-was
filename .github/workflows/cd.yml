@@ -22,6 +22,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # 3. Gradle 빌드
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+          ls -l build/libs/
+
       # Docker 빌드 컨텍스트 확인
       - name: Check current directory and files
         run: |
