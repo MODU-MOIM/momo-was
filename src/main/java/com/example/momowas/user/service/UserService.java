@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,5 +47,11 @@ public class UserService {
         user.updateProfileImage(fileUrl);
         return fileUrl;
     }
+
+    public UserDto getMyInfo(Long userId){
+        User user = findUserById(userId);
+        return UserDto.fromEntity(user);
+    }
+
 
 }
