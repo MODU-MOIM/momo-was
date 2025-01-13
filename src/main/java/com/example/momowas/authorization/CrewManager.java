@@ -3,6 +3,8 @@ package com.example.momowas.authorization;
 import com.example.momowas.crew.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
+import com.example.momowas.joinrequest.domain.JoinRequest;
+import com.example.momowas.joinrequest.service.JoinRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,17 +14,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class CrewManager {
 
     private final CrewMemberService crewMemberService;
+    private final JoinRequestService joinRequestService;
 
     /* 크루 멤버인지 확인 */
     @Transactional(readOnly = true)
     public boolean hasCrewPermission(Long crewId, Long userId) {
         return crewMemberService.isCrewMemberExists(userId,crewId);
-
     }
 
     /* 크루 멤버가 리더 권한이 있는지 확인 */
     public boolean hasCrewLeaderPermission(Long crewId, Long userId) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
+        return crewMember.getRole().equals(Role.LEADER);
+    }
+
+    /* 크루 멤버가 리더 권한이 있는지 확인 */
+    public boolean hasCrewLeaderPermissionv2(Long joinRequestId, Long userId) {
+        JoinRequest joinRequest = joinRequestService.findJoinRequestById(joinRequestId);
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, joinRequest.getCrew().getId());
         return crewMember.getRole().equals(Role.LEADER);
     }
 
