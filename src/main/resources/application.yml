@@ -51,7 +51,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
       timeout: 6000ms
       lettuce:
