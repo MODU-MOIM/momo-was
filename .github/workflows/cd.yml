@@ -22,6 +22,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # Docker 빌드 컨텍스트 확인
+      - name: Check current directory and files
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Files in current directory:"
+          ls -l
+          echo "Files in build/libs directory:"
+          ls -l build/libs/
+
       # 3. Docker 이미지 build 및 push
       - name: docker build and push
         run: |
