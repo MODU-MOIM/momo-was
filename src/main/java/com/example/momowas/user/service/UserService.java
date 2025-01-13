@@ -9,7 +9,6 @@ import com.example.momowas.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import retrofit2.http.Multipart;
 
 import java.io.IOException;
 
@@ -18,10 +17,6 @@ import java.io.IOException;
 public class UserService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
-
-    public User readById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
-    }
 
     public void create(User user){
         userRepository.save(user);
@@ -39,16 +34,17 @@ public class UserService {
         return userRepository.findByProviderId(providerId);
     }
 
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
+    }
 
     //프로필 업로드
     public String updateProfileImage(Long userId, MultipartFile file) throws IOException {
-        User user = readById(userId);
+        User user = findUserById(userId);
         String fileUrl = s3Service.uploadImage(file, "profile");
 
         user.updateProfileImage(fileUrl);
         return fileUrl;
     }
-
-
 
 }

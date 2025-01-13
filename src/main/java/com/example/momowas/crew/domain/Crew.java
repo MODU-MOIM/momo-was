@@ -3,6 +3,7 @@ package com.example.momowas.crew.domain;
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewregion.domain.CrewRegion;
+import com.example.momowas.joinrequest.domain.JoinRequest;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.user.domain.Gender;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.util.StringUtils;
 
@@ -54,8 +56,11 @@ public class Crew {
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CrewMember> crewMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "crew", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CrewRegion> crewRegions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<JoinRequest> joinRequests = new ArrayList<>();
 
     @Builder
     private Crew(String name,
@@ -117,5 +122,10 @@ public class Crew {
         this.maxAge = maxAge;
         this.genderRestriction = genderRestriction;
         this.bannerImage = bannerImage;
+    }
+
+    /* 크루 정원이 초과했는지 */
+    public boolean isCrewFull() {
+        return maxMembers!=null && Hibernate.size(crewRegions)>=maxMembers;
     }
 }

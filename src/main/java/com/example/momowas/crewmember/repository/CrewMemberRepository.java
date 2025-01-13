@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface CrewMemberRepository extends JpaRepository<CrewMember,Long> {
-    boolean existsByCrewIdAndUserId(Long crewId, Long userId);
     Optional<CrewMember> findByCrewIdAndUserId(Long crewId, Long userId);
+    boolean existsByCrewIdAndUserId(Long crewId, Long userId);
 }

@@ -50,7 +50,7 @@ public class ChatService {
     public ChatDto createChat(Long roomId, ChatReqDto chatReqDto, Long userId) {
 
         ChatRoom chatRoom =  chatRoomRepository.findById(roomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
-        User user  = userService.readById(userId);
+        User user  = userService.findUserById(userId);
 
         Chat chat = Chat.builder()
                 .chatRoom(chatRoom)

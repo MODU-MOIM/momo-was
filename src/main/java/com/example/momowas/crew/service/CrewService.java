@@ -6,7 +6,6 @@ import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
-import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.crewregion.service.CrewRegionService;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.response.BusinessException;
@@ -30,6 +29,12 @@ public class CrewService {
     private final CrewRegionService crewRegionService;
     private final UserService userService;
 
+    /* 크루 id로 크루 조회 */
+    @Transactional(readOnly = true)
+    public Crew findCrewById(Long crewId) {
+        return crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+    }
+
     /* 크루 생성 */
     @Transactional
     public Long createCrew(CrewReqDto crewReqDto, Long userId) {
@@ -39,7 +44,7 @@ public class CrewService {
         Crew crew = crewRepository.save(crewReqDto.toEntity()); //크루 저장
         crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
 
-        User user = userService.readById(userId);
+        User user = userService.findUserById(userId);
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
         return crew.getId();
@@ -58,7 +63,7 @@ public class CrewService {
     /* 특정 크루 조회 */
     @Transactional(readOnly = true)
     public CrewDetailResDto getCrewDetail(Long crewId) {
-        Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+        Crew crew = findCrewById(crewId);
         List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
         return CrewDetailResDto.of(crew,regionDtos);
     }
@@ -66,14 +71,14 @@ public class CrewService {
     /* 특정 크루 삭제 */
     @Transactional
     public void deleteCrew(Long crewId) {
-        Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+        Crew crew = findCrewById(crewId);
         crewRepository.delete(crew);
     }
 
     /* 특정 크루 수정 */
     @Transactional
     public void updateCrew(CrewReqDto crewReqDto, Long crewId) {
-        Crew crew = crewRepository.findById(crewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_CREW));
+        Crew crew = findCrewById(crewId);
 
         validateCrewName(crewReqDto.name());
 
