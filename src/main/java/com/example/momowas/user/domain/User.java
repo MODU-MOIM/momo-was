@@ -70,4 +70,11 @@ public class User {
     public void updateProfileImage(String newProfileImage){
         this.profileImage = newProfileImage;
     }
+
+    public void updateUserInfo(String newNickname, String newCp, Gender newGender, int newAge){
+        this.nickname = newNickname;
+        this.cp = newCp;
+        this.gender = newGender;
+        this.age= newAge;
+    }
 }
