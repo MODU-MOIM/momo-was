@@ -97,4 +97,14 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
+          echo "Gradle build complete. Checking output..."
+          ls -l build/libs/
+
+      # 4. 아티팩트 저장
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: build/libs/*.jar
+
 
