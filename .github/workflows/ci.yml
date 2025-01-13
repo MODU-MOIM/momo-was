@@ -37,6 +37,9 @@ jobs:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
+          BUCKET_NAME : ${{secrets.BUCKET_NAME}}
+          BUCKET_ACCESS : ${{secrets.BUCKET_ACCESS}}
+          BUCKET_SECRET : ${{secrets.BUCKET_SECRET}}
         run: |
           echo "COOLSMS_API_KEY=$COOLSMS_API_KEY"
           echo "COOLSMS_FROM_NUMBER=$COOLSMS_FROM_NUMBER"
@@ -56,6 +59,9 @@ jobs:
           echo "NAVER_CLIENT_ID=$NAVER_CLIENT_ID"
           echo "NAVER_CLIENT_SECRET=$NAVER_CLIENT_SECRET"
           echo "NAVER_REDIRECT_URI=$NAVER_REDIRECT_URI"
+          echo "BUCKET_NAME=$BUCKET_NAME"
+          echo "BUCKET_ACCESS=$BUCKET_ACCESS"
+          echo "BUCKET_SECRET=$BUCKET_SECRET"
 
       # 3. 자바 환경 설정
       - name: Set up JDK 17
@@ -85,6 +91,9 @@ jobs:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
+          BUCKET_NAME: ${{secrets.BUCKET_NAME}}
+          BUCKET_ACCESS: ${{secrets.BUCKET_ACCESS}}
+          BUCKET_SECRET: ${{secrets.BUCKET_SECRET}}
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
