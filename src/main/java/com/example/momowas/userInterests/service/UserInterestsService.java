@@ -1,16 +1,20 @@
 package com.example.momowas.userInterests.service;
 
+import com.example.momowas.chat.dto.ChatDto;
 import com.example.momowas.crew.domain.Category;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.userInterests.domain.UserInterests;
 import com.example.momowas.userInterests.dto.CategorySelectDto;
+import com.example.momowas.userInterests.dto.InterestDto;
 import com.example.momowas.userInterests.repository.UserInterestsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +44,24 @@ public class UserInterestsService {
                 userInterestsRepository.save(userInterests);
             });
         }
+    }
+
+//    public List<InterestDto> getMyInterets(Long userId){
+//        User user = userService.findUserById(userId);
+//        return userInterestsRepository.findByUser(user).stream()
+//                .map(InterestDto::fromEntity)
+//                .collect(Collectors.toList());
+//    }
+
+    public InterestDto getMyInterests(Long userId) {
+        User user = userService.findUserById(userId);
+        List<Category> categories = userInterestsRepository.findByUser(user).stream()
+                .map(UserInterests::getCategory)
+                .collect(Collectors.toList());
+
+        return InterestDto.builder()
+                .interests(categories)
+                .build();
     }
 
 }
