@@ -8,6 +8,7 @@ import com.example.momowas.userInterests.dto.CategorySelectDto;
 import com.example.momowas.userInterests.repository.UserInterestsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,8 +20,14 @@ public class UserInterestsService {
     private final UserService userService;
 
     //관심사 생성
+    @Transactional
     public void createInterests (Long userId, CategorySelectDto categorySelectDto){
         User user = userService.findUserById(userId);
+
+        //변경 시 기존 관심사 삭제
+        if(!userInterestsRepository.findByUser(user).isEmpty()){
+            userInterestsRepository.deleteByUser(user);
+        }
 
         List<Category> categories= categorySelectDto.getCategories();
 
