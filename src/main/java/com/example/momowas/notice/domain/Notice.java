@@ -48,6 +48,6 @@ public class Notice {
         this.content=content;
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt는 null이 될 수 없습니다.");
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
-        this.vote= Objects.requireNonNull(vote,"vote는 null이 될 수 없습니다.");
+        this.vote= vote;
     }
 }
