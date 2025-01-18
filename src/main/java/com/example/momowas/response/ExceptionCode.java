@@ -72,7 +72,10 @@ public enum ExceptionCode {
     NOT_FOUND_JOIN_REQUEST(409, "CM003","해당 크루 가입 요청을 찾을 수 없습니다."),
 
     //지역 관련 예외
-    NOT_FOUND_REGION(404, "R001", "해당 지역이 존재하지 않습니다.");
+    NOT_FOUND_REGION(404, "R001", "해당 지역이 존재하지 않습니다."),
+
+    //공지 투표 관련 예외
+    NOT_FOUND_VOTE(404, "V001", "해당 투표가 존재하지 않습니다.");
 
 
     private final int status;
