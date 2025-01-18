@@ -34,6 +34,7 @@ public class NoticeService {
     }
 
     /* 전체 공지 조회 */
+    @Transactional(readOnly = true)
     public List<NoticeListResDto> getNoticeList(Long crewId) {
         Crew crew = crewService.findCrewById(crewId);
 
