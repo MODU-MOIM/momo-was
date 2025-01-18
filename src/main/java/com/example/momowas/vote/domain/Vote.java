@@ -1,14 +1,15 @@
 package com.example.momowas.vote.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.momowas.voteparticipant.domain.VoteParticipant;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +20,9 @@ public class Vote {
     private Long id;
 
     private String title;
+
+    @OneToMany(mappedBy = "vote", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<VoteParticipant> voteParticipants = new ArrayList<>();
 
     @Builder
     public Vote(String title) {

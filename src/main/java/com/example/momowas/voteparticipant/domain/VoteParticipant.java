@@ -1,5 +1,7 @@
 package com.example.momowas.voteparticipant.domain;
 
+import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.vote.domain.Vote;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,8 +21,18 @@ public class VoteParticipant {
     @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "vote_id")
+    private Vote vote;
+
+    @ManyToOne
+    @JoinColumn(name = "crew_member_id")
+    private CrewMember crewMember;
+
     @Builder
-    public VoteParticipant(AttendanceStatus status) {
+    public VoteParticipant(AttendanceStatus status, Vote vote, CrewMember crewMember) {
         this.status = Objects.requireNonNull(status, "status는 null이 될 수 없습니다.");
+        this.vote = Objects.requireNonNull(vote, "vote는 null이 될 수 없습니다.");
+        this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");
     }
 }
