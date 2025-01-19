@@ -1,6 +1,7 @@
 package com.example.momowas.notice.controller;
 
 import com.example.momowas.notice.domain.Notice;
+import com.example.momowas.notice.dto.NoticeDetailResDto;
 import com.example.momowas.notice.dto.NoticeListResDto;
 import com.example.momowas.notice.dto.NoticeReqDto;
 import com.example.momowas.notice.service.NoticeService;
@@ -39,5 +40,12 @@ public class NoticeController {
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public List<NoticeListResDto> getNoticeList(@PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
         return noticeService.getNoticeList(crewId);
+    }
+
+    /* 특정 공지 조회 */
+    @GetMapping("/{noticeId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public NoticeDetailResDto getNoticeDetail(@PathVariable Long crewId, @PathVariable Long noticeId, @AuthenticationPrincipal Long userId) {
+        return noticeService.getNoticeDetail(crewId, noticeId, userId);
     }
 }

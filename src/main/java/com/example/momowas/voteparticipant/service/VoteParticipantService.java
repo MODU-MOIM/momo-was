@@ -5,6 +5,7 @@ import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.vote.domain.Vote;
+import com.example.momowas.vote.dto.VoteResDto;
 import com.example.momowas.vote.service.VoteService;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
 import com.example.momowas.voteparticipant.dto.VoteParticipantReqDto;
@@ -24,7 +25,13 @@ public class VoteParticipantService {
     /* 투표 id와 크루 멤버 id로 투표 참여자 조회 */
     @Transactional(readOnly = true)
     public VoteParticipant findVoteParticipantByVoteAndCrewMember(Long voteId, Long crewMemberId) {
-        return voteParticipantRepository.findByVoteIdAndCrewMemberId(voteId, crewMemberId).orElseThrow(()->new BusinessException(ExceptionCode.NOT_FOUND_VOTE_PARTICIPANT));
+        return voteParticipantRepository.findByVoteIdAndCrewMemberId(voteId, crewMemberId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_VOTE_PARTICIPANT));
+    }
+
+    /* 투표 id와 크루 멤버 id로 투표 참여자 존재 유무 확인 */
+    @Transactional(readOnly = true)
+    public boolean isVoteParticipantExists(Long voteId, Long crewMemberId) {
+        return voteParticipantRepository.existsByVoteIdAndCrewMemberId(voteId, crewMemberId);
     }
 
     /* 특정 공지의 투표 참여 */
@@ -33,7 +40,7 @@ public class VoteParticipantService {
         Vote vote = voteService.findVoteById(voteId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         //이미 참여한 투표인지 검증
-        if (voteParticipantRepository.existsByVoteIdAndCrewMemberId(voteId, crewMember.getId())) {
+        if (isVoteParticipantExists(voteId, crewMember.getId())) {
             throw new BusinessException(ExceptionCode.ALREADY_PARTICIPATE_VOTE);
         }
         return voteParticipantRepository.save(voteParticipantReqDto.toEntity(vote, crewMember));
@@ -45,5 +52,15 @@ public class VoteParticipantService {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         VoteParticipant voteParticipant = findVoteParticipantByVoteAndCrewMember(voteId, crewMember.getId());
         voteParticipant.revote(voteParticipantReqDto.attendanceStatus());
+    }
+
+    /* 크루 멤버의 투표 상태 조회 */
+    @Transactional(readOnly = true)
+    public VoteResDto getVoteDetail(Vote vote, CrewMember crewMember) {
+        if (vote == null) {
+            return null;
+        }
+        VoteParticipant voteParticipant = voteParticipantRepository.findByVoteIdAndCrewMemberId(vote.getId(), crewMember.getId()).orElse(null);
+        return VoteResDto.of(vote, voteParticipant);
     }
 }
