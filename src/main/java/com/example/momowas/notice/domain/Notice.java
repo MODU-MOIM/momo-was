@@ -43,7 +43,7 @@ public class Notice {
     @JoinColumn(name="crew_member_id")
     private CrewMember crewMember;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name="vote_id")
     @ColumnDefault("NULL")
     private Vote vote;
@@ -68,5 +68,11 @@ public class Notice {
 
     public void update(Vote vote) {
         this.vote=Objects.requireNonNull(vote,"vote는 null이 될 수 없습니다.");
+    }
+
+    public void deleteVote() {
+        if (this.vote != null) {
+            this.vote = null;
+        }
     }
 }

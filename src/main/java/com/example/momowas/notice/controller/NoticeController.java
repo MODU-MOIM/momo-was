@@ -58,4 +58,12 @@ public class NoticeController {
         noticeService.updateNotice(noticeReqDto, crewId, noticeId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
+
+    /* 공지 삭제 */
+    @DeleteMapping("/{noticeId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> deleteNotice(@PathVariable Long crewId, @PathVariable Long noticeId, @AuthenticationPrincipal Long userId) {
+        noticeService.deleteNotice(noticeId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
 }

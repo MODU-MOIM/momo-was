@@ -95,8 +95,16 @@ public class NoticeService {
             }
         }else{ //투표 활성화 x
             if (notice.getVote() != null) { //기존에 투표 존재 -> 삭제
-                voteService.deleteVote(notice.getVote());
+                Vote vote = notice.getVote();
+                notice.deleteVote();
+                voteService.deleteVote(vote);
             }
         }
+    }
+
+    /* 공지 삭제 */
+    public void deleteNotice(Long noticeId) {
+        Notice notice = findNoticeById(noticeId);
+        noticeRepository.delete(notice);
     }
 }

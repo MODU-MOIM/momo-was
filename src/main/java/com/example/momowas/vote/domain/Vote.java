@@ -1,12 +1,10 @@
 package com.example.momowas.vote.domain;
 
+import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.voteparticipant.domain.AttendanceStatus;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -24,6 +22,9 @@ public class Vote {
 
     @OneToMany(mappedBy = "vote", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<VoteParticipant> voteParticipants = new ArrayList<>();
+
+    @OneToOne(mappedBy = "vote", fetch = FetchType.LAZY)
+    private Notice notice;
 
     @Builder
     public Vote(String title) {

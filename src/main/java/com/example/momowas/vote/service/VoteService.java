@@ -1,5 +1,6 @@
 package com.example.momowas.vote.service;
 
+import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.vote.domain.Vote;

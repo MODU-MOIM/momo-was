@@ -21,11 +21,11 @@ public class VoteParticipant {
     @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crew_member_id")
     private CrewMember crewMember;
 
