@@ -1,5 +1,6 @@
 package com.example.momowas.vote.domain;
 
+import com.example.momowas.voteparticipant.domain.AttendanceStatus;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,4 +33,12 @@ public class Vote {
         }
         this.title=title;
     }
+
+    /* ATTENDING 상태의 투표 참여자의 수 */
+    public Long countAttendingParticipants() {
+        return voteParticipants.stream().filter(voteParticipant
+                -> voteParticipant.getStatus()== AttendanceStatus.ATTENDING)
+                .count();
+    }
+
 }

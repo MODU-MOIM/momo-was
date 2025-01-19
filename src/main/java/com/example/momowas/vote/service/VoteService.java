@@ -26,4 +26,6 @@ public class VoteService {
     public Vote createVote(VoteRequest voteRequest) {
         return voteRepository.save(voteRequest.toEntity());
     }
+
+
 }
