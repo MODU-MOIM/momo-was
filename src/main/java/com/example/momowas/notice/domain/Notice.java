@@ -58,4 +58,15 @@ public class Notice {
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
         this.vote= vote;
     }
+
+    public void update(String content) {
+        if (!StringUtils.hasText(content)) {
+            throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.content=content;
+    }
+
+    public void update(Vote vote) {
+        this.vote=Objects.requireNonNull(vote,"vote는 null이 될 수 없습니다.");
+    }
 }

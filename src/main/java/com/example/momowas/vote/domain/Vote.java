@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -39,6 +38,13 @@ public class Vote {
         return voteParticipants.stream().filter(voteParticipant
                 -> voteParticipant.getStatus()== AttendanceStatus.ATTENDING)
                 .count();
+    }
+
+    public void update(String title) {
+        if (!StringUtils.hasText(title)) {
+            throw new IllegalArgumentException("title은 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.title=title;
     }
 
 }

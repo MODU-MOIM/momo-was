@@ -13,8 +13,9 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.vote.domain.Vote;
+import com.example.momowas.vote.dto.VoteReqDto;
 import com.example.momowas.vote.dto.VoteResDto;
-import com.example.momowas.voteparticipant.domain.VoteParticipant;
+import com.example.momowas.vote.service.VoteService;
 import com.example.momowas.voteparticipant.service.VoteParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,9 @@ public class NoticeService {
     private final CrewService crewService;
     private final CrewMemberService crewMemberService;
     private final VoteParticipantService voteParticipantService;
+    private final VoteService voteService;
 
-    /* 공지id로 공지 조회 */
+    /* 공지 id로 공지 조회 */
     @Transactional(readOnly = true)
     public Notice findNoticeById(Long noticeId) {
         return noticeRepository.findById(noticeId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_NOTICE));
@@ -70,5 +72,31 @@ public class NoticeService {
 
         CrewMember writer = notice.getCrewMember();
         return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteResDto);
+    }
+
+    /* 공지 수정 */
+    @Transactional()
+    public void updateNotice(NoticeReqDto noticeReqDto, Long crewId, Long noticeId, Long userId) {
+        Notice notice = findNoticeById(noticeId);
+        notice.update(noticeReqDto.content());
+
+        updateNoticeVote(noticeReqDto, notice);
+    }
+
+    private void updateNoticeVote(NoticeReqDto noticeReqDto, Notice notice) {
+        VoteReqDto voteReqDto = noticeReqDto.vote();
+
+        if (voteReqDto.isEnabled()) { //투표 활성화
+            if (notice.getVote() != null) { //기존에 투표 존재 -> 수정
+                voteService.updateVote(notice.getVote(), voteReqDto);
+            }else{ //기존에 투표 존재x -> 생성
+                Vote vote = voteService.createVote(voteReqDto);
+                notice.update(vote);
+            }
+        }else{ //투표 활성화 x
+            if (notice.getVote() != null) { //기존에 투표 존재 -> 삭제
+                voteService.deleteVote(notice.getVote());
+            }
+        }
     }
 }

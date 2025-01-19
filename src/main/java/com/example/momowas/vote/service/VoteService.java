@@ -26,4 +26,15 @@ public class VoteService {
         return voteRepository.save(voteReqDto.toEntity());
     }
 
+    /* 투표 수정 */
+    @Transactional
+    public void updateVote(Vote vote, VoteReqDto voteReqDto) {
+        vote.update(voteReqDto.title());
+    }
+
+    /* 투표 삭제 */
+    @Transactional
+    public void deleteVote(Vote vote) {
+        voteRepository.delete(vote);
+    }
 }

@@ -5,6 +5,8 @@ import com.example.momowas.notice.dto.NoticeDetailResDto;
 import com.example.momowas.notice.dto.NoticeListResDto;
 import com.example.momowas.notice.dto.NoticeReqDto;
 import com.example.momowas.notice.service.NoticeService;
+import com.example.momowas.response.CommonResponse;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.vote.domain.Vote;
 import com.example.momowas.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +49,13 @@ public class NoticeController {
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public NoticeDetailResDto getNoticeDetail(@PathVariable Long crewId, @PathVariable Long noticeId, @AuthenticationPrincipal Long userId) {
         return noticeService.getNoticeDetail(crewId, noticeId, userId);
+    }
+
+    /* 공지 수정 */
+    @PutMapping("/{noticeId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateNotice(@RequestBody NoticeReqDto noticeReqDto, @PathVariable Long crewId, @PathVariable Long noticeId, @AuthenticationPrincipal Long userId) {
+        noticeService.updateNotice(noticeReqDto, crewId, noticeId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 }
