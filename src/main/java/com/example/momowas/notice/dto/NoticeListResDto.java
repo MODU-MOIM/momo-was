@@ -9,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDateTime;
 
-public record NoticeListResDto(String writer,
+public record NoticeListResDto(Long noticeId,
+                               String writer,
                                Role writerRole,
                                String profileImage,
                                LocalDateTime createdAt,
@@ -19,6 +20,7 @@ public record NoticeListResDto(String writer,
                                ) {
     public static NoticeListResDto of(User user, CrewMember crewMember, Notice notice) {
         return new NoticeListResDto(
+                notice.getId(),
                 user.getNickname(),
                 crewMember.getRole(),
                 user.getProfileImage(),
