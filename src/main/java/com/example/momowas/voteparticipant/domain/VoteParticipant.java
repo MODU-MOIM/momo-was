@@ -35,4 +35,9 @@ public class VoteParticipant {
         this.vote = Objects.requireNonNull(vote, "vote는 null이 될 수 없습니다.");
         this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");
     }
+
+    /* 재투표 */
+    public void revote(AttendanceStatus status) {
+        this.status = Objects.requireNonNull(status, "status는 null이 될 수 없습니다.");
+    }
 }

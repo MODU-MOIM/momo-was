@@ -1,5 +1,7 @@
 package com.example.momowas.voteparticipant.controller;
 
+import com.example.momowas.response.CommonResponse;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
 import com.example.momowas.voteparticipant.dto.VoteParticipantReqDto;
 import com.example.momowas.voteparticipant.service.VoteParticipantService;
@@ -17,7 +19,7 @@ public class VoteParticipantController {
 
     private final VoteParticipantService voteParticipantService;
 
-    /* 투표 참여자 생성 */
+    /* 특정 공지의 투표 참여 */
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public Map<String,Object> createVoteParticipant(@RequestBody VoteParticipantReqDto voteParticipantReqDto, @PathVariable Long crewId, @PathVariable Long voteId, @AuthenticationPrincipal Long userId) {
@@ -25,4 +27,11 @@ public class VoteParticipantController {
         return Map.of("voteParticipantId", voteParticipant.getId());
     }
 
+    /* 특정 공지의 투표 재참여 */
+    @PutMapping("")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> updateVoteParticipant(@RequestBody VoteParticipantReqDto voteParticipantReqDto, @PathVariable Long crewId, @PathVariable Long voteId, @AuthenticationPrincipal Long userId) {
+        voteParticipantService.updateVoteParticipant(voteParticipantReqDto, crewId, voteId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
 }
