@@ -34,6 +34,7 @@ public class Crew {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Lob
     private String description;
 
     private Integer minMembers;
