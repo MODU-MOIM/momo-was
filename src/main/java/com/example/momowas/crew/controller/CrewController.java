@@ -1,6 +1,5 @@
 package com.example.momowas.crew.controller;
 
-import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.dto.CrewReqDto;
@@ -39,9 +38,9 @@ public class CrewController {
 
     /* 크루 이미지 업로드 */
     @PostMapping("/images")
-    public Map<String, Object> uploadCrewImage(@RequestParam("image") MultipartFile image) throws IOException {
-        String imageUrl = s3Service.uploadImage(image, "crew");
-        return Map.of("imageUrl", imageUrl);
+    public Map<String, Object> uploadCrewImage(@RequestParam("crewImage") MultipartFile image) throws IOException {
+        String crewImageUrl = s3Service.uploadImage(image, "crew");
+        return Map.of("crewImageUrl", crewImageUrl);
     }
 
     /* 전체 크루 조회 */
