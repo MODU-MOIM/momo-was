@@ -12,27 +12,24 @@ public record CrewReqDto(
         String name,
         Category category,
         String description,
-        String descriptionImage,
         Integer minMembers,
         Integer maxMembers,
         Integer minAge,
         Integer maxAge,
         Gender genderRestriction,
-        String bannerImage,
         List<RegionDto> regions
 ){
-    public Crew toEntity() {
+    public Crew toEntity(String bannerImageUrl) {
         return Crew.builder()
                 .name(name)
                 .category(category)
                 .description(description)
-                .descriptionImage(descriptionImage)
                 .minMembers(minMembers)
                 .maxMembers(maxMembers)
                 .minAge(minAge)
                 .maxAge(maxAge)
                 .genderRestriction(genderRestriction)
-                .bannerImage(bannerImage)
+                .bannerImage(bannerImageUrl)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

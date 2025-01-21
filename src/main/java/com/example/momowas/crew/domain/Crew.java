@@ -36,8 +36,6 @@ public class Crew {
 
     private String description;
 
-    private String descriptionImage;
-
     private Integer minMembers;
 
     private Integer maxMembers;
@@ -70,7 +68,6 @@ public class Crew {
     private Crew(String name,
                  Category category,
                  String description,
-                 String descriptionImage,
                  Integer minMembers,
                  Integer maxMembers,
                  Integer minAge,
@@ -88,7 +85,6 @@ public class Crew {
         this.name = name;
         this.category = Objects.requireNonNull(category, "category는 null이 될 수 없습니다.");
         this.description = description;
-        this.descriptionImage = descriptionImage;
         this.minMembers = Objects.requireNonNull(minMembers, "minMembers는 null이 될 수 없습니다.");
         this.maxMembers = Objects.requireNonNull(maxMembers, "maxMembers는 null이 될 수 없습니다.");
         this.minAge = minAge;
@@ -102,7 +98,6 @@ public class Crew {
     public void update(String name,
                        Category category,
                        String description,
-                       String descriptionImage,
                        Integer minMembers,
                        Integer maxMembers,
                        Integer minAge,
@@ -119,7 +114,6 @@ public class Crew {
         this.name = name;
         this.category = Objects.requireNonNull(category, "category는 null이 될 수 없습니다.");
         this.description = description;
-        this.descriptionImage = descriptionImage;
         this.minMembers = Objects.requireNonNull(minMembers, "minMembers는 null이 될 수 없습니다.");
         this.maxMembers = Objects.requireNonNull(maxMembers, "maxMembers는 null이 될 수 없습니다.");
         this.minAge = minAge;
