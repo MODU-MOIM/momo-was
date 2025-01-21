@@ -37,11 +37,10 @@ public class CrewService {
 
     /* 크루 생성 */
     @Transactional
-    public Long createCrew(CrewReqDto crewReqDto, Long userId) {
-
+    public Long createCrew(CrewReqDto crewReqDto, String bannerImageUrl, Long userId) {
         validateCrewName(crewReqDto.name());
 
-        Crew crew = crewRepository.save(crewReqDto.toEntity()); //크루 저장
+        Crew crew = crewRepository.save(crewReqDto.toEntity(bannerImageUrl)); //크루 저장
         crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
 
         User user = userService.findUserById(userId);
@@ -77,7 +76,7 @@ public class CrewService {
 
     /* 특정 크루 수정 */
     @Transactional
-    public void updateCrew(CrewReqDto crewReqDto, Long crewId) {
+    public void updateCrew(CrewReqDto crewReqDto, Long crewId, String bannerImageUrl) {
         Crew crew = findCrewById(crewId);
 
         validateCrewName(crewReqDto.name());
@@ -90,13 +89,12 @@ public class CrewService {
                 crewReqDto.name() == null? crew.getName():crewReqDto.name(),
                 crewReqDto.category()==null? crew.getCategory() : crewReqDto.category(),
                 crewReqDto.description()==null ? crew.getDescription() : crewReqDto.description(),
-                crewReqDto.descriptionImage()==null ? crew.getDescriptionImage() : crewReqDto.descriptionImage(),
                 crewReqDto.minMembers()==null ? crew.getMinMembers() : crewReqDto.minMembers(),
                 crewReqDto.maxMembers()==null ? crew.getMaxMembers() : crewReqDto.maxMembers(),
                 crewReqDto.minAge() == null ? crew.getMinAge() : crewReqDto.minAge(),
                 crewReqDto.maxAge()==null ? crew.getMaxAge() : crewReqDto.maxAge(),
                 crewReqDto.genderRestriction()==null ? crew.getGenderRestriction() : crewReqDto.genderRestriction(),
-                crewReqDto.bannerImage()==null ? crew.getBannerImage() : crewReqDto.bannerImage()
+                bannerImageUrl==null ? crew.getBannerImage() : bannerImageUrl
         );
     }
 

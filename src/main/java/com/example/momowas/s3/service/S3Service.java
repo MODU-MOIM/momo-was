@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,6 +36,17 @@ public class S3Service {
         // S3에 파일 업로드
         amazonS3.putObject(putObjectRequest);
         return getPublicUrl(fileName);
+    }
+
+    /* 다중 이미지 업로드 */
+    public List<String> uploadImages(List<MultipartFile> images, String dirName) throws IOException {
+        List<String> imageUrls=new ArrayList<>();
+
+        for(MultipartFile image:images){
+            String imageUrl = uploadImage(image, dirName);
+            imageUrls.add(imageUrl);
+        }
+        return imageUrls;
     }
 
     private String getPublicUrl(String fileName) {
