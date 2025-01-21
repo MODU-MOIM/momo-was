@@ -76,7 +76,7 @@ public class CrewService {
 
     /* 특정 크루 수정 */
     @Transactional
-    public void updateCrew(CrewReqDto crewReqDto, Long crewId) {
+    public void updateCrew(CrewReqDto crewReqDto, Long crewId, String bannerImageUrl) {
         Crew crew = findCrewById(crewId);
 
         validateCrewName(crewReqDto.name());
@@ -94,7 +94,7 @@ public class CrewService {
                 crewReqDto.minAge() == null ? crew.getMinAge() : crewReqDto.minAge(),
                 crewReqDto.maxAge()==null ? crew.getMaxAge() : crewReqDto.maxAge(),
                 crewReqDto.genderRestriction()==null ? crew.getGenderRestriction() : crewReqDto.genderRestriction(),
-                crewReqDto.description()==null ? crew.getBannerImage() : crewReqDto.description() //수정 필요
+                bannerImageUrl==null ? crew.getBannerImage() : bannerImageUrl
         );
     }
 

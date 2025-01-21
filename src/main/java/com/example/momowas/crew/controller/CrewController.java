@@ -58,8 +58,12 @@ public class CrewController {
     /* 특정 크루 수정 */
     @PutMapping("/{crewId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
-    public CommonResponse<String> updateCrew (@RequestBody CrewReqDto crewReqDto, @PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
-        crewService.updateCrew(crewReqDto, crewId);
+    public CommonResponse<String> updateCrew (@RequestPart CrewReqDto crewReqDto,
+                                              @RequestPart(required = false, value = "bannerImage") MultipartFile image,
+                                              @PathVariable Long crewId,
+                                              @AuthenticationPrincipal Long userId) throws IOException {
+        String bannerImageUrl= image!=null ? s3Service.uploadImage(image, "crew") : null;
+        crewService.updateCrew(crewReqDto, crewId, bannerImageUrl);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
@@ -70,10 +74,5 @@ public class CrewController {
         crewService.deleteCrew(crewId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
-
-
-
-
-
 
 }
