@@ -78,7 +78,7 @@ public class NoticeService {
     @Transactional()
     public void updateNotice(NoticeReqDto noticeReqDto, Long crewId, Long noticeId, Long userId) {
         Notice notice = findNoticeById(noticeId);
-        notice.update(noticeReqDto.content());
+        notice.updateContent(noticeReqDto.content());
 
         updateNoticeVote(noticeReqDto, notice);
     }
@@ -91,7 +91,7 @@ public class NoticeService {
                 voteService.updateVote(notice.getVote(), voteReqDto);
             }else{ //기존에 투표 존재x -> 생성
                 Vote vote = voteService.createVote(voteReqDto);
-                notice.update(vote);
+                notice.updateVote(vote);
             }
         }else{ //투표 활성화 x
             if (notice.getVote() != null) { //기존에 투표 존재 -> 삭제
