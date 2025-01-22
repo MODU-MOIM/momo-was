@@ -67,8 +67,9 @@ public class AuthService {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
+        cookie.setAttribute("SameSite", "None");
         cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
-
+        response.addCookie(cookie);
     }
 
 }
