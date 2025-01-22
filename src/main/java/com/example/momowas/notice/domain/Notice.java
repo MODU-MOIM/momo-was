@@ -49,7 +49,7 @@ public class Notice {
     private Vote vote;
 
     @Builder
-    private Notice(String content, LocalDateTime createdAt, Crew crew, CrewMember crewMember, Vote vote) {
+    public Notice(String content, LocalDateTime createdAt, Crew crew, CrewMember crewMember, Vote vote) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
         }
@@ -59,14 +59,14 @@ public class Notice {
         this.vote= vote;
     }
 
-    public void updateContent(String content) {
+    public void update(String content) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
         }
         this.content=content;
     }
 
-    public void updateVote(Vote vote) {
+    public void update(Vote vote) {
         this.vote=Objects.requireNonNull(vote,"vote는 null이 될 수 없습니다.");
     }
 
