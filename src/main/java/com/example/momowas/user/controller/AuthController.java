@@ -2,6 +2,7 @@ package com.example.momowas.user.controller;
 
 
 import com.example.momowas.jwt.dto.ReIssueTokenDto;
+import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
@@ -11,6 +12,7 @@ import com.example.momowas.user.dto.*;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
 import com.example.momowas.user.util.SmsUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -26,6 +28,7 @@ public class AuthController {
     private final UserService userService;
     private final RefreshTokenService tokenService;
     private final SmsUtil smsUtil;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/sign-up")
     public UserDto signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
@@ -70,9 +73,9 @@ public class AuthController {
     }
 
     @PostMapping("/sign-out")
-    public  CommonResponse<String> logout(@RequestHeader("Authorization") final String accessToken) {
+    public  CommonResponse<String> logout(HttpServletRequest request) {
         // 엑세스 토큰으로 현재 Redis 정보 삭제
-        tokenService.removeRefreshToken(accessToken);
+        tokenService.removeRefreshToken(jwtUtil.resolveToken(request).substring(7));
         return CommonResponse.of(ExceptionCode.SUCCESS, "로그아웃 성공");
     }
 
