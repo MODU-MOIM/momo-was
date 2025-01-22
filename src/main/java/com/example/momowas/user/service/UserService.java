@@ -42,6 +42,7 @@ public class UserService {
     }
 
     //프로필 업로드
+    @Transactional
     public String updateProfileImage(Long userId, MultipartFile file) throws IOException {
         User user = findUserById(userId);
         String fileUrl = s3Service.uploadImage(file, "profile");
