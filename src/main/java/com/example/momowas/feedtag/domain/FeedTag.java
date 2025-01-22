@@ -30,4 +30,11 @@ public class FeedTag {
         this.tag= Objects.requireNonNull(tag,"tag는 null이거나 빈 문자열이 될 수 없습니다.");
     }
 
+    public static FeedTag of(Feed feed, Tag tag) {
+        return FeedTag.builder()
+                .feed(feed)
+                .tag(tag)
+                .build();
+    }
+
 }

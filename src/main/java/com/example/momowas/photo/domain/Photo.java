@@ -43,4 +43,14 @@ public class Photo {
         this.sequence= Objects.requireNonNull(sequence,"sequence는 null이거나 빈 문자열이 될 수 없습니다.");
         this.feed= Objects.requireNonNull(feed,"feed는 null이거나 빈 문자열이 될 수 없습니다.");
     }
+
+    public static Photo of(String url,
+                         Integer sequence,
+                         Feed feed) {
+        return Photo.builder()
+                .url(url)
+                .sequence(sequence)
+                .feed(feed)
+                .build();
+    }
 }

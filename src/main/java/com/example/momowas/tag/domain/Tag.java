@@ -18,17 +18,23 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;
+    private String name;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     @Builder
-    private Tag(String content) {
-        if (!StringUtils.hasText(content)) {
-            throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
+    private Tag(String name) {
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("namet은 null이거나 빈 문자열이 될 수 없습니다.");
         }
-        this.content=content;
+        this.name=name;
+    }
+
+    public static Tag of(String name) {
+        return Tag.builder()
+                .name(name)
+                .build();
     }
 }
 
