@@ -33,8 +33,8 @@ public class NoticeController {
         if (noticeReqDto.vote().isEnabled()) {
             vote = voteService.createVote(noticeReqDto.vote());
         }
-        Notice notice = noticeService.createNotice(noticeReqDto, crewId, userId, vote);
-        return Map.of("noticeId", notice.getId());
+        Long noticeId = noticeService.createNotice(noticeReqDto, crewId, userId, vote);
+        return Map.of("noticeId", noticeId);
     }
 
     /* 전체 공지 조회 */
