@@ -1,5 +1,6 @@
 package com.example.momowas.feed.controller;
 
+import com.example.momowas.feed.dto.FeedListResDto;
 import com.example.momowas.feed.dto.FeedReqDto;
 import com.example.momowas.feed.service.FeedService;
 import com.example.momowas.feedtag.repository.FeedTagRepository;
@@ -32,8 +33,15 @@ public class FeedController {
                                         @AuthenticationPrincipal Long userId) throws IOException {
         Long feedId = feedService.createFeed(feedReqDto, crewId, userId); //피드 저장
         photoService.createPhoto(files, feedId); //사진 저장
-        feedTagService.
-                createFeedTag(feedReqDto.tagNames(), feedId); //태그 저장
+        feedTagService.createFeedTag(feedReqDto.tagNames(), feedId); //태그 저장
         return Map.of("feedId", feedId);
+    }
+
+    /* 전체 피드 조회 */
+    @GetMapping("")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public List<FeedListResDto> getFeedList(@PathVariable Long crewId,
+                                            @AuthenticationPrincipal Long userId) {
+        return feedService.getFeedList(crewId, userId);
     }
 }

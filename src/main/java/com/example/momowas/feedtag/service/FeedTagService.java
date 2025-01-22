@@ -19,6 +19,7 @@ public class FeedTagService {
     private final FeedService feedService;
     private final TagService tagService;
 
+    /* 피드 태그 생성 */
     @Transactional
     public void createFeedTag(List<String> tagNames, Long feedId) {
         Feed feed = feedService.findFeedById(feedId);

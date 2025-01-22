@@ -4,6 +4,8 @@ import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.feed.service.FeedService;
 import com.example.momowas.photo.domain.Photo;
 import com.example.momowas.photo.repository.PhotoRepository;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

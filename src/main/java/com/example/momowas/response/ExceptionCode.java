@@ -81,8 +81,8 @@ public enum ExceptionCode {
     ALREADY_PARTICIPATE_VOTE(409, "N004", "이미 참여한 투표입니다."),
 
     //피드 관련 예외
-    NOT_FOUND_FEED(404, "F001","해당 피드가 존재하지 않습니다.");
-
+    NOT_FOUND_FEED(404, "F001","해당 피드가 존재하지 않습니다."),
+    NOT_FOUND_FEED_PHOTO(404, "F001","해당 피드 사진이 존재하지 않습니다.");
 
     private final int status;
     private final String code;
