@@ -108,6 +108,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
+        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
     private Gender enumGender(String gender){
