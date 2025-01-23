@@ -26,6 +26,6 @@ public class FeedTagService {
 
         tagNames.stream()
                 .map(tagService::findOrCreateTag)
-                .forEach(tag-> feedTagRepository.save(FeedTag.of(feed, tag)));
+                .forEach(tag -> feedTagRepository.save(FeedTag.of(feed, tag)));
     }
 }

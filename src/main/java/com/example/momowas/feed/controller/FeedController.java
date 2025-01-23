@@ -3,9 +3,10 @@ package com.example.momowas.feed.controller;
 import com.example.momowas.feed.dto.FeedListResDto;
 import com.example.momowas.feed.dto.FeedReqDto;
 import com.example.momowas.feed.service.FeedService;
-import com.example.momowas.feedtag.repository.FeedTagRepository;
 import com.example.momowas.feedtag.service.FeedTagService;
 import com.example.momowas.photo.service.PhotoService;
+import com.example.momowas.response.CommonResponse;
+import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,5 +44,15 @@ public class FeedController {
     public List<FeedListResDto> getFeedList(@PathVariable Long crewId,
                                             @AuthenticationPrincipal Long userId) {
         return feedService.getFeedList(crewId, userId);
+    }
+
+    /* 특정 피드 삭제 */
+    @DeleteMapping("/{feedId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> deleteFeed(@PathVariable Long feedId,
+                                             @PathVariable Long crewId,
+                                             @AuthenticationPrincipal Long userId) {
+        feedService.deleteFeed(feedId, crewId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 }

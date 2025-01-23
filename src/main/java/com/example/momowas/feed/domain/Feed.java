@@ -67,4 +67,9 @@ public class Feed {
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이거나 빈 문자열이 될 수 없습니다.");
     }
 
+    /* 작성자인지 검증 */
+    public boolean isWriter(CrewMember crewMember) {
+        return this.crewMember.getId()==crewMember.getId();
+    }
+
 }

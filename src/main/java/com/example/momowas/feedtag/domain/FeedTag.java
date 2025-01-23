@@ -5,12 +5,14 @@ import com.example.momowas.tag.domain.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class FeedTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
