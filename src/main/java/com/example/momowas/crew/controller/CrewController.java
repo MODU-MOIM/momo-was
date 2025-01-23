@@ -81,13 +81,16 @@ public class CrewController {
 
     @GetMapping("/type")
     public List<CrewDetailResDto> searchCrewByName(@RequestParam(value = "name", required = false) String name,
-                                             @RequestParam(value = "category", required = false) Category category) {
+                                                   @RequestParam(value = "category", required = false) Category category,
+                                                   @RequestParam(value = "age-group", required = false) Integer ageGroup) {
         Specification<Crew> spec = (root, query, criteriaBuilder) -> null;
 
         if (name != null)
             spec = spec.and(CrewSpecification.equalCrewName(name));
         if (category != null)
             spec = spec.and(CrewSpecification.equalCategory(category));
+        if (ageGroup != null)
+            spec = spec.and(CrewSpecification.equalAgeGroup(ageGroup));
 
         return crewService.search(spec);
     }
