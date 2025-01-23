@@ -3,8 +3,15 @@ package com.example.momowas.crew.dto;
 
 import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crewregion.domain.CrewRegion;
+import com.example.momowas.region.domain.Region;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.xml.stream.Location;
 
 public class CrewSpecification {
 
@@ -36,5 +43,20 @@ public class CrewSpecification {
             );
         };
     }
+
+    public static Specification<Crew> hasRegion(String depth1) {
+        return (root, query, criteriaBuilder) -> {
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<CrewRegion> crewRegion = subquery.from(CrewRegion.class);
+
+            Join<CrewRegion, Region> regionJoin = crewRegion.join("region");
+
+            subquery.select(crewRegion.get("crew").get("id"))
+                    .where(criteriaBuilder.equal(regionJoin.get("regionDepth1"), depth1));
+
+            return root.get("id").in(subquery);
+        };
+    }
+
 
 }

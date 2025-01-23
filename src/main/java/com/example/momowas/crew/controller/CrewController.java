@@ -7,6 +7,7 @@ import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.dto.CrewSpecification;
 import com.example.momowas.crew.service.CrewService;
+import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
@@ -82,7 +83,8 @@ public class CrewController {
     @GetMapping("/type")
     public List<CrewDetailResDto> searchCrewByName(@RequestParam(value = "name", required = false) String name,
                                                    @RequestParam(value = "category", required = false) Category category,
-                                                   @RequestParam(value = "age-group", required = false) Integer ageGroup) {
+                                                   @RequestParam(value = "age-group", required = false) Integer ageGroup,
+                                                   @RequestParam(value = "region", required = false) String depth1) {
         Specification<Crew> spec = (root, query, criteriaBuilder) -> null;
 
         if (name != null)
@@ -91,6 +93,8 @@ public class CrewController {
             spec = spec.and(CrewSpecification.equalCategory(category));
         if (ageGroup != null)
             spec = spec.and(CrewSpecification.equalAgeGroup(ageGroup));
+        if (depth1 != null)
+            spec = spec.and(CrewSpecification.hasRegion(depth1));
 
         return crewService.search(spec);
     }
