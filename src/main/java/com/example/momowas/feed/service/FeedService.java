@@ -11,12 +11,13 @@ import com.example.momowas.feed.dto.FeedReqDto;
 import com.example.momowas.feed.repository.FeedRepository;
 import com.example.momowas.feedtag.domain.FeedTag;
 import com.example.momowas.feedtag.service.FeedTagService;
+import com.example.momowas.like.repository.LikeRepository;
+import com.example.momowas.like.service.FeedLikeService;
 import com.example.momowas.photo.service.PhotoService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.tag.domain.Tag;
 import com.example.momowas.user.domain.User;
-import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +33,9 @@ public class FeedService {
     private final FeedRepository feedRepository;
     private final CrewService crewService;
     private final CrewMemberService crewMemberService;
-    private final UserService userService;
     private final PhotoService photoService;
     private final FeedTagService feedTagService;
+    private final LikeRepository likeRepository; //순환참조 때문에 일단 이렇게 ㅠㅠ 추후 수정 필요
 
     /* 피드 id로 피드 조회 */
     @Transactional(readOnly = true)
@@ -59,20 +60,26 @@ public class FeedService {
     @Transactional(readOnly = true)
     public List<FeedListResDto> getFeedList(Long crewId, Long userId) {
         Crew crew = crewService.findCrewById(crewId);
-        User user = userService.findUserById(userId);
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
         return crew.getFeeds()
                 .stream()
-                .map(feed -> FeedListResDto.of(feed, user))
+                .map(feed -> FeedListResDto.of(
+                        feed,
+                        feed.getCrewMember().getUser(),
+                        likeRepository.existsByFeedAndCrewMember(feed, crewMember)))
                 .collect(Collectors.toList());
     }
 
     /* 특정 피드 조회 */
     @Transactional(readOnly = true)
-    public FeedDetailResDto getFeedDetail(Long feedId) {
+    public FeedDetailResDto getFeedDetail(Long feedId, Long crewId, Long userId) {
         Feed feed = findFeedById(feedId);
         User writer = feed.getCrewMember().getUser();
-        return FeedDetailResDto.of(feed, writer);
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
+
+        boolean isLiked = likeRepository.existsByFeedAndCrewMember(feed, crewMember);
+        return FeedDetailResDto.of(feed, writer, isLiked);
     }
 
     /* 피드 수정 */

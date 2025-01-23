@@ -47,7 +47,7 @@ public class FeedController {
     public FeedDetailResDto getFeedDetail(@PathVariable Long crewId,
                                           @PathVariable Long feedId,
                                           @AuthenticationPrincipal Long userId) {
-        return feedService.getFeedDetail(feedId);
+        return feedService.getFeedDetail(feedId, crewId, userId);
     }
 
     /* 피드 수정 */

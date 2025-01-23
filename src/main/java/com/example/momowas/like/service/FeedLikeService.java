@@ -1,5 +1,6 @@
 package com.example.momowas.like.service;
 
+import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.feed.domain.Feed;
@@ -19,12 +20,18 @@ public class FeedLikeService {
     private final CrewMemberService crewMemberService;
     private final FeedService feedService;
 
+    /* 사용자의 좋아요 여부 확인 */
+    @Transactional
+    public boolean hasLikedFeed(Feed feed, CrewMember crewMember) {
+        return likeRepository.existsByFeedAndCrewMember(feed, crewMember);
+    }
+
     /* 피드 좋아요 */
     @Transactional
     public void likeFeed(Long feedId, Long crewId, Long userId) {
         Feed feed = feedService.findFeedById(feedId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        if (likeRepository.existsByFeedAndCrewMember(feed, crewMember)) {
+        if (hasLikedFeed(feed, crewMember)) {
             throw new BusinessException(ExceptionCode.ALREADY_LIKE_FEED);
         }
         likeRepository.save(Like.of(feed, crewMember));

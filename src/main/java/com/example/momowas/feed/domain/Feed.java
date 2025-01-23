@@ -4,6 +4,7 @@ import com.example.momowas.comment.domain.Comment;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.feedtag.domain.FeedTag;
+import com.example.momowas.like.domain.Like;
 import com.example.momowas.photo.domain.Photo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -56,6 +57,9 @@ public class Feed {
 
     @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
     @Builder
     private Feed(String content,

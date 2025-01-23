@@ -15,9 +15,10 @@ public record FeedDetailResDto(Long feedId,
                                LocalDateTime createdAt,
                                List<String> tags,
                                List<PhotoResDto> photos,
-                               List<FeedCommentResDto> comments
-                               ) {
-    public static FeedDetailResDto of(Feed feed, User writer) {
+                               List<FeedCommentResDto> comments,
+                               int likeCount,
+                               boolean isLiked) {
+    public static FeedDetailResDto of(Feed feed, User writer, boolean isLiked) {
         return new FeedDetailResDto(
                 feed.getId(),
                 writer.getNickname(),
@@ -32,7 +33,9 @@ public record FeedDetailResDto(Long feedId,
                 feed.getComments().stream()
                         .map((comment ->
                         FeedCommentResDto.of(comment, comment.getCrewMember().getUser())))
-                        .toList()
+                        .toList(),
+                feed.getLikes().size(),
+                isLiked
         );
     }
 }

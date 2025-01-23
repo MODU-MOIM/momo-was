@@ -10,15 +10,19 @@ public record FeedListResDto(Long feedId,
                              String profileImage,
                              LocalDateTime createdAt,
                              String thumbnailImage,
-                             String content) { //좋아요 기능 구현 후 사용자가 좋아요 눌렀는지 여부도 필요
-    public static FeedListResDto of(Feed feed, User user) {
+                             String content,
+                             int likeCount,
+                             boolean isLiked) {
+    public static FeedListResDto of(Feed feed, User user, boolean isLiked) {
         return new FeedListResDto(
                 feed.getId(),
                 user.getNickname(),
                 user.getProfileImage(),
                 feed.getCreatedAt(),
                 feed.getPhotos().get(0).getUrl(),
-                feed.getContent()
+                feed.getContent(),
+                feed.getLikes().size(),
+                isLiked
         );
     }
 }
