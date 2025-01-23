@@ -1,5 +1,6 @@
 package com.example.momowas.feed.domain;
 
+import com.example.momowas.comment.domain.Comment;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.feedtag.domain.FeedTag;
@@ -9,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -53,6 +53,9 @@ public class Feed {
 
     @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<FeedTag> feedTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     private Feed(String content,

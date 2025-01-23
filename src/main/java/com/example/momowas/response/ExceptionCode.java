@@ -82,7 +82,10 @@ public enum ExceptionCode {
 
     //피드 관련 예외
     NOT_FOUND_FEED(404, "F001","해당 피드가 존재하지 않습니다."),
-    NOT_FOUND_FEED_PHOTO(404, "F001","해당 피드 사진이 존재하지 않습니다.");
+    NOT_FOUND_FEED_PHOTO(404, "F001","해당 피드 사진이 존재하지 않습니다."),
+
+    //댓글 관련 예외
+    NOT_FOUNT_COMMENT(404, "CO001","해당 댓글이 존재하지 않습니다.");
 
     private final int status;
     private final String code;
