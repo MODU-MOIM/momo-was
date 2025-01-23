@@ -39,7 +39,10 @@ public class PhotoService {
     /* 피드 사진 수정 */
     @Transactional
     public void updatePhoto(List<MultipartFile> files, Feed feed) throws IOException {
-        photoRepository.deleteByFeedId(feed.getId()); //기존 사진 삭제
+        photoRepository.deleteByFeed(feed); //기존 사진 삭제
+        if (files.isEmpty()) {
+            return;
+        }
         createPhoto(files, feed); //새로운 사진으로 저장
     }
 }
