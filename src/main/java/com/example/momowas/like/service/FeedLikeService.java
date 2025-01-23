@@ -29,4 +29,14 @@ public class FeedLikeService {
         }
         likeRepository.save(Like.of(feed, crewMember));
     }
+
+    /* 피드 좋아요 취소 */
+    @Transactional
+    public void unlikeFeed(Long feedId, Long crewId, Long userId) {
+        Feed feed = feedService.findFeedById(feedId);
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
+        Like like = likeRepository.findByFeedAndCrewMember(feed, crewMember)
+                .orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_FEED_LIKE));
+        likeRepository.delete(like);
+    }
 }
