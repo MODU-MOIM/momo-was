@@ -3,8 +3,6 @@ package com.example.momowas.feed.controller;
 import com.example.momowas.feed.dto.FeedListResDto;
 import com.example.momowas.feed.dto.FeedReqDto;
 import com.example.momowas.feed.service.FeedService;
-import com.example.momowas.feedtag.service.FeedTagService;
-import com.example.momowas.photo.service.PhotoService;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +20,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FeedController {
     private final FeedService feedService;
-    private final PhotoService photoService;
-    private final FeedTagService feedTagService;
 
     /* 피드 생성 */
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public Map<String, Object> createFeed(@RequestPart FeedReqDto feedReqDto,
-                                        @RequestPart(required = false, value = "photos") List<MultipartFile> files,
-                                        @PathVariable Long crewId,
-                                        @AuthenticationPrincipal Long userId) throws IOException {
-        Long feedId = feedService.createFeed(feedReqDto, crewId, userId); //피드 저장
-        photoService.createPhoto(files, feedId); //사진 저장
-        feedTagService.createFeedTag(feedReqDto.tagNames(), feedId); //태그 저장
+                                          @RequestPart(required = false, value = "photos") List<MultipartFile> files,
+                                          @PathVariable Long crewId,
+                                          @AuthenticationPrincipal Long userId) throws IOException {
+        Long feedId = feedService.createFeed(feedReqDto, files, crewId, userId); //피드 저장
         return Map.of("feedId", feedId);
     }
 
@@ -46,7 +40,19 @@ public class FeedController {
         return feedService.getFeedList(crewId, userId);
     }
 
-    /* 특정 피드 삭제 */
+    /* 피드 수정 */
+    @PutMapping("/{feedId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> updateFeed(@RequestPart FeedReqDto feedReqDto,
+                                             @RequestPart(required = false, value = "photos") List<MultipartFile> files,
+                                             @PathVariable Long feedId,
+                                             @PathVariable Long crewId,
+                                             @AuthenticationPrincipal Long userId) throws IOException {
+        feedService.updateFeed(feedReqDto, files, feedId, crewId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
+    /* 피드 삭제 */
     @DeleteMapping("/{feedId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public CommonResponse<String> deleteFeed(@PathVariable Long feedId,

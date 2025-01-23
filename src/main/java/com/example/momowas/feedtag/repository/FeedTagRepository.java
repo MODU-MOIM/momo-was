@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FeedTagRepository extends JpaRepository<FeedTag,Long> {
     boolean existsByTagId(Long tagId);
+    void deleteByFeedIdAndTagId(Long feedId, Long tagId);
 }

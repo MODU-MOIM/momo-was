@@ -8,4 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
+    void deleteByFeedId(Long feedId);
 }

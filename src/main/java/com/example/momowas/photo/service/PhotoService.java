@@ -8,7 +8,9 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -21,11 +23,10 @@ import java.util.stream.Collectors;
 public class PhotoService {
     private final PhotoRepository photoRepository;
     private final S3Service s3Service;
-    private final FeedService feedService;
 
     /* 피드 사진 생성 */
-    public void createPhoto(List<MultipartFile> files, Long feedId) throws IOException {
-        Feed feed = feedService.findFeedById(feedId);
+    @Transactional
+    public void createPhoto(List<MultipartFile> files, Feed feed) throws IOException {
         AtomicInteger sequence = new AtomicInteger(0);
 
         List<Photo> photos = s3Service.uploadImages(files, "feed").stream()
@@ -33,5 +34,12 @@ public class PhotoService {
                 .collect(Collectors.toList());
 
         photoRepository.saveAll(photos);
+    }
+
+    /* 피드 사진 수정 */
+    @Transactional
+    public void updatePhoto(List<MultipartFile> files, Feed feed) throws IOException {
+        photoRepository.deleteByFeedId(feed.getId()); //기존 사진 삭제
+        createPhoto(files, feed); //새로운 사진으로 저장
     }
 }

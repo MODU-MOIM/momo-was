@@ -72,4 +72,9 @@ public class Feed {
         return this.crewMember.getId()==crewMember.getId();
     }
 
+    /* 내용 수정 */
+    public void updateContent(String content) {
+        this.content=content;
+    }
+
 }
