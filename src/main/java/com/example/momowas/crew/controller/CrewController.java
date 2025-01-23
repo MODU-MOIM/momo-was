@@ -75,4 +75,9 @@ public class CrewController {
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
+    @GetMapping("/type")
+    public CrewDetailResDto searchCrewByName(@RequestParam String name) {
+        return crewService.getByName(name);
+    }
+
 }
