@@ -1,15 +1,18 @@
 package com.example.momowas.feed.service;
 
+import com.example.momowas.comment.dto.FeedCommentResDto;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.feed.domain.Feed;
+import com.example.momowas.feed.dto.FeedDetailResDto;
 import com.example.momowas.feed.dto.FeedListResDto;
 import com.example.momowas.feed.dto.FeedReqDto;
 import com.example.momowas.feed.repository.FeedRepository;
 import com.example.momowas.feedtag.domain.FeedTag;
 import com.example.momowas.feedtag.service.FeedTagService;
+import com.example.momowas.photo.dto.PhotoResDto;
 import com.example.momowas.photo.service.PhotoService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -65,6 +68,14 @@ public class FeedService {
                 .stream()
                 .map(feed -> FeedListResDto.of(feed, user))
                 .collect(Collectors.toList());
+    }
+
+    /* 특정 피드 조회 */
+    @Transactional(readOnly = true)
+    public FeedDetailResDto getFeedDetail(Long feedId) {
+        Feed feed = findFeedById(feedId);
+        User writer = feed.getCrewMember().getUser();
+        return FeedDetailResDto.of(feed, writer);
     }
 
     /* 피드 수정 */

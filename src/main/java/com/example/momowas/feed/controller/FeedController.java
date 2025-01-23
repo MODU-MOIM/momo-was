@@ -1,5 +1,6 @@
 package com.example.momowas.feed.controller;
 
+import com.example.momowas.feed.dto.FeedDetailResDto;
 import com.example.momowas.feed.dto.FeedListResDto;
 import com.example.momowas.feed.dto.FeedReqDto;
 import com.example.momowas.feed.service.FeedService;
@@ -38,6 +39,15 @@ public class FeedController {
     public List<FeedListResDto> getFeedList(@PathVariable Long crewId,
                                             @AuthenticationPrincipal Long userId) {
         return feedService.getFeedList(crewId, userId);
+    }
+
+    /* 특정 피드 조회 */
+    @GetMapping("/{feedId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public FeedDetailResDto getFeedDetail(@PathVariable Long crewId,
+                                          @PathVariable Long feedId,
+                                          @AuthenticationPrincipal Long userId) {
+        return feedService.getFeedDetail(feedId);
     }
 
     /* 피드 수정 */

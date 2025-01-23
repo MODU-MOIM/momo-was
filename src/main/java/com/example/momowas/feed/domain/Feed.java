@@ -79,5 +79,4 @@ public class Feed {
     public void updateContent(String content) {
         this.content=content;
     }
-
 }
