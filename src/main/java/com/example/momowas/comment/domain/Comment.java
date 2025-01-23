@@ -41,7 +41,7 @@ public class Comment {
     private CrewMember crewMember;
 
     @Builder
-    public Comment(String content, Feed feed, CrewMember crewMember) {
+    private Comment(String content, Feed feed, CrewMember crewMember) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
         }

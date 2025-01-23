@@ -66,8 +66,8 @@ public class Feed {
             throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
         }
         this.content=content;
-        this.crew= Objects.requireNonNull(crew,"crew는 null이거나 빈 문자열이 될 수 없습니다.");
-        this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이거나 빈 문자열이 될 수 없습니다.");
+        this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
+        this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
     }
 
     /* 작성자인지 검증 */

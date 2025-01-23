@@ -28,8 +28,8 @@ public class FeedTag {
 
     @Builder
     private FeedTag(Feed feed, Tag tag) {
-        this.feed= Objects.requireNonNull(feed,"feed는 null이거나 빈 문자열이 될 수 없습니다.");
-        this.tag= Objects.requireNonNull(tag,"tag는 null이거나 빈 문자열이 될 수 없습니다.");
+        this.feed= Objects.requireNonNull(feed,"feed는 null이 될 수 없습니다.");
+        this.tag= Objects.requireNonNull(tag,"tag는 null이 될 수 없습니다.");
     }
 
     public static FeedTag of(Feed feed, Tag tag) {

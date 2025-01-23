@@ -42,8 +42,8 @@ public class Photo {
             throw new IllegalArgumentException("url은 null이거나 빈 문자열이 될 수 없습니다.");
         }
         this.url=url;
-        this.sequence= Objects.requireNonNull(sequence,"sequence는 null이거나 빈 문자열이 될 수 없습니다.");
-        this.feed= Objects.requireNonNull(feed,"feed는 null이거나 빈 문자열이 될 수 없습니다.");
+        this.sequence= Objects.requireNonNull(sequence,"sequence는 null이 될 수 없습니다.");
+        this.feed= Objects.requireNonNull(feed,"feed는 null이 될 수 없습니다.");
     }
 
     public static Photo of(String url,
