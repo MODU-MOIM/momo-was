@@ -1,5 +1,6 @@
 package com.example.momowas.crew.service;
 
+import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
@@ -14,9 +15,11 @@ import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,12 +110,14 @@ public class CrewService {
         }
     }
 
-    public CrewDetailResDto getByName(String crewName){
-        Optional<Crew> optCrew = crewRepository.findByName(crewName);
-        if(optCrew.isEmpty()){
-            return null;
-        }
-        List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(optCrew.get().getId()); //크루 id로 지역 찾기
-        return CrewDetailResDto.of(optCrew.get(),regionDtos);
+    public List<CrewDetailResDto> search(Specification<Crew> spec){
+        List<Crew> resultCrews = crewRepository.findAll(spec);
+
+        return resultCrews.stream()
+                .map(crew -> {
+                    List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
+                    return CrewDetailResDto.of(crew, regionDtos);
+                })
+                .collect(Collectors.toList());
     }
 }

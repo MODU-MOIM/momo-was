@@ -1,13 +1,17 @@
 package com.example.momowas.crew.controller;
 
+import com.example.momowas.crew.domain.Category;
+import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.dto.CrewReqDto;
+import com.example.momowas.crew.dto.CrewSpecification;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -76,8 +80,16 @@ public class CrewController {
     }
 
     @GetMapping("/type")
-    public CrewDetailResDto searchCrewByName(@RequestParam String name) {
-        return crewService.getByName(name);
+    public List<CrewDetailResDto> searchCrewByName(@RequestParam(value = "name", required = false) String name,
+                                             @RequestParam(value = "category", required = false) Category category) {
+        Specification<Crew> spec = (root, query, criteriaBuilder) -> null;
+
+        if (name != null)
+            spec = spec.and(CrewSpecification.equalCrewName(name));
+        if (category != null)
+            spec = spec.and(CrewSpecification.equalCategory(category));
+
+        return crewService.search(spec);
     }
 
 }
