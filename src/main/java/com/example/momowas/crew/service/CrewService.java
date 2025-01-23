@@ -1,5 +1,6 @@
 package com.example.momowas.crew.service;
 
+import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
@@ -14,10 +15,13 @@ import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,5 +108,16 @@ public class CrewService {
         if (crewRepository.existsByName(crewName)) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS_CREW);
         }
+    }
+
+    public List<CrewDetailResDto> search(Specification<Crew> spec){
+        List<Crew> resultCrews = crewRepository.findAll(spec);
+
+        return resultCrews.stream()
+                .map(crew -> {
+                    List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
+                    return CrewDetailResDto.of(crew, regionDtos);
+                })
+                .collect(Collectors.toList());
     }
 }

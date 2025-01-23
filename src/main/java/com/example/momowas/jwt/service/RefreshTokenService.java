@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -28,7 +29,9 @@ public class RefreshTokenService {
         refreshTokenRepository.save(new RefreshToken(userId, refreshToken, accessToken, REFRESH_TOKEN_EXPIRATION_TIME));
     }
 
+    @Transactional
     public void removeRefreshToken(String accessToken) {
+        log.info(accessToken);
         RefreshToken token = refreshTokenRepository.findByAccessToken(accessToken)
                 .orElseThrow(() -> new BusinessException(ExceptionCode.INVALID_TOKEN));
         refreshTokenRepository.delete(token);
@@ -48,10 +51,11 @@ public class RefreshTokenService {
 
             response.setHeader("Authorization", "Bearer " + newAccessToken);
             Cookie cookie = new Cookie("refreshToken", refreshToken);
-            cookie.setHttpOnly(true);
+            cookie.setHttpOnly(false);
             cookie.setSecure(true);
             cookie.setPath("/");
             cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
+            cookie.setAttribute("SameSite", "None");
             response.addCookie(cookie);
         }
     }
