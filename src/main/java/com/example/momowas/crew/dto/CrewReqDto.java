@@ -30,7 +30,6 @@ public record CrewReqDto(
                 .maxAge(maxAge)
                 .genderRestriction(genderRestriction)
                 .bannerImage(bannerImageUrl)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

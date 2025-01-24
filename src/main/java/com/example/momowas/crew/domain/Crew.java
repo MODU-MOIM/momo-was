@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import java.util.Objects;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Crew {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,8 +80,7 @@ public class Crew {
                  Integer minAge,
                  Integer maxAge,
                  Gender genderRestriction,
-                 String bannerImage,
-                 LocalDateTime createdAt
+                 String bannerImage
     ) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("name은 null이거나 빈 문자열이 될 수 없습니다.");
@@ -96,7 +97,6 @@ public class Crew {
         this.maxAge = maxAge;
         this.genderRestriction = genderRestriction;
         this.bannerImage = bannerImage;
-        this.createdAt = Objects.requireNonNull(createdAt, "createdAt는 null이 될 수 없습니다.");
     }
 
 
