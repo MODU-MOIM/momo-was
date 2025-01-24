@@ -42,7 +42,11 @@ public class NoticeService {
 
     /* 공지 생성 */
     @Transactional
-    public Long createNotice(NoticeReqDto noticeReqDto, Long crewId, Long userId, Vote vote) {
+    public Long createNotice(NoticeReqDto noticeReqDto, Long crewId, Long userId) {
+        Vote vote=null;
+        if (noticeReqDto.vote().isEnabled()) {
+            vote = voteService.createVote(noticeReqDto.vote());
+        }
         Crew crew = crewService.findCrewById(crewId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         Notice notice = noticeRepository.save(noticeReqDto.toEntity(crew, crewMember, vote));
