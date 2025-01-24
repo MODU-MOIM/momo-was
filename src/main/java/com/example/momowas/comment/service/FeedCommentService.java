@@ -31,7 +31,7 @@ public class FeedCommentService {
     public Long createFeedComment(FeedCommentReqDto feedCommentReqDto, Long crewId, Long feedId, Long userId) {
         Feed feed = feedService.findFeedById(feedId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        Comment comment = commentRepository.save(feedCommentReqDto.toEntity(feed, crewMember));
+        Comment comment = commentRepository.save(feedCommentReqDto.toEntity(feed, crewMember, null));
         return comment.getId();
     }
 
@@ -49,6 +49,15 @@ public class FeedCommentService {
         Comment comment = findFeedCommentById(commentId);
         validateWriter(crewId, userId, comment);
         commentRepository.delete(comment);
+    }
+
+    /* 피드 대댓글 작성 */
+    @Transactional
+    public Long replyFeedComment(FeedCommentReqDto feedCommentReqDto, Long crewId, Long parentId, Long userId) {
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
+        Comment parent = findFeedCommentById(parentId);
+        Comment comment = commentRepository.save(feedCommentReqDto.toEntity(parent.getFeed(), crewMember, parent));
+        return comment.getId();
     }
 
     /* 사용자가 피드 댓글 작성자인지 검증 */

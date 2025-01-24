@@ -49,4 +49,16 @@ public class FeedCommentController {
         feedCommentService.deleteFeedComment(crewId, commentId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
+
+    /* 피드 대댓글 작성 */
+    @PostMapping("/{parentId}/replies")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public Map<String, Object> replyFeedComment(@RequestBody FeedCommentReqDto feedCommentReqDto,
+                                                   @PathVariable Long crewId,
+                                                   @PathVariable Long parentId,
+                                                   @AuthenticationPrincipal Long userId) {
+        Long replyId = feedCommentService.replyFeedComment(feedCommentReqDto, crewId, parentId, userId);
+        return Map.of("replyId", replyId);
+    }
+
 }
