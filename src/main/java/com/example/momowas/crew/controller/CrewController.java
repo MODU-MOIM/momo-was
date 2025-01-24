@@ -34,17 +34,16 @@ public class CrewController {
     @PostMapping("")
     @PreAuthorize("isAuthenticated()")
     public Map<String,Object> createCrew(@RequestPart CrewReqDto crewReqDto,
-                                         @RequestPart(required = false, value = "bannerImage") MultipartFile image ,
+                                         @RequestPart(required = false, value = "bannerImage") MultipartFile file ,
                                          @AuthenticationPrincipal Long userId) throws IOException {
-        String bannerImageUrl = s3Service.uploadImage(image, "crew");
-        Long crewId = crewService.createCrew(crewReqDto, bannerImageUrl, userId);
+        Long crewId = crewService.createCrew(crewReqDto, file, userId);
         return Map.of("crewId", crewId);
     }
 
     /* 크루 이미지 업로드 */
     @PostMapping("/images")
-    public Map<String, Object> uploadCrewImage(@RequestParam("crewImage") MultipartFile image) throws IOException {
-        String crewImageUrl = s3Service.uploadImage(image, "crew");
+    public Map<String, Object> uploadCrewImage(@RequestParam("crewImage") MultipartFile file) throws IOException {
+        String crewImageUrl = s3Service.uploadImage(file, "crew");
         return Map.of("crewImageUrl", crewImageUrl);
     }
 
@@ -64,11 +63,10 @@ public class CrewController {
     @PutMapping("/{crewId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
     public CommonResponse<String> updateCrew (@RequestPart CrewReqDto crewReqDto,
-                                              @RequestPart(required = false, value = "bannerImage") MultipartFile image,
+                                              @RequestPart(required = false, value = "bannerImage") MultipartFile file,
                                               @PathVariable Long crewId,
                                               @AuthenticationPrincipal Long userId) throws IOException {
-        String bannerImageUrl= image!=null ? s3Service.uploadImage(image, "crew") : null;
-        crewService.updateCrew(crewReqDto, crewId, bannerImageUrl);
+        crewService.updateCrew(crewReqDto, file, crewId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
