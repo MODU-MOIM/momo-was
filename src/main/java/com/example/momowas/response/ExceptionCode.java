@@ -78,7 +78,18 @@ public enum ExceptionCode {
     NOT_FOUND_NOTICE(404, "N001", "해당 공지가 존재하지 않습니다."),
     NOT_FOUND_VOTE(404, "N002", "해당 투표가 존재하지 않습니다."),
     NOT_FOUND_VOTE_PARTICIPANT(404, "N003", "해당 투표자가 존재하지 않습니다."),
-    ALREADY_PARTICIPATE_VOTE(409, "N004", "이미 참여한 투표입니다.");
+    ALREADY_PARTICIPATE_VOTE(409, "N004", "이미 참여한 투표입니다."),
+
+    //피드 관련 예외
+    NOT_FOUND_FEED(404, "F001","해당 피드가 존재하지 않습니다."),
+    NOT_FOUND_FEED_PHOTO(404, "F001","해당 피드 사진이 존재하지 않습니다."),
+
+    //댓글 관련 예외
+    NOT_FOUNT_COMMENT(404, "CO001","해당 댓글이 존재하지 않습니다."),
+
+    //좋아요 관련 예외
+    ALREADY_LIKE_FEED(409, "L001", "이미 좋아요를 누른 게시글입니다."),
+    NOT_FOUND_FEED_LIKE(404,"L002", "좋아요를 누른 적이 없습니다.");
 
 
     private final int status;
