@@ -31,6 +31,7 @@ public record FeedDetailResDto(Long feedId,
                 feed.getPhotos().stream()
                         .map(PhotoResDto::of).toList(),
                 feed.getComments().stream()
+                        .filter((comment -> comment.getParent()==null))
                         .map((comment ->
                         FeedCommentResDto.of(comment, comment.getCrewMember().getUser())))
                         .toList(),
