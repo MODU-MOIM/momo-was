@@ -29,11 +29,7 @@ public class NoticeController {
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
     public Map<String,Object> createNotice(@RequestBody NoticeReqDto noticeReqDto, @PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
-        Vote vote=null;
-        if (noticeReqDto.vote().isEnabled()) {
-            vote = voteService.createVote(noticeReqDto.vote());
-        }
-        Long noticeId = noticeService.createNotice(noticeReqDto, crewId, userId, vote);
+        Long noticeId = noticeService.createNotice(noticeReqDto, crewId, userId);
         return Map.of("noticeId", noticeId);
     }
 
