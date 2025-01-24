@@ -11,6 +11,7 @@ import com.example.momowas.crewregion.service.CrewRegionService;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
+import com.example.momowas.s3.service.S3Service;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,7 @@ public class CrewService {
     private final CrewMemberService crewMemberService;
     private final CrewRegionService crewRegionService;
     private final UserService userService;
+    private final S3Service s3Service;
 
     /* 크루 id로 크루 조회 */
     @Transactional(readOnly = true)
@@ -41,13 +45,14 @@ public class CrewService {
 
     /* 크루 생성 */
     @Transactional
-    public Long createCrew(CrewReqDto crewReqDto, String bannerImageUrl, Long userId) {
+    public Long createCrew(CrewReqDto crewReqDto, MultipartFile file, Long userId) throws IOException {
         validateCrewName(crewReqDto.name());
+
+        User user = userService.findUserById(userId);
+        String bannerImageUrl = s3Service.uploadImage(file, "crew");
 
         Crew crew = crewRepository.save(crewReqDto.toEntity(bannerImageUrl)); //크루 저장
         crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
-
-        User user = userService.findUserById(userId);
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
         return crew.getId();
@@ -80,10 +85,11 @@ public class CrewService {
 
     /* 특정 크루 수정 */
     @Transactional
-    public void updateCrew(CrewReqDto crewReqDto, Long crewId, String bannerImageUrl) {
-        Crew crew = findCrewById(crewId);
-
+    public void updateCrew(CrewReqDto crewReqDto, MultipartFile file, Long crewId) throws IOException {
         validateCrewName(crewReqDto.name());
+
+        Crew crew = findCrewById(crewId);
+        String bannerImageUrl= file!=null ? s3Service.uploadImage(file, "crew") : null;
 
         if (crewReqDto.regions()!=null) {
             crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReqDto.regions(), crew);//크루-지역 수정
