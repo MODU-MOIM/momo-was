@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -40,14 +42,23 @@ public class Comment {
     @JoinColumn(name="crew_member_id")
     private CrewMember crewMember;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    private List<Comment> replies=new ArrayList<>();
+
     @Builder
-    private Comment(String content, Feed feed, CrewMember crewMember) {
+    private Comment(String content, Feed feed, CrewMember crewMember, Comment parent) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
         }
         this.content=content;
-        this.feed= Objects.requireNonNull(feed,"feed는 null이거나 빈 문자열이 될 수 없습니다.");
-        this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이거나 빈 문자열이 될 수 없습니다.");
+        this.feed= Objects.requireNonNull(feed,"feed는 null이 될 수 없습니다.");
+        this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
+        this.parent=parent;
     }
 
     public void updateContent(String content) {
