@@ -1,6 +1,6 @@
 package com.example.momowas.feed.dto;
 
-import com.example.momowas.comment.dto.FeedCommentResDto;
+import com.example.momowas.comment.dto.CommentResDto;
 import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.photo.dto.PhotoResDto;
 import com.example.momowas.user.domain.User;
@@ -15,7 +15,7 @@ public record FeedDetailResDto(Long feedId,
                                LocalDateTime createdAt,
                                List<String> tags,
                                List<PhotoResDto> photos,
-                               List<FeedCommentResDto> comments,
+                               List<CommentResDto> comments,
                                int likeCount,
                                boolean isLiked) {
     public static FeedDetailResDto of(Feed feed, User writer, boolean isLiked) {
@@ -33,7 +33,7 @@ public record FeedDetailResDto(Long feedId,
                 feed.getComments().stream()
                         .filter((comment -> comment.getParent()==null))
                         .map((comment ->
-                        FeedCommentResDto.of(comment, comment.getCrewMember().getUser())))
+                        CommentResDto.of(comment, comment.getCrewMember().getUser())))
                         .toList(),
                 feed.getLikes().size(),
                 isLiked

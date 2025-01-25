@@ -1,8 +1,8 @@
-package com.example.momowas.record.dto;
+package com.example.momowas.archive.dto;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
-import com.example.momowas.record.domain.Archive;
+import com.example.momowas.archive.domain.Archive;
 
 public record ArchiveReqDto(String title,
                             String content,
