@@ -65,6 +65,7 @@ public class ScheduleService {
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, ScheduleReqDto scheduleReqDto){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
+        Crew crew = crewService.findCrewById(scheduleReqDto.getCrewId());
 
         if(schedule.getUserId()!=user.getId()){
             throw new BusinessException(ExceptionCode.USER_MISMATCH);
@@ -75,7 +76,7 @@ public class ScheduleService {
                 scheduleReqDto.getTitle()==null ? schedule.getTitle() : scheduleReqDto.getTitle(),
                 scheduleReqDto.getDescription(),
                 scheduleReqDto.getDetailAddress(),
-                scheduleReqDto.getCrewId(),
+                scheduleReqDto.getCrewId()==null? schedule.getCrewId() : crew.getId(),
                 scheduleReqDto.getIsOnline() == null ? schedule.getIsOnline() : scheduleReqDto.getIsOnline()
         );
 
