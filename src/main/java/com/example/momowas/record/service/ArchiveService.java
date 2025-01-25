@@ -55,6 +55,14 @@ public class ArchiveService {
         archive.update(archiveReqDto.title(), archiveReqDto.content(), archiveReqDto.thumbnailImageUrl());
     }
 
+    /* 기록 삭제 */
+    @Transactional
+    public void deleteArchive(Long crewId, Long archiveId, Long userId) {
+        Archive archive = findArchiveById(archiveId);
+        validateWriter(crewId, userId, archive);
+        archiveRepository.delete(archive);
+    }
+
     /* 사용자가 기록 작성자인지 검증 */
     public void validateWriter(Long crewId, Long userId, Archive archive) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);

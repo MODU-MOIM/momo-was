@@ -58,4 +58,14 @@ public class ArchiveController {
         archiveService.updateArchive(archiveReqDto, crewId, archiveId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
+
+    /* 기록 삭제 */
+    @DeleteMapping("/{archiveId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> deleteArchive(@PathVariable Long crewId,
+                                                @PathVariable Long archiveId,
+                                                @AuthenticationPrincipal Long userId) {
+        archiveService.deleteArchive(crewId, archiveId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
 }
