@@ -49,7 +49,7 @@ public class Notice {
     private Vote vote;
 
     @Builder
-    public Notice(String content, Crew crew, CrewMember crewMember, Vote vote) {
+    private Notice(String content, Crew crew, CrewMember crewMember, Vote vote) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
         }

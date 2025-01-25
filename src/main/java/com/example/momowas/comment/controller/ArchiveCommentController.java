@@ -13,35 +13,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/crews/{crewId}/archives/{archiveId}/comments")
 @RequiredArgsConstructor
-@RequestMapping("/crews/{crewId}/feeds/{feedId}/comments")
-public class FeedCommentController {
-
+public class ArchiveCommentController {
     private final CommentService commentService;
 
-    /* 피드 댓글 작성 */
+    /* 기록 댓글 작성 */
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
-    public Map<String, Object> createFeedComment(@RequestBody CommentReqDto commentReqDto,
-                                                 @PathVariable Long crewId,
-                                                 @PathVariable Long feedId,
-                                                 @AuthenticationPrincipal Long userId) {
-        Long commentId = commentService.createComment(commentReqDto, crewId, feedId, null, userId, BoardType.FEED);
+    public Map<String, Object> createArchiveComment(@RequestBody CommentReqDto commentReqDto,
+                                                    @PathVariable Long crewId,
+                                                    @PathVariable Long archiveId,
+                                                    @AuthenticationPrincipal Long userId) {
+        Long commentId = commentService.createComment(commentReqDto, crewId, archiveId, null, userId, BoardType.ARCHIVE);
         return Map.of("commentId", commentId);
     }
 
-    /* 피드 댓글 수정 */
+    /* 기록 댓글 수정 */
     @PutMapping("/{commentId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
-    public CommonResponse<String> updateFeedComment(@RequestBody CommentReqDto commentReqDto,
-                                                    @PathVariable Long crewId,
-                                                    @PathVariable Long commentId,
-                                                    @AuthenticationPrincipal Long userId) {
+    public CommonResponse<String> updateArchiveComment(@RequestBody CommentReqDto commentReqDto,
+                                                       @PathVariable Long crewId,
+                                                       @PathVariable Long commentId,
+                                                       @AuthenticationPrincipal Long userId) {
         commentService.updateComment(commentReqDto, crewId, commentId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
-    /* 피드 댓글 삭제 */
+    /* 기록 댓글 삭제 */
     @DeleteMapping("/{commentId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public CommonResponse<String> deleteFeedComment(@PathVariable Long crewId,
@@ -51,16 +50,15 @@ public class FeedCommentController {
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
-    /* 피드 대댓글 작성 */
+    /* 기록 대댓글 작성 */
     @PostMapping("/{parentId}/replies")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public Map<String, Object> replyFeedComment(@RequestBody CommentReqDto commentReqDto,
                                                 @PathVariable Long crewId,
-                                                @PathVariable Long feedId,
+                                                @PathVariable Long archiveId,
                                                 @PathVariable Long parentId,
                                                 @AuthenticationPrincipal Long userId) {
-        Long replyId = commentService.createComment(commentReqDto, crewId, feedId, parentId, userId, BoardType.FEED);
+        Long replyId = commentService.createComment(commentReqDto, crewId, archiveId, parentId, userId, BoardType.ARCHIVE);
         return Map.of("replyId", replyId);
     }
-
 }

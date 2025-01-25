@@ -2,6 +2,7 @@ package com.example.momowas.like.domain;
 
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.feed.domain.Feed;
+import com.example.momowas.archive.domain.Archive;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,15 +34,34 @@ public class Like {
     @JoinColumn(name = "feed_id")
     private Feed feed;
 
-    @Builder
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "archive_id")
+    private Archive archive;
+
+    @Builder(builderMethodName = "feedLikeBuilder", builderClassName="feedLikeBuilder")
     private Like(Feed feed, CrewMember crewMember) {
         this.feed= Objects.requireNonNull(feed,"feed는 null이 될 수 없습니다.");
+        this.archive=null;
+        this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
+    }
+
+    @Builder(builderMethodName = "archiveLikeBuilder", builderClassName="archiveLikeBuilder")
+    private Like(Archive archive, CrewMember crewMember) {
+        this.archive= Objects.requireNonNull(archive,"archive는 null이 될 수 없습니다.");
+        this.feed=null;
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
     }
 
     public static Like of(Feed feed, CrewMember crewMember) {
-        return Like.builder()
+        return Like.feedLikeBuilder()
                 .feed(feed)
+                .crewMember(crewMember)
+                .build();
+    }
+
+    public static Like of(Archive archive, CrewMember crewMember) {
+        return Like.archiveLikeBuilder()
+                .archive(archive)
                 .crewMember(crewMember)
                 .build();
     }

@@ -2,6 +2,7 @@ package com.example.momowas.comment.domain;
 
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.feed.domain.Feed;
+import com.example.momowas.archive.domain.Archive;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,6 +40,10 @@ public class Comment {
     private Feed feed;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="archive_id")
+    private Archive archive;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="crew_member_id")
     private CrewMember crewMember;
 
@@ -50,13 +55,26 @@ public class Comment {
     @OrderBy("createdAt ASC")
     private List<Comment> replies=new ArrayList<>();
 
-    @Builder
+    @Builder(builderMethodName = "feedCommentBuilder", builderClassName="feedCommentBuilder")
     private Comment(String content, Feed feed, CrewMember crewMember, Comment parent) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
         }
         this.content=content;
         this.feed= Objects.requireNonNull(feed,"feed는 null이 될 수 없습니다.");
+        this.archive=null;
+        this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
+        this.parent=parent;
+    }
+
+    @Builder(builderMethodName = "archiveCommentBuilder", builderClassName="archiveCommentBuilder")
+    private Comment(String content, Archive archive, CrewMember crewMember, Comment parent) {
+        if (!StringUtils.hasText(content)) {
+            throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.content=content;
+        this.archive= Objects.requireNonNull(archive,"archive는 null이 될 수 없습니다.");
+        this.feed=null;
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
         this.parent=parent;
     }

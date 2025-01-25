@@ -45,6 +45,7 @@ public class CrewController {
 
     /* 크루 이미지 업로드 */
     @PostMapping("/images")
+    @PreAuthorize("isAuthenticated()")
     public Map<String, Object> uploadCrewImage(@RequestParam("crewImage") MultipartFile file) throws IOException {
         String crewImageUrl = s3Service.uploadImage(file, "crew");
         return Map.of("crewImageUrl", crewImageUrl);
