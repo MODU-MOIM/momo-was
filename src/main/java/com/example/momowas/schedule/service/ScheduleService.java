@@ -1,6 +1,8 @@
 package com.example.momowas.schedule.service;
 
 import com.example.momowas.chat.dto.ChatDto;
+import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
@@ -25,18 +27,18 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     private final UserService userService;
     private final ScheduleRepository scheduleRepository;
+    private final CrewService crewService;
 
     public ScheduleDto createSchedule(Long userId, ScheduleReqDto scheduleReqDto){
         User user  = userService.findUserById(userId);
-
-        //크루 검증 추가
+        Crew crew = crewService.findCrewById(scheduleReqDto.getCrewId());
 
         Schedule schedule = Schedule.builder()
                 .scheduleDate(scheduleReqDto.getDate())
                 .scheduleTime(scheduleReqDto.getTime())
                 .title(scheduleReqDto.getTitle())
                 .description(scheduleReqDto.getDescription())
-                .crewId(scheduleReqDto.getCrewId())
+                .crewId(crew.getId())
                 .userId(user.getId())
                 .createdAt(LocalDateTime.now())
                 .modifiedAt(null)
