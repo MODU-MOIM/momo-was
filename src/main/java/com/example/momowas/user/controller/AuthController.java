@@ -11,13 +11,12 @@ import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.*;
 import com.example.momowas.user.service.AuthService;
 import com.example.momowas.user.service.UserService;
-import com.example.momowas.user.util.SmsUtil;
+import com.example.momowas.sms.SmsUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

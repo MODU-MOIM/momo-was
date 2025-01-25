@@ -86,6 +86,9 @@ public class ScheduleService {
 
         return ScheduleDto.fromEntity(schedule);
     }
+    public Schedule getByScheduleId(Long scheduleId){
+        return scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
+    }
 
     public List<ScheduleDto> getByDate(Long userId, LocalDate date){
         User user  = userService.findUserById(userId);
@@ -104,6 +107,10 @@ public class ScheduleService {
         return scheduleRepository.findByUserIdAndScheduleDateBetween(user.getId(), startDate, endDate).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public List<Schedule> getSchedulesByDate(LocalDate date){
+        return scheduleRepository.findByScheduleDate(date);
     }
 
 }
