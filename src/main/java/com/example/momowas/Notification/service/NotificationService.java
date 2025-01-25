@@ -45,7 +45,7 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    @Scheduled(cron = "0 55 17 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")
     private void sendDailyScheduleNotifications() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         List<Schedule> schedules = scheduleService.getSchedulesByDate(tomorrow);
