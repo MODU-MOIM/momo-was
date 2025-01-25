@@ -1,5 +1,6 @@
 package com.example.momowas.record.controller;
 
+import com.example.momowas.record.dto.ArchiveListResDto;
 import com.example.momowas.record.dto.ArchiveReqDto;
 import com.example.momowas.record.service.ArchiveService;
 import com.example.momowas.s3.service.S3Service;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,18 +23,27 @@ public class ArchiveController {
 
     /* 기록 생성 */
     @PostMapping("")
-    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public Map<String, Object> createArchive(@RequestBody ArchiveReqDto archiveReqDto,
-                                            @PathVariable Long crewId,
-                                            @AuthenticationPrincipal Long userId) {
+                                             @PathVariable Long crewId,
+                                             @AuthenticationPrincipal Long userId) {
         Long archiveId = archiveService.createArchive(archiveReqDto, crewId, userId);
-        return Map.of("archiveId",archiveId);
+        return Map.of("archiveId", archiveId);
     }
 
     /* 기록 이미지 업로드 */
     @PostMapping("/images")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public Map<String, Object> uploadArchiveImage(@RequestParam("archiveImage") MultipartFile file) throws IOException {
         String archiveImageUrl = s3Service.uploadImage(file, "archive");
         return Map.of("archiveImageUrl", archiveImageUrl);
     }
+
+    /* 전체 기록 조회 */
+    @GetMapping("")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public List<ArchiveListResDto> getArchiveList(@PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
+        return archiveService.getArchiveList();
+    }
+
 }
