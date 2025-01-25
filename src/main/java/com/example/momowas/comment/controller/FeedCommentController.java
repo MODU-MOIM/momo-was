@@ -1,7 +1,8 @@
 package com.example.momowas.comment.controller;
 
+import com.example.momowas.comment.domain.BoardType;
 import com.example.momowas.comment.dto.CommentReqDto;
-import com.example.momowas.comment.service.FeedCommentService;
+import com.example.momowas.comment.service.CommentService;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/crews/{crewId}/feeds/{feedId}/comments")
 public class FeedCommentController {
 
-    private final FeedCommentService feedCommentService;
+    private final CommentService commentService;
 
     /* 피드 댓글 작성 */
     @PostMapping("")
@@ -25,7 +26,7 @@ public class FeedCommentController {
                                                  @PathVariable Long crewId,
                                                  @PathVariable Long feedId,
                                                  @AuthenticationPrincipal Long userId) {
-        Long commentId = feedCommentService.createFeedComment(commentReqDto, crewId, feedId, userId);
+        Long commentId = commentService.createComment(commentReqDto, crewId, feedId, null, userId, BoardType.FEED);
         return Map.of("commentId", commentId);
     }
 
@@ -36,7 +37,7 @@ public class FeedCommentController {
                                                     @PathVariable Long crewId,
                                                     @PathVariable Long commentId,
                                                     @AuthenticationPrincipal Long userId) {
-        feedCommentService.updateFeedComment(commentReqDto, crewId, commentId, userId);
+        commentService.updateComment(commentReqDto, crewId, commentId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
@@ -46,7 +47,7 @@ public class FeedCommentController {
     public CommonResponse<String> deleteFeedComment(@PathVariable Long crewId,
                                                     @PathVariable Long commentId,
                                                     @AuthenticationPrincipal Long userId) {
-        feedCommentService.deleteFeedComment(crewId, commentId, userId);
+        commentService.deleteComment(crewId, commentId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
@@ -54,10 +55,11 @@ public class FeedCommentController {
     @PostMapping("/{parentId}/replies")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public Map<String, Object> replyFeedComment(@RequestBody CommentReqDto commentReqDto,
-                                                   @PathVariable Long crewId,
-                                                   @PathVariable Long parentId,
-                                                   @AuthenticationPrincipal Long userId) {
-        Long replyId = feedCommentService.replyFeedComment(commentReqDto, crewId, parentId, userId);
+                                                @PathVariable Long crewId,
+                                                @PathVariable Long feedId,
+                                                @PathVariable Long parentId,
+                                                @AuthenticationPrincipal Long userId) {
+        Long replyId = commentService.createComment(commentReqDto, crewId, feedId, parentId, userId, BoardType.FEED);
         return Map.of("replyId", replyId);
     }
 
