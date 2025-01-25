@@ -3,6 +3,8 @@ package com.example.momowas.record.controller;
 import com.example.momowas.record.dto.ArchiveListResDto;
 import com.example.momowas.record.dto.ArchiveReqDto;
 import com.example.momowas.record.service.ArchiveService;
+import com.example.momowas.response.CommonResponse;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,4 +48,14 @@ public class ArchiveController {
         return archiveService.getArchiveList();
     }
 
+    /* 기록 수정 */
+    @PutMapping("/{archiveId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> updateArchive(@RequestBody ArchiveReqDto archiveReqDto,
+                                                @PathVariable Long crewId,
+                                                @PathVariable Long archiveId,
+                                                @AuthenticationPrincipal Long userId) {
+        archiveService.updateArchive(archiveReqDto, crewId, archiveId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
 }

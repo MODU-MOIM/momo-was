@@ -23,7 +23,7 @@ public class FeedCommentService {
     /* 피드 댓글 조회 */
     @Transactional(readOnly = true)
     public Comment findFeedCommentById(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUNT_COMMENT));
+        return commentRepository.findById(commentId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_COMMENT));
     }
 
     /* 피드 댓글 작성 */

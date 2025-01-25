@@ -62,4 +62,20 @@ public class Archive {
         this.crew = Objects.requireNonNull(crew, "crew는 null이 될 수 없습니다.");
         this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");
     }
+
+    public void update(String title, String content, String thumbnailImage) {
+        if (!StringUtils.hasText(title)) {
+            throw new IllegalArgumentException("title은 null이거나 빈 문자열이 될 수 없습니다.");
+        } else if (!StringUtils.hasText(content)) {
+            throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.title=title;
+        this.content=content;
+        this.thumbnailImage=thumbnailImage;
+    }
+
+    /* 작성자인지 검증 */
+    public boolean isWriter(CrewMember crewMember) {
+        return this.crewMember.getId()==crewMember.getId();
+    }
 }
