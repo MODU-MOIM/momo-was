@@ -1,4 +1,4 @@
-package com.example.momowas.user.util;
+package com.example.momowas.sms;
 
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
