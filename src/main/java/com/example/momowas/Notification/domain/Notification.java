@@ -21,18 +21,14 @@ public class Notification {
     @Column(nullable = false)
     private String message;
 
-    @Column
-    private boolean isRead;
-
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public Notification(Long scheduleId, String message, boolean isRead, LocalDateTime createdAt) {
+    public Notification(Long scheduleId, String message, LocalDateTime createdAt) {
         this.scheduleId = scheduleId;
         this.message = message;
-        this.isRead = isRead;
         this.createdAt = createdAt;
     }
 }

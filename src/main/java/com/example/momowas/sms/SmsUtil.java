@@ -2,6 +2,7 @@ package com.example.momowas.sms;
 
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
+import com.example.momowas.schedule.domain.Schedule;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import net.nurigo.sdk.NurigoApp;
@@ -78,4 +79,15 @@ public class SmsUtil {
         }
         return numStr.toString();
     }
+
+    //일정 알림 form
+    public SingleMessageSentResponse sendScheduleNotification(String toPhoneNumber, String title) {
+        Message message = new Message();
+        message.setFrom(fromNumber);
+        message.setTo(toPhoneNumber);
+        message.setText("[모두의 모임, momo]\n" + title +" 일정이 하루 남았습니다!");
+
+        return this.messageService.sendOne(new SingleMessageSendingRequest(message));
+    }
+
 }
