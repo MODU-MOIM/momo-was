@@ -8,9 +8,11 @@ import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.dto.CrewSpecification;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewregion.domain.CrewRegion;
+import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +31,7 @@ import java.util.Map;
 public class CrewController {
     private final CrewService crewService;
     private final S3Service s3Service;
+    private final JwtUtil jwtUtil;
 
     /* 크루 생성 */
     @PostMapping("")
@@ -96,6 +99,12 @@ public class CrewController {
             spec = spec.and(CrewSpecification.hasRegion(depth1));
 
         return crewService.search(spec);
+    }
+
+    @GetMapping("/me")
+    public List<CrewListResDto> getCrewsByMe(HttpServletRequest request){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return crewService.getCrewsByMe(userId);
     }
 
 }

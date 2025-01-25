@@ -1,6 +1,8 @@
 package com.example.momowas.schedule.service;
 
 import com.example.momowas.chat.dto.ChatDto;
+import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
@@ -25,18 +27,18 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     private final UserService userService;
     private final ScheduleRepository scheduleRepository;
+    private final CrewService crewService;
 
     public ScheduleDto createSchedule(Long userId, ScheduleReqDto scheduleReqDto){
         User user  = userService.findUserById(userId);
-
-        //크루 검증 추가
+        Crew crew = crewService.findCrewById(scheduleReqDto.getCrewId());
 
         Schedule schedule = Schedule.builder()
                 .scheduleDate(scheduleReqDto.getDate())
                 .scheduleTime(scheduleReqDto.getTime())
                 .title(scheduleReqDto.getTitle())
                 .description(scheduleReqDto.getDescription())
-                .crewId(scheduleReqDto.getCrewId())
+                .crewId(crew.getId())
                 .userId(user.getId())
                 .createdAt(LocalDateTime.now())
                 .modifiedAt(null)
@@ -63,6 +65,7 @@ public class ScheduleService {
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, ScheduleReqDto scheduleReqDto){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
+        Crew crew = crewService.findCrewById(scheduleReqDto.getCrewId());
 
         if(schedule.getUserId()!=user.getId()){
             throw new BusinessException(ExceptionCode.USER_MISMATCH);
@@ -73,7 +76,7 @@ public class ScheduleService {
                 scheduleReqDto.getTitle()==null ? schedule.getTitle() : scheduleReqDto.getTitle(),
                 scheduleReqDto.getDescription(),
                 scheduleReqDto.getDetailAddress(),
-                scheduleReqDto.getCrewId(),
+                scheduleReqDto.getCrewId()==null? schedule.getCrewId() : crew.getId(),
                 scheduleReqDto.getIsOnline() == null ? schedule.getIsOnline() : scheduleReqDto.getIsOnline()
         );
 
@@ -85,6 +88,9 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
         return ScheduleDto.fromEntity(schedule);
+    }
+    public Schedule getByScheduleId(Long scheduleId){
+        return scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
     }
 
     public List<ScheduleDto> getByDate(Long userId, LocalDate date){
@@ -104,6 +110,10 @@ public class ScheduleService {
         return scheduleRepository.findByUserIdAndScheduleDateBetween(user.getId(), startDate, endDate).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public List<Schedule> getSchedulesByDate(LocalDate date){
+        return scheduleRepository.findByScheduleDate(date);
     }
 
 }
