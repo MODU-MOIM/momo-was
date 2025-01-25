@@ -126,4 +126,11 @@ public class CrewService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<CrewListResDto> getCrewsByMe(Long userId){
+        return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
+            List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
+            return CrewListResDto.of(crew,regionDtos);
+        }).collect(Collectors.toList());
+    }
 }
