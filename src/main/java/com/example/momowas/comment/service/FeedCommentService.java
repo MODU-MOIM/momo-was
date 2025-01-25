@@ -1,7 +1,7 @@
 package com.example.momowas.comment.service;
 
 import com.example.momowas.comment.domain.Comment;
-import com.example.momowas.comment.dto.FeedCommentReqDto;
+import com.example.momowas.comment.dto.CommentReqDto;
 import com.example.momowas.comment.repository.CommentRepository;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
@@ -28,19 +28,19 @@ public class FeedCommentService {
 
     /* 피드 댓글 작성 */
     @Transactional
-    public Long createFeedComment(FeedCommentReqDto feedCommentReqDto, Long crewId, Long feedId, Long userId) {
+    public Long createFeedComment(CommentReqDto commentReqDto, Long crewId, Long feedId, Long userId) {
         Feed feed = feedService.findFeedById(feedId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        Comment comment = commentRepository.save(feedCommentReqDto.toEntity(feed, crewMember, null));
+        Comment comment = commentRepository.save(commentReqDto.toEntity(feed, crewMember, null));
         return comment.getId();
     }
 
     /* 피드 댓글 수정 */
     @Transactional
-    public void updateFeedComment(FeedCommentReqDto feedCommentReqDto, Long crewId, Long commentId, Long userId) {
+    public void updateFeedComment(CommentReqDto commentReqDto, Long crewId, Long commentId, Long userId) {
         Comment comment = findFeedCommentById(commentId);
         validateWriter(crewId, userId, comment);
-        comment.updateContent(feedCommentReqDto.content());
+        comment.updateContent(commentReqDto.content());
     }
 
     /* 피드 댓글 삭제 */
@@ -53,10 +53,10 @@ public class FeedCommentService {
 
     /* 피드 대댓글 작성 */
     @Transactional
-    public Long replyFeedComment(FeedCommentReqDto feedCommentReqDto, Long crewId, Long parentId, Long userId) {
+    public Long replyFeedComment(CommentReqDto commentReqDto, Long crewId, Long parentId, Long userId) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         Comment parent = findFeedCommentById(parentId);
-        Comment comment = commentRepository.save(feedCommentReqDto.toEntity(parent.getFeed(), crewMember, parent));
+        Comment comment = commentRepository.save(commentReqDto.toEntity(parent.getFeed(), crewMember, parent));
         return comment.getId();
     }
 

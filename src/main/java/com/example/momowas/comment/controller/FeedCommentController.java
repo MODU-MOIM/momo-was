@@ -1,6 +1,6 @@
 package com.example.momowas.comment.controller;
 
-import com.example.momowas.comment.dto.FeedCommentReqDto;
+import com.example.momowas.comment.dto.CommentReqDto;
 import com.example.momowas.comment.service.FeedCommentService;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
@@ -21,22 +21,22 @@ public class FeedCommentController {
     /* 피드 댓글 작성 */
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
-    public Map<String, Object> createFeedComment(@RequestBody FeedCommentReqDto feedCommentReqDto,
+    public Map<String, Object> createFeedComment(@RequestBody CommentReqDto commentReqDto,
                                                  @PathVariable Long crewId,
                                                  @PathVariable Long feedId,
                                                  @AuthenticationPrincipal Long userId) {
-        Long commentId = feedCommentService.createFeedComment(feedCommentReqDto, crewId, feedId, userId);
+        Long commentId = feedCommentService.createFeedComment(commentReqDto, crewId, feedId, userId);
         return Map.of("commentId", commentId);
     }
 
     /* 피드 댓글 수정 */
     @PutMapping("/{commentId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
-    public CommonResponse<String> updateFeedComment(@RequestBody FeedCommentReqDto feedCommentReqDto,
+    public CommonResponse<String> updateFeedComment(@RequestBody CommentReqDto commentReqDto,
                                                     @PathVariable Long crewId,
                                                     @PathVariable Long commentId,
                                                     @AuthenticationPrincipal Long userId) {
-        feedCommentService.updateFeedComment(feedCommentReqDto, crewId, commentId, userId);
+        feedCommentService.updateFeedComment(commentReqDto, crewId, commentId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
@@ -53,11 +53,11 @@ public class FeedCommentController {
     /* 피드 대댓글 작성 */
     @PostMapping("/{parentId}/replies")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
-    public Map<String, Object> replyFeedComment(@RequestBody FeedCommentReqDto feedCommentReqDto,
+    public Map<String, Object> replyFeedComment(@RequestBody CommentReqDto commentReqDto,
                                                    @PathVariable Long crewId,
                                                    @PathVariable Long parentId,
                                                    @AuthenticationPrincipal Long userId) {
-        Long replyId = feedCommentService.replyFeedComment(feedCommentReqDto, crewId, parentId, userId);
+        Long replyId = feedCommentService.replyFeedComment(commentReqDto, crewId, parentId, userId);
         return Map.of("replyId", replyId);
     }
 
