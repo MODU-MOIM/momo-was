@@ -12,7 +12,6 @@ import com.example.momowas.feed.repository.FeedRepository;
 import com.example.momowas.feedtag.domain.FeedTag;
 import com.example.momowas.feedtag.service.FeedTagService;
 import com.example.momowas.like.repository.LikeRepository;
-import com.example.momowas.like.service.FeedLikeService;
 import com.example.momowas.photo.service.PhotoService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;

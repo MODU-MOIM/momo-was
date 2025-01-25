@@ -75,7 +75,6 @@ public class Comment {
         this.content=content;
         this.archive= Objects.requireNonNull(archive,"archive는 null이 될 수 없습니다.");
         this.feed=null;
-
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
         this.parent=parent;
     }

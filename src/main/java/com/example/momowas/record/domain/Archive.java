@@ -1,7 +1,9 @@
 package com.example.momowas.record.domain;
 
+import com.example.momowas.comment.domain.Comment;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.like.domain.Like;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,6 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -44,6 +48,9 @@ public class Archive {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="crew_member_id")
     private CrewMember crewMember;
+
+    @OneToMany(mappedBy = "archive", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     private Archive(String title,

@@ -88,8 +88,8 @@ public enum ExceptionCode {
     NOT_FOUND_COMMENT(404, "CO001","해당 댓글이 존재하지 않습니다."),
 
     //좋아요 관련 예외
-    ALREADY_LIKE_FEED(409, "L001", "이미 좋아요를 누른 게시글입니다."),
-    NOT_FOUND_FEED_LIKE(404,"L002", "좋아요를 누른 적이 없습니다."),
+    ALREADY_LIKE_BOARD(409, "L001", "이미 좋아요를 누른 게시글입니다."),
+    NOT_FOUND_LIKE(404,"L002", "좋아요를 누른 적이 없습니다."),
 
     //기록 관련 예외
     NOT_FOUND_ARCHIVE(404, "ARO001","해당 기록이 존재하지 않습니다.");
