@@ -19,12 +19,7 @@ public class FeedCommentService {
     private final CommentRepository commentRepository;;
     private final CrewMemberService crewMemberService;
     private final FeedService feedService;
-
-    /* 피드 댓글 조회 */
-    @Transactional(readOnly = true)
-    public Comment findFeedCommentById(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_COMMENT));
-    }
+    private final CommentService commentService;
 
     /* 피드 댓글 작성 */
     @Transactional
@@ -38,16 +33,16 @@ public class FeedCommentService {
     /* 피드 댓글 수정 */
     @Transactional
     public void updateFeedComment(CommentReqDto commentReqDto, Long crewId, Long commentId, Long userId) {
-        Comment comment = findFeedCommentById(commentId);
-        validateWriter(crewId, userId, comment);
+        Comment comment = commentService.findCommentById(commentId);
+        commentService.validateWriter(crewId, userId, comment);
         comment.updateContent(commentReqDto.content());
     }
 
     /* 피드 댓글 삭제 */
     @Transactional
     public void deleteFeedComment(Long crewId,Long commentId, Long userId) {
-        Comment comment = findFeedCommentById(commentId);
-        validateWriter(crewId, userId, comment);
+        Comment comment = commentService.findCommentById(commentId);
+        commentService.validateWriter(crewId, userId, comment);
         commentRepository.delete(comment);
     }
 
@@ -55,16 +50,9 @@ public class FeedCommentService {
     @Transactional
     public Long replyFeedComment(CommentReqDto commentReqDto, Long crewId, Long parentId, Long userId) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        Comment parent = findFeedCommentById(parentId);
+        Comment parent = commentService.findCommentById(parentId);
         Comment comment = commentRepository.save(commentReqDto.toEntity(parent.getFeed(), crewMember, parent));
         return comment.getId();
     }
 
-    /* 사용자가 피드 댓글 작성자인지 검증 */
-    private void validateWriter(Long crewId, Long userId, Comment comment) {
-        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        if(!comment.isWriter(crewMember)){
-            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
-        }
-    }
 }
