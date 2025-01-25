@@ -3,7 +3,7 @@ package com.example.momowas.like.repository;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.like.domain.Like;
-import com.example.momowas.record.domain.Archive;
+import com.example.momowas.archive.domain.Archive;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -3,7 +3,7 @@ package com.example.momowas.comment.dto;
 import com.example.momowas.comment.domain.Comment;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.feed.domain.Feed;
-import com.example.momowas.record.domain.Archive;
+import com.example.momowas.archive.domain.Archive;
 
 public record CommentReqDto(
         String content
