@@ -27,13 +27,4 @@ public class CrewManager {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         return crewMember.getRole().equals(Role.LEADER);
     }
-
-    /* 크루 멤버가 리더 권한이 있는지 확인 */
-    public boolean hasCrewLeaderPermissionv2(Long joinRequestId, Long userId) {
-        JoinRequest joinRequest = joinRequestService.findJoinRequestById(joinRequestId);
-        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, joinRequest.getCrew().getId());
-        return crewMember.getRole().equals(Role.LEADER);
-    }
-
-
 }
