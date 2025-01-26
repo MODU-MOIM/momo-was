@@ -51,7 +51,7 @@ public class RefreshTokenService {
 
             response.setHeader("Authorization", "Bearer " + newAccessToken);
             Cookie cookie = new Cookie("refreshToken", refreshToken);
-            cookie.setHttpOnly(false);
+            cookie.setHttpOnly(true);
             cookie.setSecure(true);
             cookie.setPath("/");
             cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);

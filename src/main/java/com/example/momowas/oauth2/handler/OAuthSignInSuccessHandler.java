@@ -104,7 +104,7 @@ public class OAuthSignInSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
