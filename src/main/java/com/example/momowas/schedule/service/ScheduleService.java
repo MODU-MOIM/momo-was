@@ -95,7 +95,7 @@ public class ScheduleService {
 
     public List<ScheduleDto> getByDate(Long userId, Long crewId, LocalDate date){
         User user  = userService.findUserById(userId);
-        return scheduleRepository.findByUserIdAndCrewIdAndScheduleDate(user.getId(), crewId, date).stream()
+        return scheduleRepository.findByCrewIdAndScheduleDate(crewId, date).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -107,7 +107,7 @@ public class ScheduleService {
         LocalDate startDate = yearMonthObj.atDay(1);
         LocalDate endDate = yearMonthObj.atEndOfMonth();
 
-        return scheduleRepository.findByUserIdAndCrewIdAndScheduleDateBetween(user.getId(), crewId, startDate, endDate).stream()
+        return scheduleRepository.findByCrewIdAndScheduleDateBetween(crewId, startDate, endDate).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
