@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedules")
+@RequestMapping("/crews/{crewId}/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final JwtUtil jwtUtil;
@@ -43,20 +43,21 @@ public class ScheduleController {
     }
 
     @GetMapping("/{scheduleId}")
-    private ScheduleDto getByScheduleId(HttpServletRequest request, @PathVariable Long scheduleId){
+    private ScheduleDto getByScheduleId(HttpServletRequest request, @PathVariable Long scheduleId, @PathVariable String crewId){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return scheduleService.getByScheduleId(userId, scheduleId);
     }
+
     @GetMapping("/daily")
-    private List<ScheduleDto> getByScheduleId(HttpServletRequest request, @RequestParam LocalDate date){
+    private List<ScheduleDto> getByThisDay(HttpServletRequest request, @PathVariable Long crewId,  @RequestParam LocalDate date){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        return scheduleService.getByDate(userId, date);
+        return scheduleService.getByDate(userId, crewId, date);
     }
 
     @GetMapping("/monthly")
-    private List<ScheduleDto> getByThisMonth(HttpServletRequest request, @RequestParam String yearMonth){
+    private List<ScheduleDto> getByThisMonth(HttpServletRequest request, @PathVariable Long crewId, @RequestParam String yearMonth){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        return scheduleService.getByThisMonth(userId, yearMonth);
+        return scheduleService.getByThisMonth(userId, crewId, yearMonth);
     }
 
 }

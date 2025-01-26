@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    List<Schedule> findByUserIdAndScheduleDate(Long userId, LocalDate date);
-    List<Schedule> findByUserIdAndScheduleDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
+    List<Schedule> findByUserIdAndCrewIdAndScheduleDate(Long userId, Long crewId, LocalDate date);
+    List<Schedule> findByUserIdAndCrewIdAndScheduleDateBetween(Long userId, Long crewId, LocalDate startDate, LocalDate endDate);
     List<Schedule> findByScheduleDate(LocalDate scheduleDate);
 }

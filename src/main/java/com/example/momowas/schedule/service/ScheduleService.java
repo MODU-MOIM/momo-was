@@ -93,21 +93,21 @@ public class ScheduleService {
         return scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
     }
 
-    public List<ScheduleDto> getByDate(Long userId, LocalDate date){
+    public List<ScheduleDto> getByDate(Long userId, Long crewId, LocalDate date){
         User user  = userService.findUserById(userId);
-        return scheduleRepository.findByUserIdAndScheduleDate(user.getId(), date).stream()
+        return scheduleRepository.findByUserIdAndCrewIdAndScheduleDate(user.getId(), crewId, date).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<ScheduleDto> getByThisMonth(Long userId, String yearMonth) {
+    public List<ScheduleDto> getByThisMonth(Long userId, Long crewId, String yearMonth) {
         User user  = userService.findUserById(userId);
 
         YearMonth yearMonthObj = YearMonth.parse(yearMonth); // "yyyy-MM" 형식이어야 함
         LocalDate startDate = yearMonthObj.atDay(1);
         LocalDate endDate = yearMonthObj.atEndOfMonth();
 
-        return scheduleRepository.findByUserIdAndScheduleDateBetween(user.getId(), startDate, endDate).stream()
+        return scheduleRepository.findByUserIdAndCrewIdAndScheduleDateBetween(user.getId(), crewId, startDate, endDate).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
