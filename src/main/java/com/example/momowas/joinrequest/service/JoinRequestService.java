@@ -76,6 +76,10 @@ public class JoinRequestService {
     /* 사용자가 크루에 가입 가능한지 검증 */
     @Transactional(readOnly = true)
     private void validateCrewJoinEligibility(User user, Crew crew) {
+        //이미 사용자가 크루에 가입했는지 검증
+        if (crewMemberService.isCrewMemberExists(user.getId(), crew.getId())) {
+            throw new BusinessException(ExceptionCode.ALREADY_JOINED_CREW);
+        }
         //이미 사용자가 크루에 가입 요청을 했는지 검증
         if (joinRequestRepository.existsByCrewIdAndUserId(crew.getId(), user.getId())) {
             throw new BusinessException(ExceptionCode.ALREADY_REQUESTED_TO_JOIN_CREW);
