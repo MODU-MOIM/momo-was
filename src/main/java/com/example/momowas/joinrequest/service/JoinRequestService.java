@@ -70,7 +70,6 @@ public class JoinRequestService {
     @Transactional
     public void rejectJoinRequest(Long joinRequestId) {
         JoinRequest joinRequest = findJoinRequestById(joinRequestId);
-
         joinRequest.updateRequestStatus(RequestStatus.REJECTED);
     }
 
@@ -86,7 +85,7 @@ public class JoinRequestService {
             throw new BusinessException(ExceptionCode.CREW_FULL);
         }
         //크루 성별 조건 검증
-        if(crew.getGenderRestriction()!=null & crew.getGenderRestriction()==user.getGender()){
+        if(crew.getGenderRestriction()!=null & crew.getGenderRestriction()!=user.getGender()){
             throw new BusinessException(ExceptionCode.INVALID_CREW_JOIN_CONDITION);
         }
         //크루 나이 조건 검증
