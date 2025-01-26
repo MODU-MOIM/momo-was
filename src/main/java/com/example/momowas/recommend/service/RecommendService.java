@@ -1,12 +1,11 @@
 package com.example.momowas.recommend.service;
 
+import com.example.momowas.feed.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,8 +18,7 @@ public class RecommendService {
     public void handleFeedEvent(Long feedId, String eventType) {
         String key = "PopularFeed";
         int score = calculateScore(eventType);
-        String feedIdKey = "feed_" + String.valueOf(feedId);
-        redisTemplate.opsForZSet().incrementScore(key, feedIdKey, score);
+        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(feedId), score);
     }
 
     // 가중치 설정
@@ -34,14 +32,16 @@ public class RecommendService {
         };
     }
 
-
     // 상위 N개의 인기 피드 조회
-    public List<String> getTopFeeds(int limit) {
+    public List<Long> getTopFeedIds(int limit) {
         String key = "PopularFeed";
-        Set<Object> topFeeds = redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1);
-        return topFeeds.stream()
-                .map(Object::toString)
+        return redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1).stream()
+                .map(id -> Long.parseLong(id.toString()))
                 .collect(Collectors.toList());
     }
+
+
+
+
 
 }
