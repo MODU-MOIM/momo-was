@@ -81,6 +81,9 @@ public class Feed {
 
     /* 내용 수정 */
     public void updateContent(String content) {
+        if (!StringUtils.hasText(content)) {
+            throw new IllegalArgumentException("content은 null이거나 빈 문자열이 될 수 없습니다.");
+        }
         this.content=content;
     }
 }
