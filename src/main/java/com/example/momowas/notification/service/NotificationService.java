@@ -26,7 +26,7 @@ public class NotificationService {
     private final UserService userService;
 
     private void create(Long scheduleId) {
-        Schedule schedule = scheduleService.getByScheduleId(scheduleId);
+        Schedule schedule = scheduleService.getScheduleByScheduleId(scheduleId);
 
         // 이미 알림이 생성된 스케줄인지 확인
         boolean isAlreadyNotified = notificationRepository.existsByScheduleId(scheduleId);
