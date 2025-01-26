@@ -19,8 +19,6 @@ import java.util.Map;
 public class FeedCommentController {
 
     private final CommentService commentService;
-    private final RecommendService recommendService;
-
 
     /* 피드 댓글 작성 */
     @PostMapping("")
@@ -30,8 +28,6 @@ public class FeedCommentController {
                                                  @PathVariable Long feedId,
                                                  @AuthenticationPrincipal Long userId) {
         Long commentId = commentService.createComment(commentReqDto, crewId, feedId, null, userId, BoardType.FEED);
-        //추천 로직
-        recommendService.handleFeedEvent(feedId, "comment");
         return Map.of("commentId", commentId);
     }
 
@@ -53,9 +49,7 @@ public class FeedCommentController {
                                                     @PathVariable Long feedId,
                                                     @PathVariable Long commentId,
                                                     @AuthenticationPrincipal Long userId) {
-        commentService.deleteComment(crewId, commentId, userId);
-        //추천 로직
-        recommendService.handleFeedEvent(feedId, "deleteComment");
+        commentService.deleteComment(crewId, commentId, userId, BoardType.FEED);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 

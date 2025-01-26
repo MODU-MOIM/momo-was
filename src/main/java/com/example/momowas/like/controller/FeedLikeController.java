@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FeedLikeController {
     private final LikeService likeService;
-    private final RecommendService recommendService;
+
     /* 피드 좋아요 */
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
@@ -23,8 +23,6 @@ public class FeedLikeController {
                                            @PathVariable Long feedId,
                                            @AuthenticationPrincipal Long userId) {
         likeService.likeBoard(feedId, crewId, userId, BoardType.FEED);
-        //추천 로직
-        recommendService.handleFeedEvent(feedId, "like");
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
@@ -35,8 +33,6 @@ public class FeedLikeController {
                                              @PathVariable Long feedId,
                                              @AuthenticationPrincipal Long userId) {
         likeService.unlikeBoard(feedId, crewId, userId, BoardType.FEED);
-        //추천 로직
-        recommendService.handleFeedEvent(feedId, "unLike");
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 }
