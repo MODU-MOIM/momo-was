@@ -49,7 +49,10 @@ public class FeedService {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
         Feed feed = feedRepository.save(feedReqDto.toEntity(crew, crewMember));//피드 저장
-        photoService.createPhoto(files, feed); //사진 저장
+        if(files!=null && !files.isEmpty()){
+            photoService.createPhoto(files, feed); //사진 저장
+        }
+
         feedTagService.createFeedTag(feedReqDto.tagNames(), feed); //태그 저장
 
         return feed.getId();

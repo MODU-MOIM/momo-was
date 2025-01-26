@@ -3,6 +3,7 @@ package com.example.momowas.comment.controller;
 import com.example.momowas.comment.domain.BoardType;
 import com.example.momowas.comment.dto.CommentReqDto;
 import com.example.momowas.comment.service.CommentService;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import java.util.Map;
 public class FeedCommentController {
 
     private final CommentService commentService;
+    private final RecommendService recommendService;
+
 
     /* 피드 댓글 작성 */
     @PostMapping("")
@@ -27,6 +30,8 @@ public class FeedCommentController {
                                                  @PathVariable Long feedId,
                                                  @AuthenticationPrincipal Long userId) {
         Long commentId = commentService.createComment(commentReqDto, crewId, feedId, null, userId, BoardType.FEED);
+        //추천 로직
+        recommendService.handleFeedEvent(feedId, "comment");
         return Map.of("commentId", commentId);
     }
 
@@ -45,9 +50,12 @@ public class FeedCommentController {
     @DeleteMapping("/{commentId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public CommonResponse<String> deleteFeedComment(@PathVariable Long crewId,
+                                                    @PathVariable Long feedId,
                                                     @PathVariable Long commentId,
                                                     @AuthenticationPrincipal Long userId) {
         commentService.deleteComment(crewId, commentId, userId);
+        //추천 로직
+        recommendService.handleFeedEvent(feedId, "deleteComment");
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
