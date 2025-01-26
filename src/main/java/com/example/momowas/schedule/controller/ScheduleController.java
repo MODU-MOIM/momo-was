@@ -1,62 +1,71 @@
 package com.example.momowas.schedule.controller;
 
+import com.example.momowas.authorization.CrewManager;
 import com.example.momowas.jwt.util.JwtUtil;
+import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.dto.ScheduleDto;
 import com.example.momowas.schedule.dto.ScheduleReqDto;
 import com.example.momowas.schedule.service.ScheduleService;
-import jakarta.servlet.http.HttpServlet;
+import com.example.momowas.crewmember.service.CrewMemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Path;
 
-import java.net.http.HttpRequest;
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedules")
+@RequestMapping("/crews/{crewId}/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
-    private final JwtUtil jwtUtil;
+
     private final ScheduleService scheduleService;
+    private final JwtUtil jwtUtil;
+    private final CrewManager crewManager;
+
 
     @PostMapping("")
-    private ScheduleDto createSchedule(HttpServletRequest request, @RequestBody ScheduleReqDto scheduleReqDto){
+    private ScheduleDto createSchedule(HttpServletRequest request, @PathVariable Long crewId, @RequestBody ScheduleReqDto scheduleReqDto) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        return scheduleService.createSchedule(userId, scheduleReqDto);
+        crewManager.hasCrewLeaderPermission(crewId, userId);
+        return scheduleService.createSchedule(userId, crewId, scheduleReqDto);
     }
 
     @DeleteMapping("/{scheduleId}")
-    private CommonResponse<String> deleteSchedule(HttpServletRequest request, @PathVariable Long scheduleId){
+    private CommonResponse<String> deleteSchedule(HttpServletRequest request, @PathVariable Long crewId, @PathVariable Long scheduleId) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        crewManager.hasCrewLeaderPermission(crewId, userId);
         scheduleService.deleteSchedule(userId, scheduleId);
         return CommonResponse.of(ExceptionCode.SUCCESS, "일정 삭제 성공");
     }
 
     @PutMapping("/{scheduleId}")
-    private ScheduleDto updateSchedule(HttpServletRequest request, @PathVariable Long scheduleId, @RequestBody ScheduleReqDto scheduleReqDto){
+    private ScheduleDto updateSchedule(HttpServletRequest request, @PathVariable Long crewId, @PathVariable Long scheduleId, @RequestBody ScheduleReqDto scheduleReqDto) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        crewManager.hasCrewLeaderPermission(crewId, userId);
         return scheduleService.updateSchedule(userId, scheduleId, scheduleReqDto);
     }
 
     @GetMapping("/{scheduleId}")
-    private ScheduleDto getByScheduleId(HttpServletRequest request, @PathVariable Long scheduleId){
+    private ScheduleDto getByScheduleId(HttpServletRequest request, @PathVariable Long crewId, @PathVariable Long scheduleId) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        return scheduleService.getByScheduleId(userId, scheduleId);
+        crewManager.hasCrewLeaderPermission(crewId, userId);
+        return scheduleService.getByScheduleId(scheduleId);
     }
+
     @GetMapping("/daily")
-    private List<ScheduleDto> getByScheduleId(HttpServletRequest request, @RequestParam LocalDate date){
+    private List<ScheduleDto> getByThisDay(HttpServletRequest request, @PathVariable Long crewId, @RequestParam LocalDate date) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        return scheduleService.getByDate(userId, date);
+        crewManager.hasCrewLeaderPermission(crewId, userId);
+        return scheduleService.getByDate(crewId, date);
     }
 
     @GetMapping("/monthly")
-    private List<ScheduleDto> getByThisMonth(HttpServletRequest request, @RequestParam String yearMonth){
+    private List<ScheduleDto> getByThisMonth(HttpServletRequest request, @PathVariable Long crewId, @RequestParam String yearMonth) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        return scheduleService.getByThisMonth(userId, yearMonth);
+        crewManager.hasCrewLeaderPermission(crewId, userId);
+        return scheduleService.getByThisMonth(crewId, yearMonth);
     }
-
 }

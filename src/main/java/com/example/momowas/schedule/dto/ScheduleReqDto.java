@@ -12,6 +12,5 @@ public class ScheduleReqDto {
     private String title;
     private String description;
     private String detailAddress;
-    private Long crewId;
     private Boolean isOnline;
 }

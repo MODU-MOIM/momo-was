@@ -66,12 +66,11 @@ public class Schedule {
         this.detailAddress = detailAddress;
     }
 
-    public void updateSchedule(LocalDate date, LocalTime time, String title, String description, String detailAddress, Long crewId, Boolean isOnline){
+    public void updateSchedule(LocalDate date, LocalTime time, String title, String description, String detailAddress, Boolean isOnline){
         this.scheduleDate = date;
         this.scheduleTime = time;
         this.title = title;
         this.description = description;
-        this.crewId = crewId;
         this.isOnline = isOnline;
         this.detailAddress = detailAddress;
         this.modifiedAt = LocalDateTime.now();

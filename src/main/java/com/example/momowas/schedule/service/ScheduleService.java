@@ -29,9 +29,9 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CrewService crewService;
 
-    public ScheduleDto createSchedule(Long userId, ScheduleReqDto scheduleReqDto){
+    public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
         User user  = userService.findUserById(userId);
-        Crew crew = crewService.findCrewById(scheduleReqDto.getCrewId());
+        Crew crew = crewService.findCrewById(crewId);
 
         Schedule schedule = Schedule.builder()
                 .scheduleDate(scheduleReqDto.getDate())
@@ -65,7 +65,6 @@ public class ScheduleService {
     public ScheduleDto updateSchedule(Long userId, Long scheduleId, ScheduleReqDto scheduleReqDto){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
-        Crew crew = crewService.findCrewById(scheduleReqDto.getCrewId());
 
         if(schedule.getUserId()!=user.getId()){
             throw new BusinessException(ExceptionCode.USER_MISMATCH);
@@ -76,38 +75,32 @@ public class ScheduleService {
                 scheduleReqDto.getTitle()==null ? schedule.getTitle() : scheduleReqDto.getTitle(),
                 scheduleReqDto.getDescription(),
                 scheduleReqDto.getDetailAddress(),
-                scheduleReqDto.getCrewId()==null? schedule.getCrewId() : crew.getId(),
                 scheduleReqDto.getIsOnline() == null ? schedule.getIsOnline() : scheduleReqDto.getIsOnline()
         );
 
         return ScheduleDto.fromEntity(schedule);
     }
 
-    public ScheduleDto getByScheduleId(Long userId, Long scheduleId){
-        User user  = userService.findUserById(userId);
+    public ScheduleDto getByScheduleId(Long scheduleId){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
-
         return ScheduleDto.fromEntity(schedule);
     }
-    public Schedule getByScheduleId(Long scheduleId){
+    public Schedule getScheduleByScheduleId(Long scheduleId){
         return scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
     }
 
-    public List<ScheduleDto> getByDate(Long userId, LocalDate date){
-        User user  = userService.findUserById(userId);
-        return scheduleRepository.findByUserIdAndScheduleDate(user.getId(), date).stream()
+    public List<ScheduleDto> getByDate(Long crewId, LocalDate date){
+        return scheduleRepository.findByCrewIdAndScheduleDate(crewId, date).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<ScheduleDto> getByThisMonth(Long userId, String yearMonth) {
-        User user  = userService.findUserById(userId);
-
+    public List<ScheduleDto> getByThisMonth(Long crewId, String yearMonth) {
         YearMonth yearMonthObj = YearMonth.parse(yearMonth); // "yyyy-MM" 형식이어야 함
         LocalDate startDate = yearMonthObj.atDay(1);
         LocalDate endDate = yearMonthObj.atEndOfMonth();
 
-        return scheduleRepository.findByUserIdAndScheduleDateBetween(user.getId(), startDate, endDate).stream()
+        return scheduleRepository.findByCrewIdAndScheduleDateBetween(crewId, startDate, endDate).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
