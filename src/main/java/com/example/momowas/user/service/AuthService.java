@@ -64,7 +64,7 @@ public class AuthService {
 
         response.setHeader("Authorization", "Bearer " + accessToken);
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setAttribute("SameSite", "None");
