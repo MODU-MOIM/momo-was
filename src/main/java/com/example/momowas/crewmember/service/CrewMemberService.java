@@ -29,7 +29,7 @@ public class CrewMemberService {
     public CrewMember createMember(User user, Crew crew) {
         //이미 사용자가 크루에 가입했는지 검증
         if (isCrewMemberExists(user.getId(), crew.getId())) {
-            new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
+            new BusinessException(ExceptionCode.ALREADY_JOINED_CREW);
         }
         CrewMember crewMember = CrewMember.of(crew, user, Role.MEMBER);
         return crewMemberRepository.save(crewMember);
