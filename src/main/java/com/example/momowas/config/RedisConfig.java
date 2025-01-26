@@ -1,4 +1,4 @@
-package com.example.momowas.redis.config;
+package com.example.momowas.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
