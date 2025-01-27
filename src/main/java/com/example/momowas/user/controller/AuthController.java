@@ -91,5 +91,10 @@ public class AuthController {
         return CommonResponse.of(ExceptionCode.SUCCESS, "로그인 성공");
     }
 
+    @PostMapping("/verify-me")
+    public CommonResponse<Boolean> verifyMe(HttpServletRequest request, @RequestBody CheckingPasswordReqDto checkingPasswordReqDto) {
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return CommonResponse.of(ExceptionCode.SUCCESS, authService.verifyMe(userId, checkingPasswordReqDto));
+    }
 
 }
