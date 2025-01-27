@@ -52,6 +52,7 @@ public class ScheduleService {
 
         //추천
         recommendService.handleCrewEvent(crewId, "addSchedule", crew.getCrewMembers().size(), crew.getMaxMembers());
+        recommendService.incrementHotPlace(schedule.getDetailAddress(), crew.getCategory());
         return ScheduleDto.fromEntity(schedule);
     }
 
@@ -66,6 +67,7 @@ public class ScheduleService {
         }
 
         recommendService.handleCrewEvent(crewId, "deleteSchedule", crew.getCrewMembers().size(), crew.getMaxMembers());
+        recommendService.decrementHotPlace(schedule.getDetailAddress(), crew.getCategory());
         scheduleRepository.delete(schedule);
     }
 

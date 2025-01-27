@@ -1,6 +1,8 @@
 package com.example.momowas.recommend.service;
 
+import com.example.momowas.crew.domain.Category;
 import com.example.momowas.feed.service.FeedService;
+import com.example.momowas.recommend.dto.HotPlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -76,6 +78,32 @@ public class RecommendService {
         String key = "PopularCrew";
         return redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1).stream()
                 .map(id -> Long.parseLong(id.toString()))
+                .collect(Collectors.toList());
+    }
+
+    //핫플레이스(schedule 설정 시 언급 빈도)
+    public void incrementHotPlace(String detailAddress, Category category) {
+        String key = "HotPlace:" + category.name();
+        redisTemplate.opsForZSet().incrementScore(key, detailAddress, 1);
+    }
+
+    public void decrementHotPlace(String detailAddress, Category category) {
+        String key = "HotPlace:" + category.name();
+        Double score = redisTemplate.opsForZSet().score(key, detailAddress);
+        if (score > 1) {
+            redisTemplate.opsForZSet().incrementScore(key, detailAddress, -1);
+        } else {
+            redisTemplate.opsForZSet().remove(key, detailAddress);
+        }
+    }
+
+    public List<HotPlaceDto> getTopHotPlaces(Category category, int limit) {
+        String key = "HotPlace:" + category.name();
+        return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1).stream()
+                .map(tuple ->  HotPlaceDto.builder()
+                        .category(category)
+                        .detailAddress(tuple.getValue().toString())
+                        .build())
                 .collect(Collectors.toList());
     }
 

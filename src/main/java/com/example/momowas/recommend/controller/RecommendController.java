@@ -1,6 +1,8 @@
 package com.example.momowas.recommend.controller;
 
+import com.example.momowas.crew.domain.Category;
 import com.example.momowas.feed.dto.FeedListResDto;
+import com.example.momowas.recommend.dto.HotPlaceDto;
 import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
@@ -27,5 +29,10 @@ public class RecommendController {
     @GetMapping("/crews/popular")
     public CommonResponse<List<Long>> getTopCrews(@RequestParam(value="limit") int limit){
         return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopCrewIds(limit));
+    }
+
+    @GetMapping("/regions/hot")
+    public List<HotPlaceDto> getTopCrews(@RequestParam(value="limit") int limit, @RequestParam(value = "category") Category category){
+        return recommendService.getTopHotPlaces(category, limit);
     }
 }
