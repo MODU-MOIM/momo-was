@@ -13,6 +13,7 @@ import com.example.momowas.feedtag.domain.FeedTag;
 import com.example.momowas.feedtag.service.FeedTagService;
 import com.example.momowas.like.repository.LikeRepository;
 import com.example.momowas.photo.service.PhotoService;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.tag.domain.Tag;
@@ -35,6 +36,7 @@ public class FeedService {
     private final PhotoService photoService;
     private final FeedTagService feedTagService;
     private final LikeRepository likeRepository; //순환참조 때문에 일단 이렇게 ㅠㅠ 추후 수정 필요
+    private final RecommendService recommendService;
 
     /* 피드 id로 피드 조회 */
     @Transactional(readOnly = true)
@@ -54,6 +56,8 @@ public class FeedService {
         }
 
         feedTagService.createFeedTag(feedReqDto.tagNames(), feed); //태그 저장
+
+        recommendService.handleCrewEvent(crewId, "addFeed", crew.getCrewMembers().size(), crew.getMaxMembers());
 
         return feed.getId();
     }
@@ -99,6 +103,7 @@ public class FeedService {
     @Transactional
     public void deleteFeed(Long feedId, Long crewId, Long userId) {
         Feed feed = findFeedById(feedId);
+        Crew crew = crewService.findCrewById(crewId);
         validateWriter(crewId, userId, feed);
 
         List<Tag> tags = feed.getFeedTags().stream()
@@ -107,6 +112,8 @@ public class FeedService {
 
         feedRepository.delete(feed); //피드 삭제
         feedTagService.deleteTags(tags); //태그 삭제
+
+        recommendService.handleCrewEvent(crewId, "deleteFeed", crew.getCrewMembers().size(), crew.getMaxMembers());
     }
 
     /* 사용자가 피드 작성자인지 검증 */

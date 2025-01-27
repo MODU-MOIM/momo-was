@@ -9,6 +9,7 @@ import com.example.momowas.like.domain.Like;
 import com.example.momowas.like.repository.LikeRepository;
 import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.archive.service.ArchiveService;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class LikeService {
     private final CrewMemberService crewMemberService;
     private final FeedService feedService;
     private final ArchiveService archiveService;
+    private final RecommendService recommendService;
 
     /* 게시글 좋아요 */
     @Transactional
@@ -35,6 +37,9 @@ public class LikeService {
                 throw new BusinessException(ExceptionCode.ALREADY_LIKE_BOARD);
             }else{
                 like=Like.of(feed, crewMember);
+
+                //추천 로직
+                recommendService.handleFeedEvent(feed.getId(), "like");
             }
         }
         if (boardType.equals(BoardType.ARCHIVE)) {
@@ -58,6 +63,9 @@ public class LikeService {
             Feed feed = feedService.findFeedById(boardId);
             like = likeRepository.findByFeedAndCrewMember(feed, crewMember)
                     .orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_LIKE));
+
+            //추천 로직
+            recommendService.handleFeedEvent(feed.getId(), "unLike");
         }
         if (boardType.equals(BoardType.ARCHIVE)) {
             Archive archive = archiveService.findArchiveById(boardId);

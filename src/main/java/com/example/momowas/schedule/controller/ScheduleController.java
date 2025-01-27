@@ -37,7 +37,7 @@ public class ScheduleController {
     private CommonResponse<String> deleteSchedule(HttpServletRequest request, @PathVariable Long crewId, @PathVariable Long scheduleId) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         crewManager.hasCrewLeaderPermission(crewId, userId);
-        scheduleService.deleteSchedule(userId, scheduleId);
+        scheduleService.deleteSchedule(userId, crewId, scheduleId);
         return CommonResponse.of(ExceptionCode.SUCCESS, "일정 삭제 성공");
     }
 

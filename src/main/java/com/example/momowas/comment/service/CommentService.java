@@ -10,6 +10,7 @@ import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.feed.service.FeedService;
 import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.archive.service.ArchiveService;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class CommentService {
     private final CrewMemberService crewMemberService;
     private final FeedService feedService;
     private final ArchiveService archiveService;
+    private final RecommendService recommendService;
 
     /* 댓글 id로 댓글 조회 */
     @Transactional(readOnly = true)
@@ -40,6 +42,8 @@ public class CommentService {
         if (boardType.equals(BoardType.FEED)) {
             Feed feed = feedService.findFeedById(boardId);
             comment=commentReqDto.toEntity(feed, crewMember, parent);
+            //추천 로직
+            recommendService.handleFeedEvent(comment.getFeed().getId(), "comment");
         }
 
         if (boardType.equals(BoardType.ARCHIVE)) {
@@ -59,10 +63,15 @@ public class CommentService {
 
     /* 댓글 삭제 */
     @Transactional
-    public void deleteComment(Long crewId,Long commentId, Long userId) {
+    public void deleteComment(Long crewId,Long commentId, Long userId, BoardType boardType) {
         Comment comment = findCommentById(commentId);
         validateWriter(crewId, userId, comment);
         commentRepository.delete(comment);
+
+        if (boardType.equals(BoardType.FEED)) {
+            //추천 로직
+            recommendService.handleFeedEvent(comment.getFeed().getId(), "deleteComment");
+        }
     }
 
     /* 사용자가 댓글 작성자인지 검증 */

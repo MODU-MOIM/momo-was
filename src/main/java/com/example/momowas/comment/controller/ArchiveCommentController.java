@@ -46,7 +46,7 @@ public class ArchiveCommentController {
     public CommonResponse<String> deleteFeedComment(@PathVariable Long crewId,
                                                     @PathVariable Long commentId,
                                                     @AuthenticationPrincipal Long userId) {
-        commentService.deleteComment(crewId, commentId, userId);
+        commentService.deleteComment(crewId, commentId, userId, BoardType.ARCHIVE);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 

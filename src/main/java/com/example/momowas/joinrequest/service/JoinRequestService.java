@@ -8,6 +8,7 @@ import com.example.momowas.joinrequest.domain.JoinRequest;
 import com.example.momowas.joinrequest.domain.RequestStatus;
 import com.example.momowas.joinrequest.dto.JoinRequestListResDto;
 import com.example.momowas.joinrequest.repository.JoinRequestRepository;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
@@ -26,6 +27,7 @@ public class JoinRequestService {
     private final UserService userService;
     private final CrewService crewService;
     private final CrewMemberService crewMemberService;
+    private final RecommendService recommendService;
 
     @Transactional(readOnly = true)
     public JoinRequest findJoinRequestById(Long joinRequestId) {
@@ -63,6 +65,9 @@ public class JoinRequestService {
 
         joinRequest.updateRequestStatus(RequestStatus.ACCEPTED);
         CrewMember crewMember = crewMemberService.createMember(joinRequest.getUser(), joinRequest.getCrew());
+
+        Crew crew = crewMember.getCrew();
+        recommendService.handleCrewEvent(crew.getId(), "newMember", crew.getCrewMembers().size(), crew.getMaxMembers());
         return crewMember.getId();
     }
 
