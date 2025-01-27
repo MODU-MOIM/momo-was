@@ -1,8 +1,7 @@
 package com.example.momowas.recommend.service;
 
 import com.example.momowas.crew.domain.Category;
-import com.example.momowas.feed.service.FeedService;
-import com.example.momowas.recommend.dto.HotPlaceDto;
+import com.example.momowas.recommend.dto.HotPlaceResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -97,10 +96,10 @@ public class RecommendService {
         }
     }
 
-    public List<HotPlaceDto> getTopHotPlaces(Category category, int limit) {
+    public List<HotPlaceResDto> getTopHotPlaces(Category category, int limit) {
         String key = "HotPlace:" + category.name();
         return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1).stream()
-                .map(tuple ->  HotPlaceDto.builder()
+                .map(tuple ->  HotPlaceResDto.builder()
                         .category(category)
                         .detailAddress(tuple.getValue().toString())
                         .build())
