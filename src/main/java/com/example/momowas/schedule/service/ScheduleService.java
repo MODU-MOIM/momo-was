@@ -3,6 +3,7 @@ package com.example.momowas.schedule.service;
 import com.example.momowas.chat.dto.ChatDto;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
@@ -28,6 +29,7 @@ public class ScheduleService {
     private final UserService userService;
     private final ScheduleRepository scheduleRepository;
     private final CrewService crewService;
+    private final RecommendService recommendService;
 
     public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
         User user  = userService.findUserById(userId);
@@ -47,17 +49,23 @@ public class ScheduleService {
                 .build();
 
         scheduleRepository.save(schedule);
+
+        //추천
+        recommendService.handleCrewEvent(crewId, "addSchedule", crew.getCrewMembers().size(), crew.getMaxMembers());
         return ScheduleDto.fromEntity(schedule);
     }
 
     @Transactional
-    public void deleteSchedule(Long userId, Long scheduleId){
+    public void deleteSchedule(Long userId, Long crewId, Long scheduleId){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
+        Crew crew = crewService.findCrewById(crewId);
 
         if(schedule.getUserId()!=user.getId()){
             throw new BusinessException(ExceptionCode.USER_MISMATCH);
         }
+
+        recommendService.handleCrewEvent(crewId, "deleteSchedule", crew.getCrewMembers().size(), crew.getMaxMembers());
         scheduleRepository.delete(schedule);
     }
 

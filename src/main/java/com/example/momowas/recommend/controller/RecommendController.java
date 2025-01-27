@@ -23,4 +23,9 @@ public class RecommendController {
     public CommonResponse<List<Long>> getTopFeeds(@RequestParam(value="limit") int limit){
         return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopFeedIds(limit));
     }
+
+    @GetMapping("/crews/popular")
+    public CommonResponse<List<Long>> getTopCrews(@RequestParam(value="limit") int limit){
+        return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopCrewIds(limit));
+    }
 }

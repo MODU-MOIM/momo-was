@@ -41,7 +41,42 @@ public class RecommendService {
     }
 
 
+    // 크루 이벤트 처리
+    public void handleCrewEvent(Long crewId, String eventType, int currentMembers, int maxMembers) {
+        String key = "PopularCrew";
 
+        Double currentScore = redisTemplate.opsForZSet().score(key, String.valueOf(crewId));
+        if (currentScore == null) currentScore = 0.0; // 점수가 없으면 기본값 0
 
+        double memberRatio = (eventType.equals("newMember"))
+                ? calculateMemberRatio(currentMembers, maxMembers)
+                : 0;
+        double eventScore = calculateCrewScore(eventType);
+        double updatedScore = currentScore + memberRatio + eventScore;
+        redisTemplate.opsForZSet().add(key, String.valueOf(crewId), updatedScore);
+    }
+
+    // 멤버 비율 계산
+    private double calculateMemberRatio(int currentMembers, int maxMembers) {
+        return maxMembers > 0 ? (double) currentMembers / maxMembers * 100 : 0;
+    }
+
+    private double calculateCrewScore(String eventType) {
+        return switch (eventType) {
+            case "addSchedule" -> 10;
+            case "removeSchedule" -> -10;
+            case "addFeed" -> 8;
+            case "deleteFeed" -> -8;
+            default -> 0;
+        };
+    }
+
+    // 상위 N개의 인기 크루 조회
+    public List<Long> getTopCrewIds(int limit) {
+        String key = "PopularCrew";
+        return redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1).stream()
+                .map(id -> Long.parseLong(id.toString()))
+                .collect(Collectors.toList());
+    }
 
 }

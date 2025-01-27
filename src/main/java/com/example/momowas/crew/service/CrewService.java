@@ -8,6 +8,7 @@ import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -36,6 +37,7 @@ public class CrewService {
     private final CrewRegionService crewRegionService;
     private final UserService userService;
     private final S3Service s3Service;
+    private final RecommendService recommendService;
 
     /* 크루 id로 크루 조회 */
     @Transactional(readOnly = true)
@@ -54,6 +56,8 @@ public class CrewService {
         Crew crew = crewRepository.save(crewReqDto.toEntity(bannerImageUrl)); //크루 저장
         crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
+
+        recommendService.handleCrewEvent(crew.getId(), "createCrew", 0, crew.getMaxMembers());
 
         return crew.getId();
     }
