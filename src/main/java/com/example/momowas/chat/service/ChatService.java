@@ -6,6 +6,7 @@ import com.example.momowas.chat.domain.MessageType;
 import com.example.momowas.chat.dto.ChatDto;
 import com.example.momowas.chat.dto.ChatReqDto;
 import com.example.momowas.chat.dto.ChatRoomDto;
+import com.example.momowas.chat.dto.ChatRoomReqDto;
 import com.example.momowas.chat.repository.ChatRepository;
 import com.example.momowas.chat.repository.ChatRoomRepository;
 import com.example.momowas.response.BusinessException;
@@ -39,9 +40,10 @@ public class ChatService {
         return ChatRoomDto.fromEntity(chatRoom);
     }
 
-    public ChatRoomDto createRoom(String name) {
+    public ChatRoomDto createRoom(ChatRoomReqDto chatRoomReqDto) {
         ChatRoom chatRoom  = ChatRoom.builder()
-                .name(name)
+                .crewId(chatRoomReqDto.getCrewId())
+                .name(chatRoomReqDto.getName())
                 .createdAt(LocalDateTime.now())
                 .build();
         chatRoomRepository.save(chatRoom);
