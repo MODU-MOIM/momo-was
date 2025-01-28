@@ -4,6 +4,7 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.jwt.service.RefreshTokenService;
+import com.example.momowas.user.dto.CheckingPasswordReqDto;
 import com.example.momowas.user.dto.SignInReqDto;
 import com.example.momowas.user.dto.SignUpReqDto;
 import com.example.momowas.user.domain.User;
@@ -70,6 +71,12 @@ public class AuthService {
         cookie.setAttribute("SameSite", "None");
         cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION_TIME);
         response.addCookie(cookie);
+    }
+
+    public boolean verifyMe(Long userId, CheckingPasswordReqDto checkingPassowordReqDto){
+        User user = userService.findUserById(userId);
+
+        return passwordEncoder.matches(checkingPassowordReqDto.getPassword(), user.getPassword());
     }
 
 }
