@@ -16,6 +16,9 @@ public class ChatRoom {
     @Column(name = "chatRoom_id")
     private Long id;
 
+    @Column(nullable = false)
+    private Long crewId;
+
     @Column
     private String name;
 
@@ -24,7 +27,8 @@ public class ChatRoom {
     private LocalDateTime createdAt;
 
     @Builder
-    public ChatRoom(String name, LocalDateTime createdAt) {
+    public ChatRoom(Long crewId, String name, LocalDateTime createdAt) {
+        this.crewId = crewId;
         this.name = name;
         this.createdAt = createdAt;
     }
