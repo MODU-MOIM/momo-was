@@ -26,7 +26,7 @@ import java.util.List;
 public class ChatRoomController {
     private final ChatService chatService;
     private final JwtUtil jwtUtil;
-    private final CrewManager crewManager;
+
 
     @GetMapping("/{roomId}/history")
     public List<ChatDto> chatHistory(@PathVariable Long roomId) {
@@ -41,9 +41,7 @@ public class ChatRoomController {
     @PostMapping("")
     public ChatRoomDto createChatRoom(HttpServletRequest request, @RequestBody ChatRoomReqDto chatRoomReqDto) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
-        crewManager.hasCrewLeaderPermission(chatRoomReqDto.getCrewId(), userId);
-
-        return chatService.createRoom(chatRoomReqDto);
+        return chatService.createRoom(userId, chatRoomReqDto);
     }
 
     @GetMapping("")
@@ -52,8 +50,9 @@ public class ChatRoomController {
     }
 
     @DeleteMapping("/{roomId}")
-    public CommonResponse<String> deleteChatRoom(@PathVariable Long roomId){
-        chatService.deleteChatRoom(roomId);
+    public CommonResponse<String> deleteChatRoom(HttpServletRequest request, @PathVariable Long roomId){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        chatService.deleteChatRoom(userId, roomId);
         return CommonResponse.of(ExceptionCode.SUCCESS,"채팅방을 삭제했습니다");
     }
 

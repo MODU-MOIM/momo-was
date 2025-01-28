@@ -1,5 +1,6 @@
 package com.example.momowas.chat.service;
 
+import com.example.momowas.authorization.CrewManager;
 import com.example.momowas.chat.domain.Chat;
 import com.example.momowas.chat.domain.ChatRoom;
 import com.example.momowas.chat.domain.MessageType;
@@ -28,6 +29,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
     private final UserService userService;
+    private final CrewManager crewManager;
 
     public List<ChatRoomDto> findAllRoom() {
         return chatRoomRepository.findAll().stream()
@@ -40,7 +42,8 @@ public class ChatService {
         return ChatRoomDto.fromEntity(chatRoom);
     }
 
-    public ChatRoomDto createRoom(ChatRoomReqDto chatRoomReqDto) {
+    public ChatRoomDto createRoom(Long userId, ChatRoomReqDto chatRoomReqDto) {
+        crewManager.hasCrewLeaderPermission(chatRoomReqDto.getCrewId(), userId);
         ChatRoom chatRoom  = ChatRoom.builder()
                 .crewId(chatRoomReqDto.getCrewId())
                 .name(chatRoomReqDto.getName())
@@ -77,8 +80,9 @@ public class ChatService {
     }
 
     @Transactional
-    public void deleteChatRoom(Long roomId){
+    public void deleteChatRoom(Long userId, Long roomId){
         ChatRoom chatRoom =  chatRoomRepository.findById(roomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
+        crewManager.hasCrewLeaderPermission(chatRoom.getCrewId(), userId);
 
         chatRoomRepository.delete(chatRoom);
     }
