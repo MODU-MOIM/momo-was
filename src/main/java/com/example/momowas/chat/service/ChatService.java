@@ -15,6 +15,7 @@ import com.example.momowas.user.dto.UserDto;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -71,6 +72,13 @@ public class ChatService {
         return chatRepository.findAllByChatRoomId(roomId).stream()
                 .map(ChatDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteChatRoom(Long roomId){
+        ChatRoom chatRoom =  chatRoomRepository.findById(roomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
+
+        chatRoomRepository.delete(chatRoom);
     }
 
 }
