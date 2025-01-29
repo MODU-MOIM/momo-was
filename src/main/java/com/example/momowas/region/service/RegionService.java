@@ -13,8 +13,8 @@ public class RegionService {
     private final RegionRepository regionRepository;
 
     /* 시, 군, 구로 지역 찾기 */
-    public Region findRegion(String depth1, String depth2, String depth3) {
-        return regionRepository.findByRegionDepth1AndRegionDepth2AndRegionDepth3(depth1, depth2, depth3)
+    public Region findRegion(String depth1, String depth2) {
+        return regionRepository.findByRegionDepth1AndRegionDepth2(depth1, depth2)
                 .orElseThrow(()->new BusinessException(ExceptionCode.NOT_FOUND_REGION));
     }
 

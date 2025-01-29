@@ -1,6 +1,5 @@
 package com.example.momowas.crew.service;
 
-import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
@@ -9,7 +8,7 @@ import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
 import com.example.momowas.recommend.service.RecommendService;
-import com.example.momowas.region.dto.RegionDto;
+import com.example.momowas.region.dto.RegionResDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
@@ -23,9 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,8 +63,8 @@ public class CrewService {
     @Transactional(readOnly = true)
     public List<CrewListResDto> getCrewList() {
         return crewRepository.findAll().stream().map(crew -> {
-            List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
-            return CrewListResDto.of(crew,regionDtos);
+            List<RegionResDto> regionResDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
+            return CrewListResDto.of(crew, regionResDtos);
         }).collect(Collectors.toList());
 
     }
@@ -76,8 +73,8 @@ public class CrewService {
     @Transactional(readOnly = true)
     public CrewDetailResDto getCrewDetail(Long crewId) {
         Crew crew = findCrewById(crewId);
-        List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
-        return CrewDetailResDto.of(crew,regionDtos);
+        List<RegionResDto> regionResDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
+        return CrewDetailResDto.of(crew, regionResDtos);
     }
 
     /* 특정 크루 삭제 */
@@ -125,16 +122,16 @@ public class CrewService {
 
         return resultCrews.stream()
                 .map(crew -> {
-                    List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
-                    return CrewDetailResDto.of(crew, regionDtos);
+                    List<RegionResDto> regionResDtos = crewRegionService.findRegionByCrewId(crew.getId());
+                    return CrewDetailResDto.of(crew, regionResDtos);
                 })
                 .collect(Collectors.toList());
     }
 
     public List<CrewListResDto> getCrewsByMe(Long userId){
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
-            List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
-            return CrewListResDto.of(crew,regionDtos);
+            List<RegionResDto> regionResDtos = crewRegionService.findRegionByCrewId(crew.getId());
+            return CrewListResDto.of(crew, regionResDtos);
         }).collect(Collectors.toList());
     }
 }

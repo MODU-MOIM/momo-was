@@ -2,7 +2,7 @@ package com.example.momowas.crew.dto;
 
 import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.region.dto.RegionDto;
+import com.example.momowas.region.dto.RegionResDto;
 import com.example.momowas.user.domain.Gender;
 
 import java.time.LocalDateTime;
@@ -18,9 +18,9 @@ public record CrewDetailResDto(Long crewId,
                                Integer maxAge,
                                Gender genderRestriction,
                                String bannerImage,
-                               List<RegionDto> regions,
+                               List<RegionResDto> regions,
                                LocalDateTime createdAt){
-    public static CrewDetailResDto of(Crew crew, List<RegionDto> regions) {
+    public static CrewDetailResDto of(Crew crew, List<RegionResDto> regions) {
         return new CrewDetailResDto(
                 crew.getId(),
                 crew.getName(),

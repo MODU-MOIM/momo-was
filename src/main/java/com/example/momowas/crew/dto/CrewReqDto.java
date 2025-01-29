@@ -2,10 +2,9 @@ package com.example.momowas.crew.dto;
 
 import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.region.dto.RegionDto;
+import com.example.momowas.region.dto.RegionResDto;
 import com.example.momowas.user.domain.Gender;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record CrewReqDto(
@@ -17,7 +16,7 @@ public record CrewReqDto(
         Integer minAge,
         Integer maxAge,
         Gender genderRestriction,
-        List<RegionDto> regions
+        List<RegionResDto> regions
 ){
     public Crew toEntity(String bannerImageUrl) {
         return Crew.builder()
