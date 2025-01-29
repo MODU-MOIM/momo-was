@@ -23,7 +23,7 @@ public class CrewRegionService {
 
         List<CrewRegion> crewRegions = regionDtos.stream()
                 .map(regionDto -> {
-                    Region region = regionService.findRegion(regionDto.regionDepth1(), regionDto.regionDepth2(), regionDto.regionDepth3());
+                    Region region = regionService.findRegion(regionDto.regionDepth1(), regionDto.regionDepth2());
                     return CrewRegion.of(region, crew);
                 }).collect(Collectors.toList());
 

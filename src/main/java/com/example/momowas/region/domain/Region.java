@@ -20,6 +20,4 @@ public class Region {
 
     private String regionDepth2;
 
-    private String regionDepth3;
-
 }
