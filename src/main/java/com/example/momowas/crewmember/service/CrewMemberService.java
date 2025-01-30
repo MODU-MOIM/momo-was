@@ -47,5 +47,18 @@ public class CrewMemberService {
         return crewMemberRepository.existsByCrewIdAndUserId(crewId,userId);
     }
 
+    @Transactional(readOnly = true)
+    public CrewMember findCrewMemberById(Long crewMemberId) {
+        return crewMemberRepository.findById(crewMemberId).orElseThrow(() ->
+                new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
+    }
+
+    /* 특정 크루 멤버 강제 탈퇴 */
+    @Transactional
+    public void removeCrewMember(Long crewMemberId) {
+        CrewMember crewMember = findCrewMemberById(crewMemberId);
+        crewMember.updateDeletedAt();
+        crewMemberRepository.delete(crewMember);
+    }
 
 }

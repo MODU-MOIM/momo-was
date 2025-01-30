@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,6 +20,8 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
+@SQLDelete(sql = "UPDATE crew_member SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 public class CrewMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +41,10 @@ public class CrewMember {
     @CreatedDate
     private LocalDateTime joinedAt;
 
+    private boolean isDeleted = false;
+
+    private LocalDateTime deletedAt;
+
     @Builder
     private CrewMember(Crew crew, User user, Role role) {
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
@@ -50,5 +58,9 @@ public class CrewMember {
                 .user(user)
                 .role(role)
                 .build();
+    }
+
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
