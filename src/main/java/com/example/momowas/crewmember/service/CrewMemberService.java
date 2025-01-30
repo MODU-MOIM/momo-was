@@ -3,6 +3,7 @@ package com.example.momowas.crewmember.service;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.crewmember.dto.CrewMemberListResDto;
 import com.example.momowas.crewmember.repository.CrewMemberRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -10,6 +11,8 @@ import com.example.momowas.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +54,13 @@ public class CrewMemberService {
     public CrewMember findCrewMemberById(Long crewMemberId) {
         return crewMemberRepository.findById(crewMemberId).orElseThrow(() ->
                 new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
+    }
+
+    /* 전체 크루 멤버 조회 */
+    @Transactional(readOnly = true)
+    public List<CrewMemberListResDto> getCrewMemberList(Long crewId) {
+        return crewMemberRepository.findByCrewId(crewId).stream().map(
+                CrewMemberListResDto::of).toList();
     }
 
     /* 특정 크루 멤버 강제 탈퇴 */
