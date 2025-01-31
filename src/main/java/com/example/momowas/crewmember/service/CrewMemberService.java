@@ -1,15 +1,20 @@
 package com.example.momowas.crewmember.service;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.domain.Role;
+import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.crewmember.dto.CrewMemberListResDto;
+import com.example.momowas.crewmember.dto.CrewMemberRoleReqDto;
 import com.example.momowas.crewmember.repository.CrewMemberRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
+import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +47,47 @@ public class CrewMemberService {
             new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
     }
 
+    /* 특정 크루 멤버가 존재하는지 조회 */
     @Transactional(readOnly = true)
     public boolean isCrewMemberExists(Long userId, Long crewId) {
         return crewMemberRepository.existsByCrewIdAndUserId(crewId,userId);
     }
 
+    /* 크루 멤버 Id로 크루 멤버 조회 */
+    @Transactional(readOnly = true)
+    public CrewMember findCrewMemberById(Long crewMemberId) {
+        return crewMemberRepository.findById(crewMemberId).orElseThrow(() ->
+                new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
+    }
 
+    /* 전체 크루 멤버 조회 */
+    @Transactional(readOnly = true)
+    public List<CrewMemberListResDto> getCrewMemberList(Long crewId) {
+        return crewMemberRepository.findByCrewId(crewId).stream().map(
+                CrewMemberListResDto::of).toList();
+    }
+
+    /* 특정 크루 멤버 강제 탈퇴 */
+    @Transactional
+    public void removeCrewMember(Long crewMemberId) {
+        CrewMember crewMember = findCrewMemberById(crewMemberId);
+        crewMember.updateDeletedAt();
+        crewMemberRepository.delete(crewMember);
+    }
+
+    /* 크루 멤버 권한 설정 */
+    @Transactional
+    public void updateCrewMemberRole(CrewMemberRoleReqDto crewMemberRoleReqDto, Long crewMemberId) {
+        CrewMember crewMember = findCrewMemberById(crewMemberId);
+        crewMember.updateRole(crewMemberRoleReqDto.role());
+    }
+
+    /* 크루 리더 위임 */
+    @Transactional
+    public void delegateCrewLeader(Long crewMemberId, Long crewId, Long userId) {
+        CrewMember postLeader = findCrewMemberById(crewMemberId);
+        CrewMember preLeader = findCrewMemberByCrewAndUser(userId, crewId);
+        preLeader.updateRole(Role.MEMBER);
+        postLeader.updateRole(Role.LEADER);
+    }
 }

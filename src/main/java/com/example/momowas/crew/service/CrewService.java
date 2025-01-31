@@ -6,6 +6,7 @@ import com.example.momowas.crew.dto.CrewDetailResDto;
 import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.repository.CrewRepository;
+import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
 import com.example.momowas.recommend.service.RecommendService;
@@ -137,4 +138,5 @@ public class CrewService {
             return CrewListResDto.of(crew,regionDtos);
         }).collect(Collectors.toList());
     }
+
 }

@@ -2,7 +2,7 @@ package com.example.momowas.archive.dto;
 
 import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.comment.dto.CommentResDto;
-import com.example.momowas.crew.domain.Role;
+import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.user.domain.User;
 
 import java.time.LocalDateTime;

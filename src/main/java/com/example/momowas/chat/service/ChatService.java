@@ -8,7 +8,7 @@ import com.example.momowas.chat.dto.ChatResDto;
 import com.example.momowas.chat.dto.ChatReqDto;
 import com.example.momowas.chat.repository.ChatRepository;
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.domain.Role;
+import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;

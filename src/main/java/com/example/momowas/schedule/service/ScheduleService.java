@@ -8,6 +8,7 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleDto;
+import com.example.momowas.schedule.dto.SchedulePermissionReqDto;
 import com.example.momowas.schedule.dto.ScheduleReqDto;
 import com.example.momowas.schedule.repository.ScheduleRepository;
 import com.example.momowas.user.domain.User;
@@ -32,7 +33,7 @@ public class ScheduleService {
     private final CrewManager crewManager;
 
     public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
-        if(!crewManager.hasCrewPermission(crewId, userId)){
+        if(!crewManager.hasScheduleCreatePermission(crewId, userId)){
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
         }
 
@@ -81,7 +82,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto updateSchedule(Long userId, Long crewId, Long scheduleId, ScheduleReqDto scheduleReqDto){
-        if(!crewManager.hasCrewPermission(crewId, userId)){
+        if(!crewManager.hasScheduleUpdatePermission(crewId, userId)){
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
         }
 
@@ -140,4 +141,10 @@ public class ScheduleService {
         return scheduleRepository.findByScheduleDate(date);
     }
 
+    @Transactional
+    public void updateSchedulePermission(SchedulePermissionReqDto schedulePermissionReqDto, Long crewId) {
+        Crew crew = crewService.findCrewById(crewId);
+        crew.updateScheduleCreatePermission(schedulePermissionReqDto.createPermission());
+        crew.updateScheduleUpdatePermission(schedulePermissionReqDto.updatePermission());
+    }
 }
