@@ -39,7 +39,7 @@ public class SecurityConfig {
             "/ws/**",
             "/stomp/**",
             "/auth/find-id",
-            "/auth/find-pw",
+            "/auth/reset-pw",
             "/auth/sign-in",
             "/auth/sign-up",
             "/auth/reissue",

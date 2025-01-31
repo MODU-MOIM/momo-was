@@ -6,12 +6,14 @@ import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.jwt.service.RefreshTokenService;
 import com.example.momowas.user.dto.*;
 import com.example.momowas.user.domain.User;
+import io.lettuce.core.ConnectionEvents;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -88,6 +90,14 @@ public class AuthService {
         return FindEmailResDto.builder()
                 .email(user.getEmail())
                 .build();
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordReqDto resetPasswordReqDto){
+        User user = userService.findUserByEmail(resetPasswordReqDto.getEmail());
+        String enPassword = passwordEncoder.encode(resetPasswordReqDto.getNewPassword());
+
+        user.updatePassword(enPassword);
     }
 
 }

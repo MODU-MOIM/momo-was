@@ -88,11 +88,17 @@ public class AuthController {
     }
 
     @PostMapping("/find-id")
-    public FindEmailResDto findId(@RequestBody SmsReqDto smsReqDto, HttpSession session){
+    public FindEmailResDto findId(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession session){
         // 인증 여부 확인
         if (!smsUtil.isAuthenticated(session)) {
             throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
         }
         return authService.findEmail(smsReqDto);
+    }
+
+    @PostMapping("/reset-pw")
+    public CommonResponse<String> resetPassword(@RequestBody ResetPasswordReqDto resetPasswordReqDto){
+        authService.resetPassword(resetPasswordReqDto);
+        return CommonResponse.of(ExceptionCode.SUCCESS, "비밀번호 재설정 성공");
     }
 }
