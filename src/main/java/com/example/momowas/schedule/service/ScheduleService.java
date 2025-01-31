@@ -1,6 +1,5 @@
 package com.example.momowas.schedule.service;
 
-import com.example.momowas.chat.dto.ChatDto;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.recommend.service.RecommendService;
@@ -11,7 +10,6 @@ import com.example.momowas.schedule.dto.ScheduleDto;
 import com.example.momowas.schedule.dto.ScheduleReqDto;
 import com.example.momowas.schedule.repository.ScheduleRepository;
 import com.example.momowas.user.domain.User;
-import com.example.momowas.user.dto.UserDto;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

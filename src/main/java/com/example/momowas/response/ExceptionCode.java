@@ -55,6 +55,7 @@ public enum ExceptionCode {
 
     //채팅방 예외
     CHATROOM_NOT_FOUND(404, "C001", "채팅방을 찾을 수 없습니다."),
+    ALREADY_ENTER(404, "C002","이미 채팅방에 입장했습니다."),
 
     //일정 예외
     SCHEDULE_NOT_FOUND(404, "SC001", "일정을 찾을 수 없습니다."),

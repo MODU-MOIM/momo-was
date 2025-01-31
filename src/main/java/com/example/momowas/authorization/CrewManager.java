@@ -6,11 +6,13 @@ import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.joinrequest.domain.JoinRequest;
 import com.example.momowas.joinrequest.service.JoinRequestService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CrewManager {
 
     private final CrewMemberService crewMemberService;
@@ -26,5 +28,13 @@ public class CrewManager {
     public boolean hasCrewLeaderPermission(Long crewId, Long userId) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         return crewMember.getRole().equals(Role.LEADER);
+    }
+
+    @Transactional(readOnly = true)
+    public Role findUserRoleInCrew(Long crewId, Long userId) {
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId );
+
+        log.info(String.valueOf(crewId)+ " "+String.valueOf(crewMember.getRole()));
+        return crewMember.getRole();
     }
 }
