@@ -30,10 +30,10 @@ public class ChatRoom {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<CrewMember> chatMembers = new ArrayList<>();
+    private List<ChatMember> chatMembers = new ArrayList<>();
 
     @Builder
-    public ChatRoom(Long crewId, String name, LocalDateTime createdAt, List<CrewMember> chatMembers) {
+    public ChatRoom(Long crewId, String name, LocalDateTime createdAt, List<ChatMember> chatMembers) {
         this.crewId = crewId;
         this.name = name;
         this.createdAt = createdAt;

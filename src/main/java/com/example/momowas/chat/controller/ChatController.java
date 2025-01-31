@@ -26,9 +26,14 @@ public class ChatController {
     @SendTo("/room/{roomId}")
     public ChatDto sendChatMessage( @DestinationVariable Long roomId, @RequestBody ChatReqDto chatReqDto, @Header("token") String token) {
         Long userId = jwtUtil.getUserIdFromToken(token);
-        log.info("UserId: {}", userId);
-        log.info("Chat Request: {}", chatReqDto);
         return chatService.createChat(roomId, chatReqDto, userId);
+    }
+
+    @MessageMapping("/room/{roomId}/enter")
+    @SendTo("/room/{roomId}")
+    public ChatDto enterChatRoomMessage( @DestinationVariable Long roomId, @Header("token") String token) {
+        Long userId = jwtUtil.getUserIdFromToken(token);
+        return chatService.enterChatRoomChat(roomId, userId);
     }
 
 }

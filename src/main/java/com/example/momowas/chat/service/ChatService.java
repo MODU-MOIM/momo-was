@@ -21,10 +21,30 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserService userService;
     private final ChatRoomService chatRoomService;
+    private final ChatMemberService chatMemberService;
 
+    public ChatDto enterChatRoomChat(Long chatRoomId, Long userId) {
+        ChatRoom chatRoom = chatRoomService.findChatRoomById(chatRoomId);
+        User user = userService.findUserById(userId);
 
-    public ChatDto createChat(Long roomId, ChatReqDto chatReqDto, Long userId) {
-        ChatRoom chatRoom =  chatRoomService.findChatRoomById(roomId);
+        // 채팅 참여자로 등록
+        chatMemberService.addParticipant(user, chatRoom);
+
+        Chat chat = Chat.builder()
+                .chatRoom(chatRoom)
+                .senderId(userId)
+                .senderName(user.getNickname())
+                .type(MessageType.ENTER)
+                .content(user.getNickname() + "님이 입장하였습니다.")
+                .sendAt(LocalDateTime.now())
+                .build();
+
+        chatRepository.save(chat);
+        return ChatDto.fromEntity(chat);
+    }
+
+    public ChatDto createChat(Long chatRoomId, ChatReqDto chatReqDto, Long userId) {
+        ChatRoom chatRoom =  chatRoomService.findChatRoomById(chatRoomId);
         User user  = userService.findUserById(userId);
 
         Chat chat = Chat.builder()
@@ -40,6 +60,8 @@ public class ChatService {
         return ChatDto.fromEntity(chat);
 
     }
+
+
     public List<ChatDto> findAllChatByRoomId(Long chatRoomId) {
         ChatRoom chatRoom =  chatRoomService.findChatRoomById(chatRoomId);
         return chatRepository.findAllByChatRoomId(chatRoomId).stream()

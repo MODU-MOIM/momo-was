@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chatArea {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            text-align: left;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        #messageInput {
+            width: calc(100% - 120px);
+        }
+        #sendButton, #enterButton {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div id="chatArea">
+    <h2>Chat Room</h2>
+
+    <label>토큰 입력:</label>
+    <input type="text" id="tokenInput" placeholder="JWT 토큰 입력">
+    <br>
+
+    <label>채팅방 ID 입력:</label>
+    <input type="number" id="roomIdInput" placeholder="Room ID 입력">
+    <br>
+
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <button id="enterButton" onclick="enterChatRoom()">Enter Room</button>
+
+    <h3>Messages</h3>
+    <div id="messages"></div>
+
+    <input type="text" id="messageInput" placeholder="Enter your message">
+    <button id="sendButton">Send</button>
+</div>
+
+<script>
+    let stompClient = null;
+    let token = "";
+    let roomId = "";
+
+    function connect() {
+        token = document.getElementById("tokenInput").value;
+        roomId = document.getElementById("roomIdInput").value;
+
+        if (!token || !roomId) {
+            alert("토큰과 채팅방 ID를 입력하세요!");
+            return;
+        }
+
+        const socket = new SockJS('/stomp/chat'); // ✅ 원래 방식 유지
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({ Authorization: `Bearer ${token}` }, function (frame) {
+            console.log('Connected: ' + frame);
+
+            // Subscribe to the chat room
+            stompClient.subscribe(`/room/${roomId}`, function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+
+            // 자동으로 입장 처리 가능 (원하는 경우)
+            // enterChatRoom();
+        }, function (error) {
+            console.error('WebSocket connection error:', error);
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        console.log("Disconnected");
+    }
+
+    function enterChatRoom() {
+        if (!stompClient || !stompClient.connected) {
+            alert("WebSocket에 먼저 연결하세요!");
+            return;
+        }
+
+        stompClient.send(`/send/room/${roomId}/enter`, { "token": token }, {});
+        console.log("Entered chat room:", roomId);
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const messageContent = messageInput.value.trim();
+
+        if (!token || !roomId) {
+            alert("토큰과 채팅방 ID를 입력하세요!");
+            return;
+        }
+
+        if (messageContent && stompClient) {
+            stompClient.send(`/send/room/${roomId}/message`,{ "token": token }, JSON.stringify({
+                content: messageContent
+            }));
+            messageInput.value = "";
+        }
+    }
+
+    function showMessage(message) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = `[${message.sendAt}] ${message.writerName}: ${message.message}`;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+    document.getElementById('messageInput').addEventListener('keyup', function (event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    window.addEventListener('beforeunload', disconnect);
+</script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.example.momowas.chat.service;
 
 import com.example.momowas.authorization.CrewManager;
+import com.example.momowas.chat.domain.ChatMember;
 import com.example.momowas.chat.domain.ChatRoom;
 import com.example.momowas.chat.dto.ChatRoomDto;
 import com.example.momowas.chat.dto.ChatRoomReqDto;
