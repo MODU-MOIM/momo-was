@@ -41,4 +41,9 @@ public class ChatMemberService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public boolean isChatMemberExists(ChatRoom chatRoom, User user) {
+        return chatMemberRepository.existsByChatRoomAndUser(chatRoom,user);
+    }
+
 }

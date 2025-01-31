@@ -12,6 +12,8 @@ import com.example.momowas.crew.domain.Role;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -71,8 +73,12 @@ public class ChatService {
     }
 
 
-    public List<ChatResDto> findAllChatByRoomId(Long chatRoomId) {
+    public List<ChatResDto> findAllChatByRoomId(Long userId, Long chatRoomId) {
         ChatRoom chatRoom = chatRoomService.findChatRoomById(chatRoomId);
+        User user = userService.findUserById(userId);
+        if(!chatMemberService.isChatMemberExists(chatRoom, user)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
 
         return chatRepository.findAllByChatRoomId(chatRoomId).stream()
                 .map(chat -> {

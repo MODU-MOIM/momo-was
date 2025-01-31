@@ -25,8 +25,9 @@ public class ChatRoomController {
     private final JwtUtil jwtUtil;
 
     @GetMapping("/{roomId}/history")
-    public List<ChatResDto> chatHistory(@PathVariable Long roomId) {
-        return chatService.findAllChatByRoomId(roomId);
+    public List<ChatResDto> chatHistory(HttpServletRequest request, @PathVariable Long roomId) {
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return chatService.findAllChatByRoomId(userId, roomId);
     }
 
     @GetMapping("/{roomId}")
