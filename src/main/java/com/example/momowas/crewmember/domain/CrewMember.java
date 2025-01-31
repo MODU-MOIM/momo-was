@@ -1,7 +1,6 @@
 package com.example.momowas.crewmember.domain;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.domain.Role;
 import com.example.momowas.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -62,5 +61,9 @@ public class CrewMember {
 
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateRole(Role role) {
+        this.role=role;
     }
 }

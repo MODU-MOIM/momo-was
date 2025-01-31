@@ -1,9 +1,10 @@
 package com.example.momowas.crewmember.service;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.domain.Role;
+import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.dto.CrewMemberListResDto;
+import com.example.momowas.crewmember.dto.CrewMemberRoleReqDto;
 import com.example.momowas.crewmember.repository.CrewMemberRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -45,11 +46,13 @@ public class CrewMemberService {
             new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
     }
 
+    /* 특정 크루 멤버가 존재하는지 조회 */
     @Transactional(readOnly = true)
     public boolean isCrewMemberExists(Long userId, Long crewId) {
         return crewMemberRepository.existsByCrewIdAndUserId(crewId,userId);
     }
 
+    /* 크루 멤버 Id로 크루 멤버 조회 */
     @Transactional(readOnly = true)
     public CrewMember findCrewMemberById(Long crewMemberId) {
         return crewMemberRepository.findById(crewMemberId).orElseThrow(() ->
@@ -71,4 +74,10 @@ public class CrewMemberService {
         crewMemberRepository.delete(crewMember);
     }
 
+    /* 크루 멤버 권한 설정 */
+    @Transactional
+    public void updateCrewMemberRole(CrewMemberRoleReqDto crewMemberRoleReqDto, Long crewMemberId) {
+        CrewMember crewMember = findCrewMemberById(crewMemberId);
+        crewMember.updateRole(crewMemberRoleReqDto.role());
+    }
 }
