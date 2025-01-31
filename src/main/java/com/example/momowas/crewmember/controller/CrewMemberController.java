@@ -20,9 +20,8 @@ public class CrewMemberController {
 
     /* 전체 크루 멤버 조회 */
     @GetMapping("")
-    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
-    public List<CrewMemberListResDto> getCrewMemberList(@PathVariable Long crewId,
-                                                        @AuthenticationPrincipal Long userId) {
+    @PreAuthorize("isAuthenticated()")
+    public List<CrewMemberListResDto> getCrewMemberList(@PathVariable Long crewId){
         return crewMemberService.getCrewMemberList(crewId);
     }
 
@@ -46,4 +45,15 @@ public class CrewMemberController {
         crewMemberService.updateCrewMemberRole(crewMemberRoleReqDto, memberId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
+
+    /* 크루 리더 위임 */
+    @PatchMapping("/{memberId}/leader")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> delegateCrewLeader(@PathVariable Long crewId,
+                                                     @PathVariable Long memberId,
+                                                     @AuthenticationPrincipal Long userId) {
+        crewMemberService.delegateCrewLeader(memberId, crewId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
 }

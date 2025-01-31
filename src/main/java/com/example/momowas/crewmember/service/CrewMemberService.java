@@ -9,6 +9,7 @@ import com.example.momowas.crewmember.repository.CrewMemberRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
+import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,5 +80,14 @@ public class CrewMemberService {
     public void updateCrewMemberRole(CrewMemberRoleReqDto crewMemberRoleReqDto, Long crewMemberId) {
         CrewMember crewMember = findCrewMemberById(crewMemberId);
         crewMember.updateRole(crewMemberRoleReqDto.role());
+    }
+
+    /* 크루 리더 위임 */
+    @Transactional
+    public void delegateCrewLeader(Long crewMemberId, Long crewId, Long userId) {
+        CrewMember postLeader = findCrewMemberById(crewMemberId);
+        CrewMember preLeader = findCrewMemberByCrewAndUser(userId, crewId);
+        preLeader.updateRole(Role.MEMBER);
+        postLeader.updateRole(Role.LEADER);
     }
 }
