@@ -33,7 +33,7 @@ public class ScheduleService {
     private final CrewManager crewManager;
 
     public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
-        if(!crewManager.hasCrewPermission(crewId, userId)){
+        if(!crewManager.hasScheduleCreatePermission(crewId, userId)){
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
         }
 
@@ -82,7 +82,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto updateSchedule(Long userId, Long crewId, Long scheduleId, ScheduleReqDto scheduleReqDto){
-        if(!crewManager.hasCrewPermission(crewId, userId)){
+        if(!crewManager.hasScheduleUpdatePermission(crewId, userId)){
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
         }
 

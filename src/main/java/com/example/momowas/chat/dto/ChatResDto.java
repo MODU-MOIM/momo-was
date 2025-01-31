@@ -1,7 +1,7 @@
 package com.example.momowas.chat.dto;
 
 import com.example.momowas.chat.domain.Chat;
-import com.example.momowas.crew.domain.Role;
+import com.example.momowas.crewmember.domain.Role;
 import lombok.Builder;
 import lombok.Data;
 

@@ -6,6 +6,7 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.dto.ScheduleDto;
+import com.example.momowas.schedule.dto.SchedulePermissionReqDto;
 import com.example.momowas.schedule.dto.ScheduleReqDto;
 import com.example.momowas.schedule.service.ScheduleService;
 import com.example.momowas.crewmember.service.CrewMemberService;
@@ -23,8 +24,6 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
     private final JwtUtil jwtUtil;
-    private final CrewManager crewManager;
-
 
     @PostMapping("")
     private ScheduleDto createSchedule(HttpServletRequest request, @PathVariable Long crewId, @RequestBody ScheduleReqDto scheduleReqDto) {
@@ -62,4 +61,12 @@ public class ScheduleController {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return scheduleService.getByThisMonth(userId, crewId, yearMonth);
     }
+
+    @PatchMapping("/permissions")
+    public CommonResponse<String> updateSchedulePermission(@RequestBody SchedulePermissionReqDto schedulePermissionReqDto, HttpServletRequest request, @PathVariable Long crewId) {
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        scheduleService.updateSchedulePermission(schedulePermissionReqDto, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
 }
