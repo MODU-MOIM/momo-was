@@ -30,8 +30,14 @@ public class ChatRoomController {
     }
 
     @GetMapping("/{roomId}")
-    public ChatRoomResDto joinRoom(@PathVariable Long roomId) {
-        return chatRoomService.findRoomById(roomId);
+    public ChatRoomResDto findById(@PathVariable Long roomId) {
+        return chatRoomService.findById(roomId);
+    }
+
+    @GetMapping("/me")
+    public List<ChatRoomResDto> findByMe (HttpServletRequest request){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return chatRoomService.findChatRoomsByMe(userId);
     }
 
     //모임 장이 채팅방 생성

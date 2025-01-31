@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,13 @@ public class ChatMemberService {
                 .build();
         chatMemberRepository.save(chatMember);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatRoom> findChatRoomsByUser(User user) {
+        return chatMemberRepository.findByUser(user).stream()
+                .map(ChatMember::getChatRoom)
+                .collect(Collectors.toList());
     }
 
 }

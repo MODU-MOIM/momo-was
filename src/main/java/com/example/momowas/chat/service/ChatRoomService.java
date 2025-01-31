@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMemberService chatMemberService;
     private final UserService userService;
     private final CrewManager crewManager;
 
@@ -34,9 +35,18 @@ public class ChatRoomService {
     public ChatRoom findChatRoomById(Long chatRoomId){
         return chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
     }
-    public ChatRoomResDto findRoomById(Long chatRoomId) {
+
+    public ChatRoomResDto findById(Long chatRoomId) {
         ChatRoom chatRoom =  chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
         return ChatRoomResDto.fromEntity(chatRoom);
+    }
+
+    public List<ChatRoomResDto> findChatRoomsByMe(Long userId) {
+        User user = userService.findUserById(userId);
+        List<ChatRoom> chatRooms = chatMemberService.findChatRoomsByUser(user);
+        return chatRooms.stream()
+                .map(ChatRoomResDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public ChatRoomResDto createRoom(Long userId, ChatRoomReqDto chatRoomReqDto) {
