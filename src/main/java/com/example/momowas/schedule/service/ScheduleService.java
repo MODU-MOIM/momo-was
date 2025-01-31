@@ -8,6 +8,7 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleDto;
+import com.example.momowas.schedule.dto.SchedulePermissionReqDto;
 import com.example.momowas.schedule.dto.ScheduleReqDto;
 import com.example.momowas.schedule.repository.ScheduleRepository;
 import com.example.momowas.user.domain.User;
@@ -119,4 +120,10 @@ public class ScheduleService {
         return scheduleRepository.findByScheduleDate(date);
     }
 
+    @Transactional
+    public void updateSchedulePermission(SchedulePermissionReqDto schedulePermissionReqDto, Long crewId) {
+        Crew crew = crewService.findCrewById(crewId);
+        crew.updateScheduleCreatePermission(schedulePermissionReqDto.createPermission());
+        crew.updateScheduleUpdatePermission(schedulePermissionReqDto.updatePermission());
+    }
 }

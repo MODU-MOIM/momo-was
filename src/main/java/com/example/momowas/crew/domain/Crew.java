@@ -2,6 +2,7 @@ package com.example.momowas.crew.domain;
 
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.joinrequest.domain.JoinRequest;
@@ -71,6 +72,12 @@ public class Crew {
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Feed> feeds = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private Role scheduleCreatePermission;
+
+    @Enumerated(EnumType.STRING)
+    private Role scheduleUpdatePermission;
+
     @Builder
     private Crew(String name,
                  Category category,
@@ -97,6 +104,8 @@ public class Crew {
         this.maxAge = maxAge;
         this.genderRestriction = genderRestriction;
         this.bannerImage = bannerImage;
+        this.scheduleCreatePermission=Role.LEADER;
+        this.scheduleUpdatePermission=Role.LEADER;
     }
 
 
@@ -130,5 +139,13 @@ public class Crew {
     /* 크루 정원이 초과했는지 */
     public boolean isCrewFull() {
         return maxMembers!=null && Hibernate.size(crewRegions)>=maxMembers;
+    }
+
+    public void updateScheduleCreatePermission(Role role) {
+        this.scheduleCreatePermission=role;
+    }
+
+    public void updateScheduleUpdatePermission(Role role) {
+        this.scheduleUpdatePermission=role;
     }
 }
