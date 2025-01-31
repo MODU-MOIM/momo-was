@@ -41,7 +41,9 @@ public class ChatRoomService {
 
     public ChatRoomResDto createRoom(Long userId, ChatRoomReqDto chatRoomReqDto) {
         User user  = userService.findUserById(userId);
-        crewManager.hasCrewLeaderPermission(chatRoomReqDto.getCrewId(), user.getId());
+        if(!crewManager.hasCrewLeaderPermission(chatRoomReqDto.getCrewId(), user.getId())){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
 
         ChatRoom chatRoom  = ChatRoom.builder()
                 .crewId(chatRoomReqDto.getCrewId())
@@ -55,7 +57,9 @@ public class ChatRoomService {
     @Transactional
     public void deleteChatRoom(Long userId, Long chatRoomId){
         ChatRoom chatRoom =  chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
-        crewManager.hasCrewLeaderPermission(chatRoom.getCrewId(), userId);
+        if(!crewManager.hasCrewLeaderPermission(chatRoom.getCrewId(),userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
 
         chatRoomRepository.delete(chatRoom);
     }

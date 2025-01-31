@@ -23,10 +23,14 @@ public class ChatRoomResDto {
     }
 
     public static ChatRoomResDto fromEntity(ChatRoom chatRoom){
+        int memberNumbers = 0;
+        if(chatRoom.getChatMembers()!=null){
+            memberNumbers = chatRoom.getChatMembers().size();
+        }
         return ChatRoomResDto.builder()
                 .roomId(chatRoom.getId())
                 .name(chatRoom.getName())
-                .chatMemberNumbers(chatRoom.getChatMembers().size())
+                .chatMemberNumbers(memberNumbers)
                 .createdAt(chatRoom.getCreatedAt())
                 .build();
     }

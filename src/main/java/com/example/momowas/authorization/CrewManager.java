@@ -27,4 +27,10 @@ public class CrewManager {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         return crewMember.getRole().equals(Role.LEADER);
     }
+
+    @Transactional(readOnly = true)
+    public Role findUserRoleInCrew(Long crewId, Long userId) {
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(crewId, userId);
+        return crewMember.getRole();
+    }
 }
