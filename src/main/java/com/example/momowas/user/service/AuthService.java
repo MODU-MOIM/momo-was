@@ -4,16 +4,16 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.jwt.service.RefreshTokenService;
-import com.example.momowas.user.dto.CheckingPasswordReqDto;
-import com.example.momowas.user.dto.SignInReqDto;
-import com.example.momowas.user.dto.SignUpReqDto;
+import com.example.momowas.user.dto.*;
 import com.example.momowas.user.domain.User;
+import io.lettuce.core.ConnectionEvents;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -30,11 +30,15 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
 
-    public User signUp(SignUpReqDto signUpReqDto){
+    public UserDto signUp(SignUpReqDto signUpReqDto){
+        if (userService.isEmailExists(signUpReqDto.getEmail())) {
+            throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
+        }
+
         String enPassword = passwordEncoder.encode(signUpReqDto.getPassword());
 
         //사용자 기본 설정
-        return User.builder()
+        User user =  User.builder()
                 .email(signUpReqDto.getEmail())
                 .password(enPassword)
                 .nickname(signUpReqDto.getNickname())
@@ -47,6 +51,8 @@ public class AuthService {
                 .provider("momo")
                 .providerId(signUpReqDto.getEmail())
                 .build();
+        userService.create(user);
+        return UserDto.fromEntity(user);
     }
 
     public void signIn(SignInReqDto signInReqDto, HttpServletResponse response){
@@ -77,6 +83,21 @@ public class AuthService {
         User user = userService.findUserById(userId);
 
         return passwordEncoder.matches(checkingPassowordReqDto.getPassword(), user.getPassword());
+    }
+
+    public FindEmailResDto findEmail(SmsReqDto smsReqDto){
+        User user = userService.findUserByCp(smsReqDto.getToPhoneNumber());
+        return FindEmailResDto.builder()
+                .email(user.getEmail())
+                .build();
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordReqDto resetPasswordReqDto){
+        User user = userService.findUserByEmail(resetPasswordReqDto.getEmail());
+        String enPassword = passwordEncoder.encode(resetPasswordReqDto.getNewPassword());
+
+        user.updatePassword(enPassword);
     }
 
 }
