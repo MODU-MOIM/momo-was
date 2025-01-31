@@ -40,6 +40,9 @@ public class UserService {
     public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
     }
+    public User findUserByCp(String cp){
+        return userRepository.findByCp(cp).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
+    }
 
     //프로필 업로드
     @Transactional

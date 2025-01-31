@@ -77,4 +77,8 @@ public class User {
         this.gender = newGender;
         this.age= newAge;
     }
+
+    public void updatePassword(String newPassword){
+        this.password= newPassword;
+    }
 }

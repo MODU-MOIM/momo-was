@@ -7,10 +7,8 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.jwt.service.RefreshTokenService;
-import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.*;
 import com.example.momowas.user.service.AuthService;
-import com.example.momowas.user.service.UserService;
 import com.example.momowas.sms.SmsUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,27 +22,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
-    private final UserService userService;
     private final RefreshTokenService tokenService;
     private final SmsUtil smsUtil;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/sign-up")
     public UserDto signUp(@RequestBody @Valid SignUpReqDto signUpReqDto, HttpSession session) {
-        // 이메일 중복 체크
-        if (userService.isEmailExists(signUpReqDto.getEmail())) {
-            throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
-        }
 
         // 인증 여부 확인
-//        if (!smsUtil.isAuthenticated(session)) {
-//            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
-//        }
+        if (!smsUtil.isAuthenticated(session)) {
+            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
+        }
 
-        User user = authService.signUp(signUpReqDto);
-        userService.create(user);
-
-        return UserDto.fromEntity(user);
+        return authService.signUp(signUpReqDto);
     }
 
     @PostMapping("/send-sms")
@@ -97,4 +87,18 @@ public class AuthController {
         return CommonResponse.of(ExceptionCode.SUCCESS, authService.verifyMe(userId, checkingPasswordReqDto));
     }
 
+    @PostMapping("/find-id")
+    public FindEmailResDto findId(@RequestBody @Valid SmsReqDto smsReqDto, HttpSession session){
+        // 인증 여부 확인
+        if (!smsUtil.isAuthenticated(session)) {
+            throw new BusinessException(ExceptionCode.NOT_VERIFIED_YET);
+        }
+        return authService.findEmail(smsReqDto);
+    }
+
+    @PostMapping("/reset-pw")
+    public CommonResponse<String> resetPassword(@RequestBody ResetPasswordReqDto resetPasswordReqDto){
+        authService.resetPassword(resetPasswordReqDto);
+        return CommonResponse.of(ExceptionCode.SUCCESS, "비밀번호 재설정 성공");
+    }
 }
