@@ -1,5 +1,6 @@
 package com.example.momowas.schedule.service;
 
+import com.example.momowas.authorization.CrewManager;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.recommend.service.RecommendService;
@@ -28,8 +29,13 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CrewService crewService;
     private final RecommendService recommendService;
+    private final CrewManager crewManager;
 
     public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
+        if(!crewManager.hasCrewPermission(crewId, userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
+
         User user  = userService.findUserById(userId);
         Crew crew = crewService.findCrewById(crewId);
 
@@ -56,6 +62,10 @@ public class ScheduleService {
 
     @Transactional
     public void deleteSchedule(Long userId, Long crewId, Long scheduleId){
+        if(!crewManager.hasCrewPermission(crewId, userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
+
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
         Crew crew = crewService.findCrewById(crewId);
@@ -70,7 +80,11 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleDto updateSchedule(Long userId, Long scheduleId, ScheduleReqDto scheduleReqDto){
+    public ScheduleDto updateSchedule(Long userId, Long crewId, Long scheduleId, ScheduleReqDto scheduleReqDto){
+        if(!crewManager.hasCrewPermission(crewId, userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
+
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
 
@@ -89,21 +103,30 @@ public class ScheduleService {
         return ScheduleDto.fromEntity(schedule);
     }
 
-    public ScheduleDto getByScheduleId(Long scheduleId){
+    public ScheduleDto getByScheduleId(Long userId, Long crewId, Long scheduleId){
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
+        if(!crewManager.hasCrewPermission(crewId, userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
         return ScheduleDto.fromEntity(schedule);
     }
     public Schedule getScheduleByScheduleId(Long scheduleId){
         return scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
     }
 
-    public List<ScheduleDto> getByDate(Long crewId, LocalDate date){
+    public List<ScheduleDto> getByDate(Long userId, Long crewId, LocalDate date){
+        if(!crewManager.hasCrewPermission(crewId, userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
         return scheduleRepository.findByCrewIdAndScheduleDate(crewId, date).stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<ScheduleDto> getByThisMonth(Long crewId, String yearMonth) {
+    public List<ScheduleDto> getByThisMonth(Long userId, Long crewId, String yearMonth) {
+        if(!crewManager.hasCrewPermission(crewId, userId)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
         YearMonth yearMonthObj = YearMonth.parse(yearMonth); // "yyyy-MM" 형식이어야 함
         LocalDate startDate = yearMonthObj.atDay(1);
         LocalDate endDate = yearMonthObj.atEndOfMonth();
