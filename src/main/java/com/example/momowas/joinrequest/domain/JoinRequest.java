@@ -1,8 +1,6 @@
 package com.example.momowas.joinrequest.domain;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.domain.Role;
-import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,7 +1,7 @@
 
 package com.example.momowas.notice.dto;
 
-import com.example.momowas.crew.domain.Role;
+import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.user.domain.User;
