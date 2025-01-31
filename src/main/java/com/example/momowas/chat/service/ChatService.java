@@ -3,7 +3,7 @@ package com.example.momowas.chat.service;
 import com.example.momowas.chat.domain.Chat;
 import com.example.momowas.chat.domain.ChatRoom;
 import com.example.momowas.chat.domain.MessageType;
-import com.example.momowas.chat.dto.ChatDto;
+import com.example.momowas.chat.dto.ChatResDto;
 import com.example.momowas.chat.dto.ChatReqDto;
 import com.example.momowas.chat.repository.ChatRepository;
 import com.example.momowas.user.domain.User;
@@ -23,7 +23,7 @@ public class ChatService {
     private final ChatRoomService chatRoomService;
     private final ChatMemberService chatMemberService;
 
-    public ChatDto enterChatRoomChat(Long chatRoomId, Long userId) {
+    public ChatResDto enterChatRoomChat(Long chatRoomId, Long userId) {
         ChatRoom chatRoom = chatRoomService.findChatRoomById(chatRoomId);
         User user = userService.findUserById(userId);
 
@@ -40,10 +40,10 @@ public class ChatService {
                 .build();
 
         chatRepository.save(chat);
-        return ChatDto.fromEntity(chat);
+        return ChatResDto.fromEntity(chat);
     }
 
-    public ChatDto createChat(Long chatRoomId, ChatReqDto chatReqDto, Long userId) {
+    public ChatResDto createChat(Long chatRoomId, ChatReqDto chatReqDto, Long userId) {
         ChatRoom chatRoom =  chatRoomService.findChatRoomById(chatRoomId);
         User user  = userService.findUserById(userId);
 
@@ -57,15 +57,15 @@ public class ChatService {
                 .build();
 
         chatRepository.save(chat);
-        return ChatDto.fromEntity(chat);
+        return ChatResDto.fromEntity(chat);
 
     }
 
 
-    public List<ChatDto> findAllChatByRoomId(Long chatRoomId) {
+    public List<ChatResDto> findAllChatByRoomId(Long chatRoomId) {
         ChatRoom chatRoom =  chatRoomService.findChatRoomById(chatRoomId);
         return chatRepository.findAllByChatRoomId(chatRoomId).stream()
-                .map(ChatDto::fromEntity)
+                .map(ChatResDto::fromEntity)
                 .collect(Collectors.toList());
     }
 

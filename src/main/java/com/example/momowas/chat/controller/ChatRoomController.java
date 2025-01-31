@@ -1,9 +1,9 @@
 package com.example.momowas.chat.controller;
 
 
-import com.example.momowas.chat.dto.ChatDto;
-import com.example.momowas.chat.dto.ChatRoomDto;
+import com.example.momowas.chat.dto.ChatResDto;
 import com.example.momowas.chat.dto.ChatRoomReqDto;
+import com.example.momowas.chat.dto.ChatRoomResDto;
 import com.example.momowas.chat.service.ChatRoomService;
 import com.example.momowas.chat.service.ChatService;
 import com.example.momowas.jwt.util.JwtUtil;
@@ -25,24 +25,24 @@ public class ChatRoomController {
     private final JwtUtil jwtUtil;
 
     @GetMapping("/{roomId}/history")
-    public List<ChatDto> chatHistory(@PathVariable Long roomId) {
+    public List<ChatResDto> chatHistory(@PathVariable Long roomId) {
         return chatService.findAllChatByRoomId(roomId);
     }
 
     @GetMapping("/{roomId}")
-    public ChatRoomDto joinRoom(@PathVariable Long roomId) {
+    public ChatRoomResDto joinRoom(@PathVariable Long roomId) {
         return chatRoomService.findRoomById(roomId);
     }
 
     //모임 장이 채팅방 생성
     @PostMapping("")
-    public ChatRoomDto createChatRoom(HttpServletRequest request, @RequestBody ChatRoomReqDto chatRoomReqDto) {
+    public ChatRoomResDto createChatRoom(HttpServletRequest request, @RequestBody ChatRoomReqDto chatRoomReqDto) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return chatRoomService.createRoom(userId, chatRoomReqDto);
     }
 
     @GetMapping("")
-    public List<ChatRoomDto> roomList() {
+    public List<ChatRoomResDto> roomList() {
         return chatRoomService.findAllRoom();
     }
 
