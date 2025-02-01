@@ -88,6 +88,7 @@ public class NoticeService {
         updateNoticeVote(noticeReqDto, notice);
     }
 
+    @Transactional
     private void updateNoticeVote(NoticeReqDto noticeReqDto, Notice notice) {
         VoteReqDto voteReqDto = noticeReqDto.vote();
 
@@ -108,8 +109,17 @@ public class NoticeService {
     }
 
     /* 공지 삭제 */
+    @Transactional
     public void deleteNotice(Long noticeId) {
         Notice notice = findNoticeById(noticeId);
         noticeRepository.delete(notice);
+    }
+
+    /* 공지 상단 고정 또는 고정 되있으면 해제*/
+    @Transactional
+    public Long togglePinNotice(Long noticeId) {
+        Notice notice = findNoticeById(noticeId);
+        notice.togglePinned();
+        return noticeId;
     }
 }

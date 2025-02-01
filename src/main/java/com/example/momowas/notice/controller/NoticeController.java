@@ -62,4 +62,13 @@ public class NoticeController {
         noticeService.deleteNotice(noticeId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
+
+    /* 공지 상단 고정 또는 고정 되있으면 해제*/
+    @PatchMapping("/{noticeId}/pin-toggle")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public Map<String,Object> togglePinNotice(@PathVariable Long crewId, @PathVariable Long noticeId, @AuthenticationPrincipal Long userId) {
+        Long pinnedNoticeId = noticeService.togglePinNotice(noticeId);
+        return Map.of("noticeId", pinnedNoticeId);
+    }
+
 }
