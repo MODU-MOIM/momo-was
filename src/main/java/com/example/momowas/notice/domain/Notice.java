@@ -28,6 +28,8 @@ public class Notice {
 
     private String content;
 
+    private Boolean isPinned;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -57,6 +59,7 @@ public class Notice {
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
         this.vote= vote;
+        this.isPinned=false;
     }
 
     public void updateContent(String content) {
@@ -74,5 +77,9 @@ public class Notice {
         if (this.vote != null) {
             this.vote = null;
         }
+    }
+
+    public void togglePinned() {
+        isPinned=!isPinned;
     }
 }

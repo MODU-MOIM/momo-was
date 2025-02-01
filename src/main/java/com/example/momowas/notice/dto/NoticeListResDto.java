@@ -16,7 +16,8 @@ public record NoticeListResDto(Long noticeId,
                                LocalDateTime createdAt,
                                String content,
                                @JsonInclude(JsonInclude.Include.NON_NULL)
-                               Long attendingCounts
+                               Long attendingCounts,
+                               boolean isPinned
                                ) {
     public static NoticeListResDto of(User user, CrewMember crewMember, Notice notice) {
         return new NoticeListResDto(
@@ -26,7 +27,8 @@ public record NoticeListResDto(Long noticeId,
                 user.getProfileImage(),
                 notice.getCreatedAt(),
                 notice.getContent(),
-                notice.getVote()!=null ? notice.getVote().countAttendingParticipants() : null
+                notice.getVote()!=null ? notice.getVote().countAttendingParticipants() : null,
+                notice.getIsPinned()
         );
     }
 }
