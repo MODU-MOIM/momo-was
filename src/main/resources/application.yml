@@ -10,10 +10,6 @@ spring:
         format_sql: true
         highlight_sql: true
 
-  sql:
-    init:
-      mode: always
-
   servlet:
     multipart:
       enabled: true
