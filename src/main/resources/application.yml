@@ -10,6 +10,12 @@ spring:
         format_sql: true
         highlight_sql: true
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+
   security:
     oauth2:
       client:
