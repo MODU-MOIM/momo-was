@@ -13,6 +13,7 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.vote.domain.Vote;
+import com.example.momowas.vote.dto.VoteListResDto;
 import com.example.momowas.vote.dto.VoteReqDto;
 import com.example.momowas.vote.dto.VoteResDto;
 import com.example.momowas.vote.service.VoteService;
@@ -61,7 +62,11 @@ public class NoticeService {
         List<NoticeListResDto> noticeListResDtos = crew.getNotices().stream().map((notice) -> {
             CrewMember crewMember = notice.getCrewMember();
             User user = crewMember.getUser();
-            return NoticeListResDto.of(user, crewMember, notice);
+            Vote vote = notice.getVote();
+            VoteListResDto voteListResDto= vote !=null
+                    ? VoteListResDto.of(true, vote.countAttendingParticipants())
+                    : VoteListResDto.of(false, null) ;
+            return NoticeListResDto.of(user, crewMember, notice,voteListResDto);
         }).collect(Collectors.toList());
 
         return noticeListResDtos;

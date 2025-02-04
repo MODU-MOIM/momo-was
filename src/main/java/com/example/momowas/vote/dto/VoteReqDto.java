@@ -8,7 +8,6 @@ public record VoteReqDto(boolean isEnabled,
     public Vote toEntity() {
         return Vote.builder()
                 .title(title)
-
                 .build();
     }
 }
