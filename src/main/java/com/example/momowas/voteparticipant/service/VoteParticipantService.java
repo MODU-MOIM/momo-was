@@ -5,7 +5,7 @@ import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.vote.domain.Vote;
-import com.example.momowas.vote.dto.VoteResDto;
+import com.example.momowas.vote.dto.VoteDetailResDto;
 import com.example.momowas.vote.service.VoteService;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
 import com.example.momowas.voteparticipant.dto.VoteParticipantReqDto;
@@ -56,11 +56,11 @@ public class VoteParticipantService {
 
     /* 크루 멤버의 투표 상태 조회 */
     @Transactional(readOnly = true)
-    public VoteResDto getVoteDetail(Vote vote, CrewMember crewMember) {
+    public VoteDetailResDto getVoteDetail(Vote vote, CrewMember crewMember) {
         if (vote == null) {
-            return null;
+            return VoteDetailResDto.of(false,null,null);
         }
         VoteParticipant voteParticipant = voteParticipantRepository.findByVoteIdAndCrewMemberId(vote.getId(), crewMember.getId()).orElse(null);
-        return VoteResDto.of(vote, voteParticipant);
+        return VoteDetailResDto.of(true, vote, voteParticipant);
     }
 }
