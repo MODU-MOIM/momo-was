@@ -15,7 +15,7 @@ import com.example.momowas.user.domain.User;
 import com.example.momowas.vote.domain.Vote;
 import com.example.momowas.vote.dto.VoteListResDto;
 import com.example.momowas.vote.dto.VoteReqDto;
-import com.example.momowas.vote.dto.VoteResDto;
+import com.example.momowas.vote.dto.VoteDetailResDto;
 import com.example.momowas.vote.service.VoteService;
 import com.example.momowas.voteparticipant.service.VoteParticipantService;
 import lombok.RequiredArgsConstructor;
@@ -78,10 +78,10 @@ public class NoticeService {
         Notice notice = findNoticeById(noticeId);
 
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        VoteResDto voteResDto = voteParticipantService.getVoteDetail(notice.getVote(), crewMember);
+        VoteDetailResDto voteDetailResDto = voteParticipantService.getVoteDetail(notice.getVote(), crewMember);
 
         CrewMember writer = notice.getCrewMember();
-        return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteResDto);
+        return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteDetailResDto);
     }
 
     /* 공지 수정 */

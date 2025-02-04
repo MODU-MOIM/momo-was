@@ -27,7 +27,6 @@ public record NoticeListResDto(Long noticeId,
                 user.getProfileImage(),
                 notice.getCreatedAt(),
                 notice.getContent(),
-                //notice.getVote()!=null ? notice.getVote().countAttendingParticipants() : null,
                 vote,
                 notice.getIsPinned()
         );
