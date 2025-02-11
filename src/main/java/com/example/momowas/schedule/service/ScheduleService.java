@@ -71,10 +71,6 @@ public class ScheduleService {
         User user  = userService.findUserById(userId);
         Crew crew = crewService.findCrewById(crewId);
 
-        if(schedule.getUserId()!=user.getId()){
-            throw new BusinessException(ExceptionCode.USER_MISMATCH);
-        }
-
         recommendService.handleCrewEvent(crewId, "deleteSchedule", crew.getCrewMembers().size(), crew.getMaxMembers());
         recommendService.decrementHotPlace(schedule.getDetailAddress(), crew.getCategory());
         scheduleRepository.delete(schedule);
@@ -89,9 +85,6 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new BusinessException(ExceptionCode.SCHEDULE_NOT_FOUND));
         User user  = userService.findUserById(userId);
 
-        if(schedule.getUserId()!=user.getId()){
-            throw new BusinessException(ExceptionCode.USER_MISMATCH);
-        }
         schedule.updateSchedule(
                 scheduleReqDto.getDate() == null? schedule.getScheduleDate():scheduleReqDto.getDate(),
                 scheduleReqDto.getTime()==null? schedule.getScheduleTime() : scheduleReqDto.getTime(),
