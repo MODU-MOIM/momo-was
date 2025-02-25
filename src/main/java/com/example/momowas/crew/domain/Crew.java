@@ -147,6 +147,14 @@ public class Crew {
         this.bannerImage = bannerImage;
     }
 
+    public void updateCategory(Category category) {
+        this.category = Objects.requireNonNull(category, "category는 null이 될 수 없습니다.");
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
     /* 크루 정원이 초과했는지 */
     public boolean isCrewFull() {
         return maxMembers!=null && Hibernate.size(crewRegions)>=maxMembers;

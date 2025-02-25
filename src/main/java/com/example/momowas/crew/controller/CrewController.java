@@ -67,9 +67,21 @@ public class CrewController {
                                                   @RequestPart(required = false, value = "bannerImage") MultipartFile file,
                                                   @PathVariable Long crewId,
                                                   @AuthenticationPrincipal Long userId) throws IOException {
-        crewService.updateCrewNameAndBannerImage(crewNameReqDto, file, crewId);
+        crewService.updateCrewBasic(crewNameReqDto, file, crewId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
+
+    /* 크루 소개 수정 */
+    @PatchMapping("/{crewId}/report")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateCrewReport(@RequestBody CrewReportReqDto crewReportReqDto,
+                                                   @PathVariable Long crewId,
+                                                   @AuthenticationPrincipal Long userId){
+        crewService.updateCrewReport(crewReportReqDto, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
+
 
     /* 특정 크루 삭제 */
     @DeleteMapping("/{crewId}")

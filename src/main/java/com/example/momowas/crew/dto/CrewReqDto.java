@@ -6,7 +6,6 @@ import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.user.domain.Gender;
 
 import java.util.List;
-import java.util.Optional;
 
 public record CrewReqDto(
         String name,

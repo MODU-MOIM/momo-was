@@ -1,10 +1,7 @@
 package com.example.momowas.crew.service;
 
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.dto.CrewDetailResDto;
-import com.example.momowas.crew.dto.CrewListResDto;
-import com.example.momowas.crew.dto.CrewNameReqDto;
-import com.example.momowas.crew.dto.CrewReqDto;
+import com.example.momowas.crew.dto.*;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
@@ -111,7 +108,7 @@ public class CrewService {
 
     /* 크루명 및 배너사진 수정 */
     @Transactional
-    public void updateCrewNameAndBannerImage(CrewNameReqDto crewNameReqDto, MultipartFile file, Long crewId) throws IOException {
+    public void updateCrewBasic(CrewNameReqDto crewNameReqDto, MultipartFile file, Long crewId) throws IOException {
         Crew crew = findCrewById(crewId);
         validateCrewName(crewNameReqDto.name());
         String bannerImageUrl= s3Service.uploadImage(file, "crew");
@@ -119,6 +116,20 @@ public class CrewService {
         crew.updateName(crewNameReqDto.name());
         crew.updateBannerImage(bannerImageUrl);
     }
+
+    /* 크루 소개 수정 */
+    @Transactional
+    public void updateCrewReport(CrewReportReqDto crewReportReqDto, Long crewId){
+        Crew crew = findCrewById(crewId);
+
+        crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReportReqDto.regions(), crew);
+        crew.updateCategory(crewReportReqDto.category());
+        crew.updateDescription(crewReportReqDto.description());
+    }
+
+    /* 인원수 수정 */
+
+    /* 가입 조건 수정 */
 
 
     /* 크루명 중복 검증 */
