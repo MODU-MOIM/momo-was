@@ -81,7 +81,15 @@ public class CrewController {
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
-
+    /* 크루 인원수 수정 */
+    @PatchMapping("/{crewId}/headcount")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateCrewHeadCount(@RequestBody CrewHeadcountReqDto crewHeadcountReqDto,
+                                                      @PathVariable Long crewId,
+                                                      @AuthenticationPrincipal Long userId){
+        crewService.updateCrewHeadCount(crewHeadcountReqDto, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
 
     /* 특정 크루 삭제 */
     @DeleteMapping("/{crewId}")

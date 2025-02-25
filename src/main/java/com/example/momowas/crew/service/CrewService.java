@@ -128,6 +128,13 @@ public class CrewService {
     }
 
     /* 인원수 수정 */
+    @Transactional
+    public void updateCrewHeadCount(CrewHeadcountReqDto crewHeadcountReqDto, Long crewId) {
+        Crew crew = findCrewById(crewId);
+
+        crew.updateMinMembers(crewHeadcountReqDto.minMembers());
+        crew.updateMaxMembers(crewHeadcountReqDto.maxMembers());
+    }
 
     /* 가입 조건 수정 */
 

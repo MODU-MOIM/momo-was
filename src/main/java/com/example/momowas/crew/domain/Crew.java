@@ -155,6 +155,14 @@ public class Crew {
         this.description = description;
     }
 
+    public void updateMinMembers(Integer minMembers) {
+        this.minMembers=minMembers;
+    }
+
+    public void updateMaxMembers(Integer maxMembers) {
+        this.maxMembers=maxMembers;
+    }
+
     /* 크루 정원이 초과했는지 */
     public boolean isCrewFull() {
         return maxMembers!=null && Hibernate.size(crewRegions)>=maxMembers;
