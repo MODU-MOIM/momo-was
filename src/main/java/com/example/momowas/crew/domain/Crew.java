@@ -136,6 +136,17 @@ public class Crew {
         this.bannerImage = bannerImage;
     }
 
+    public void updateName(String name){
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("name은 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.name=name;
+    }
+
+    public void updateBannerImage(String bannerImage) {
+        this.bannerImage = bannerImage;
+    }
+
     /* 크루 정원이 초과했는지 */
     public boolean isCrewFull() {
         return maxMembers!=null && Hibernate.size(crewRegions)>=maxMembers;
