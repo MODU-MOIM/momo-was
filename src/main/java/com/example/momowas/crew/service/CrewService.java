@@ -1,12 +1,8 @@
 package com.example.momowas.crew.service;
 
-import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.dto.CrewDetailResDto;
-import com.example.momowas.crew.dto.CrewListResDto;
-import com.example.momowas.crew.dto.CrewReqDto;
+import com.example.momowas.crew.dto.*;
 import com.example.momowas.crew.repository.CrewRepository;
-import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
 import com.example.momowas.recommend.service.RecommendService;
@@ -24,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +64,6 @@ public class CrewService {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
             return CrewListResDto.of(crew,regionDtos);
         }).collect(Collectors.toList());
-
     }
 
     /* 특정 크루 조회 */
@@ -88,29 +81,44 @@ public class CrewService {
         crewRepository.delete(crew);
     }
 
-    /* 특정 크루 수정 */
+    /* 크루명 및 배너사진 수정 */
     @Transactional
-    public void updateCrew(CrewReqDto crewReqDto, MultipartFile file, Long crewId) throws IOException {
-        validateCrewName(crewReqDto.name());
-
+    public void updateCrewBasic(CrewNameReqDto crewNameReqDto, MultipartFile file, Long crewId) throws IOException {
         Crew crew = findCrewById(crewId);
-        String bannerImageUrl= file!=null ? s3Service.uploadImage(file, "crew") : null;
+        validateCrewName(crewNameReqDto.name());
+        String bannerImageUrl= s3Service.uploadImage(file, "crew");
 
-        if (crewReqDto.regions()!=null) {
-            crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReqDto.regions(), crew);//크루-지역 수정
-        }
+        crew.updateName(crewNameReqDto.name());
+        crew.updateBannerImage(bannerImageUrl);
+    }
 
-        crew.update(
-                crewReqDto.name() == null? crew.getName():crewReqDto.name(),
-                crewReqDto.category()==null? crew.getCategory() : crewReqDto.category(),
-                crewReqDto.description()==null ? crew.getDescription() : crewReqDto.description(),
-                crewReqDto.minMembers()==null ? crew.getMinMembers() : crewReqDto.minMembers(),
-                crewReqDto.maxMembers()==null ? crew.getMaxMembers() : crewReqDto.maxMembers(),
-                crewReqDto.minAge() == null ? crew.getMinAge() : crewReqDto.minAge(),
-                crewReqDto.maxAge()==null ? crew.getMaxAge() : crewReqDto.maxAge(),
-                crewReqDto.genderRestriction()==null ? crew.getGenderRestriction() : crewReqDto.genderRestriction(),
-                bannerImageUrl==null ? crew.getBannerImage() : bannerImageUrl
-        );
+    /* 크루 소개 수정 */
+    @Transactional
+    public void updateCrewReport(CrewReportReqDto crewReportReqDto, Long crewId){
+        Crew crew = findCrewById(crewId);
+
+        crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReportReqDto.regions(), crew);
+        crew.updateCategory(crewReportReqDto.category());
+        crew.updateDescription(crewReportReqDto.description());
+    }
+
+    /* 인원수 수정 */
+    @Transactional
+    public void updateCrewHeadCount(CrewHeadcountReqDto crewHeadcountReqDto, Long crewId) {
+        Crew crew = findCrewById(crewId);
+
+        crew.updateMinMembers(crewHeadcountReqDto.minMembers());
+        crew.updateMaxMembers(crewHeadcountReqDto.maxMembers());
+    }
+
+    /* 가입 조건 수정 */
+    @Transactional
+    public void updateCrewCondition(CrewConditionReqDto crewConditionReqDto, Long crewId) {
+        Crew crew = findCrewById(crewId);
+
+        crew.updateMinAge(crewConditionReqDto.minAge());
+        crew.updateMaxAge(crewConditionReqDto.maxAge());
+        crew.updateGenderRestriction(crewConditionReqDto.genderRestriction());
     }
 
     /* 크루명 중복 검증 */

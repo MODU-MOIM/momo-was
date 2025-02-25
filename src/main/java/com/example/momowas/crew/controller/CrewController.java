@@ -2,10 +2,7 @@ package com.example.momowas.crew.controller;
 
 import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
-import com.example.momowas.crew.dto.CrewDetailResDto;
-import com.example.momowas.crew.dto.CrewListResDto;
-import com.example.momowas.crew.dto.CrewReqDto;
-import com.example.momowas.crew.dto.CrewSpecification;
+import com.example.momowas.crew.dto.*;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewregion.domain.CrewRegion;
 import com.example.momowas.jwt.util.JwtUtil;
@@ -63,14 +60,44 @@ public class CrewController {
         return crewService.getCrewDetail(crewId);
     }
 
-    /* 특정 크루 수정 */
-    @PutMapping("/{crewId}")
+    /* 크루명 및 배너 사진 수정 */
+    @PatchMapping("/{crewId}/basic")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
-    public CommonResponse<String> updateCrew (@RequestPart CrewReqDto crewReqDto,
-                                              @RequestPart(required = false, value = "bannerImage") MultipartFile file,
-                                              @PathVariable Long crewId,
-                                              @AuthenticationPrincipal Long userId) throws IOException {
-        crewService.updateCrew(crewReqDto, file, crewId);
+    public CommonResponse<String> updateCrewBasic(@RequestPart CrewNameReqDto crewNameReqDto,
+                                                  @RequestPart(required = false, value = "bannerImage") MultipartFile file,
+                                                  @PathVariable Long crewId,
+                                                  @AuthenticationPrincipal Long userId) throws IOException {
+        crewService.updateCrewBasic(crewNameReqDto, file, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
+    /* 크루 소개 수정 */
+    @PatchMapping("/{crewId}/report")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateCrewReport(@RequestBody CrewReportReqDto crewReportReqDto,
+                                                   @PathVariable Long crewId,
+                                                   @AuthenticationPrincipal Long userId){
+        crewService.updateCrewReport(crewReportReqDto, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
+    /* 크루 인원수 수정 */
+    @PatchMapping("/{crewId}/headcount")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateCrewHeadCount(@RequestBody CrewHeadcountReqDto crewHeadcountReqDto,
+                                                      @PathVariable Long crewId,
+                                                      @AuthenticationPrincipal Long userId){
+        crewService.updateCrewHeadCount(crewHeadcountReqDto, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
+    /* 크루 가입 조건 수정 */
+    @PatchMapping("/{crewId}/condition")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateCrewCondition(@RequestBody CrewConditionReqDto crewConditionReqDto,
+                                                      @PathVariable Long crewId,
+                                                      @AuthenticationPrincipal Long userId){
+        crewService.updateCrewCondition(crewConditionReqDto, crewId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
