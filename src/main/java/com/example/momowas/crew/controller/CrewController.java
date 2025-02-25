@@ -91,6 +91,16 @@ public class CrewController {
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
+    /* 크루 가입 조건 수정 */
+    @PatchMapping("/{crewId}/condition")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
+    public CommonResponse<String> updateCrewCondition(@RequestBody CrewConditionReqDto crewConditionReqDto,
+                                                      @PathVariable Long crewId,
+                                                      @AuthenticationPrincipal Long userId){
+        crewService.updateCrewCondition(crewConditionReqDto, crewId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
     /* 특정 크루 삭제 */
     @DeleteMapping("/{crewId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록

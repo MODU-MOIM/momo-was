@@ -108,34 +108,6 @@ public class Crew {
         this.scheduleUpdatePermission=Role.LEADER;
     }
 
-
-    public void update(String name,
-                       Category category,
-                       String description,
-                       Integer minMembers,
-                       Integer maxMembers,
-                       Integer minAge,
-                       Integer maxAge,
-                       Gender genderRestriction,
-                       String bannerImage
-    ) {
-        if (!StringUtils.hasText(name)) {
-            throw new IllegalArgumentException("name은 null이거나 빈 문자열이 될 수 없습니다.");
-        } else if (!StringUtils.hasText(description)) {
-            throw new IllegalArgumentException("description은 null이거나 빈 문자열이 될 수 없습니다.");
-        }
-
-        this.name = name;
-        this.category = Objects.requireNonNull(category, "category는 null이 될 수 없습니다.");
-        this.description = description;
-        this.minMembers = Objects.requireNonNull(minMembers, "minMembers는 null이 될 수 없습니다.");
-        this.maxMembers = Objects.requireNonNull(maxMembers, "maxMembers는 null이 될 수 없습니다.");
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.genderRestriction = genderRestriction;
-        this.bannerImage = bannerImage;
-    }
-
     public void updateName(String name){
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("name은 null이거나 빈 문자열이 될 수 없습니다.");
@@ -156,11 +128,23 @@ public class Crew {
     }
 
     public void updateMinMembers(Integer minMembers) {
-        this.minMembers=minMembers;
+        this.minMembers = Objects.requireNonNull(minMembers, "minMembers는 null이 될 수 없습니다.");
     }
 
     public void updateMaxMembers(Integer maxMembers) {
-        this.maxMembers=maxMembers;
+        this.maxMembers = Objects.requireNonNull(maxMembers, "maxMembers는 null이 될 수 없습니다.");
+    }
+
+    public void updateMinAge(Integer minAge) {
+        this.minAge=minAge;
+    }
+
+    public void updateMaxAge(Integer maxAge) {
+        this.maxAge=maxAge;
+    }
+
+    public void updateGenderRestriction(Gender genderRestriction) {
+        this.genderRestriction = genderRestriction;
     }
 
     /* 크루 정원이 초과했는지 */

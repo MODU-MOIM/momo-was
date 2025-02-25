@@ -81,31 +81,6 @@ public class CrewService {
         crewRepository.delete(crew);
     }
 
-    /* 특정 크루 수정 */
-    @Transactional
-    public void updateCrew(CrewReqDto crewReqDto, MultipartFile file, Long crewId) throws IOException {
-//        validateCrewName(crewReqDto.name());
-//
-//        Crew crew = findCrewById(crewId);
-//        String bannerImageUrl= file!=null ? s3Service.uploadImage(file, "crew") : null;
-//
-//        if (crewReqDto.regions()!=null) {
-//            crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReqDto.regions(), crew);//크루-지역 수정
-//        }
-//
-//        crew.update(
-//                crewReqDto.name() == null? crew.getName():crewReqDto.name(),
-//                crewReqDto.category()==null? crew.getCategory() : crewReqDto.category(),
-//                crewReqDto.description()==null ? crew.getDescription() : crewReqDto.description(),
-//                crewReqDto.minMembers()==null ? crew.getMinMembers() : crewReqDto.minMembers(),
-//                crewReqDto.maxMembers()==null ? crew.getMaxMembers() : crewReqDto.maxMembers(),
-//                crewReqDto.minAge() == null ? crew.getMinAge() : crewReqDto.minAge(),
-//                crewReqDto.maxAge()==null ? crew.getMaxAge() : crewReqDto.maxAge(),
-//                crewReqDto.genderRestriction()==null ? crew.getGenderRestriction() : crewReqDto.genderRestriction(),
-//                bannerImageUrl==null ? crew.getBannerImage() : bannerImageUrl
-//        );
-    }
-
     /* 크루명 및 배너사진 수정 */
     @Transactional
     public void updateCrewBasic(CrewNameReqDto crewNameReqDto, MultipartFile file, Long crewId) throws IOException {
@@ -137,7 +112,14 @@ public class CrewService {
     }
 
     /* 가입 조건 수정 */
+    @Transactional
+    public void updateCrewCondition(CrewConditionReqDto crewConditionReqDto, Long crewId) {
+        Crew crew = findCrewById(crewId);
 
+        crew.updateMinAge(crewConditionReqDto.minAge());
+        crew.updateMaxAge(crewConditionReqDto.maxAge());
+        crew.updateGenderRestriction(crewConditionReqDto.genderRestriction());
+    }
 
     /* 크루명 중복 검증 */
     @Transactional(readOnly = true)
