@@ -98,8 +98,12 @@ public class JoinRequestService {
             throw new BusinessException(ExceptionCode.INVALID_CREW_JOIN_CONDITION);
         }
         //크루 나이 조건 검증
-        if(user.getAge()< crew.getMinAge() || user.getAge() > crew.getMaxAge()){
+        if(crew.getMinAge()!=null && user.getAge()< crew.getMinAge() ){
             throw new BusinessException(ExceptionCode.INVALID_CREW_JOIN_CONDITION);
         }
+        if(crew.getMaxAge()!=null && user.getAge() > crew.getMaxAge()){
+            throw new BusinessException(ExceptionCode.INVALID_CREW_JOIN_CONDITION);
+        }
+
     }
 }
