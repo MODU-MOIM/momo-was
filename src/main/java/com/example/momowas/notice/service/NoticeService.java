@@ -13,8 +13,9 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.vote.domain.Vote;
+import com.example.momowas.vote.dto.VoteListResDto;
 import com.example.momowas.vote.dto.VoteReqDto;
-import com.example.momowas.vote.dto.VoteResDto;
+import com.example.momowas.vote.dto.VoteDetailResDto;
 import com.example.momowas.vote.service.VoteService;
 import com.example.momowas.voteparticipant.service.VoteParticipantService;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,11 @@ public class NoticeService {
         List<NoticeListResDto> noticeListResDtos = crew.getNotices().stream().map((notice) -> {
             CrewMember crewMember = notice.getCrewMember();
             User user = crewMember.getUser();
-            return NoticeListResDto.of(user, crewMember, notice);
+            Vote vote = notice.getVote();
+            VoteListResDto voteListResDto= vote !=null
+                    ? VoteListResDto.of(true, vote.countAttendingParticipants())
+                    : VoteListResDto.of(false, null) ;
+            return NoticeListResDto.of(user, crewMember, notice,voteListResDto);
         }).collect(Collectors.toList());
 
         return noticeListResDtos;
@@ -73,10 +78,10 @@ public class NoticeService {
         Notice notice = findNoticeById(noticeId);
 
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        VoteResDto voteResDto = voteParticipantService.getVoteDetail(notice.getVote(), crewMember);
+        VoteDetailResDto voteDetailResDto = voteParticipantService.getVoteDetail(notice.getVote(), crewMember);
 
         CrewMember writer = notice.getCrewMember();
-        return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteResDto);
+        return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteDetailResDto);
     }
 
     /* 공지 수정 */

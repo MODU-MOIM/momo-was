@@ -70,8 +70,7 @@ public class CrewMemberService {
     @Transactional
     public void deleteCrewMember(Long crewMemberId) {
         CrewMember crewMember = findCrewMemberById(crewMemberId);
-        crewMember.updateDeletedAt();
-        crewMemberRepository.delete(crewMember);
+        crewMember.updateDeletedAt(); //soft delete
     }
 
     /* 크루 멤버 권한 설정 */

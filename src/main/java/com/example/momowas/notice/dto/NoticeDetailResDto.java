@@ -4,7 +4,7 @@ import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.user.domain.User;
-import com.example.momowas.vote.dto.VoteResDto;
+import com.example.momowas.vote.dto.VoteDetailResDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDateTime;
@@ -15,10 +15,9 @@ public record NoticeDetailResDto(Long noticeId,
                                  String profileImage,
                                  LocalDateTime createdAt,
                                  String content,
-                                 @JsonInclude(JsonInclude.Include.NON_NULL)
-                                 VoteResDto vote) {
+                                 VoteDetailResDto vote) {
 
-    public static NoticeDetailResDto of(User user, CrewMember crewMember, Notice notice, VoteResDto voteResDto) {
+    public static NoticeDetailResDto of(User user, CrewMember crewMember, Notice notice, VoteDetailResDto voteDetailResDto) {
         return new NoticeDetailResDto(
                 notice.getId(),
                 user.getNickname(),
@@ -26,7 +25,7 @@ public record NoticeDetailResDto(Long noticeId,
                 user.getProfileImage(),
                 notice.getCreatedAt(),
                 notice.getContent(),
-                voteResDto
+                voteDetailResDto
         );
     }
 }
