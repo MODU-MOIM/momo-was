@@ -78,6 +78,7 @@ public class CrewService {
     @Transactional
     public void deleteCrew(Long crewId) {
         Crew crew = findCrewById(crewId);
+        crewMemberService.deleteCrewMemberByCrewId(crewId); //크루 멤버 삭제
         crewRepository.delete(crew);
     }
 

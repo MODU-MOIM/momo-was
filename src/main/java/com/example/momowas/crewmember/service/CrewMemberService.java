@@ -69,7 +69,7 @@ public class CrewMemberService {
 
     /* 특정 크루 멤버 강제 탈퇴 */
     @Transactional
-    public void removeCrewMember(Long crewMemberId) {
+    public void deleteCrewMember(Long crewMemberId) {
         CrewMember crewMember = findCrewMemberById(crewMemberId);
         crewMember.updateDeletedAt();
         crewMemberRepository.delete(crewMember);
@@ -89,5 +89,11 @@ public class CrewMemberService {
         CrewMember preLeader = findCrewMemberByCrewAndUser(userId, crewId);
         preLeader.updateRole(Role.MEMBER);
         postLeader.updateRole(Role.LEADER);
+    }
+
+    /* 크루 id로 크루 멤버 삭제 */
+    @Transactional
+    public void deleteCrewMemberByCrewId(Long crewId) {
+        crewMemberRepository.deleteByCrewId(crewId);
     }
 }
