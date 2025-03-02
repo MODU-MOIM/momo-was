@@ -63,7 +63,7 @@ public class CrewMemberService {
     /* 전체 크루 멤버 조회 */
     @Transactional(readOnly = true)
     public List<CrewMemberListResDto> getCrewMemberList(Long crewId) {
-        return crewMemberRepository.findByCrewId(crewId).stream().map(
+        return crewMemberRepository.findByCrewIdAndDeletedAtIsNotNull(crewId).stream().map(
                 CrewMemberListResDto::of).toList();
     }
 
@@ -71,8 +71,7 @@ public class CrewMemberService {
     @Transactional
     public void deleteCrewMember(Long crewMemberId) {
         CrewMember crewMember = findCrewMemberById(crewMemberId);
-        crewMember.updateDeletedAt();
-        crewMemberRepository.delete(crewMember);
+        crewMember.updateDeletedAt(); //soft delete
     }
 
     /* 크루 멤버 권한 설정 */
@@ -89,11 +88,5 @@ public class CrewMemberService {
         CrewMember preLeader = findCrewMemberByCrewAndUser(userId, crewId);
         preLeader.updateRole(Role.MEMBER);
         postLeader.updateRole(Role.LEADER);
-    }
-
-    /* 크루 id로 크루 멤버 삭제 */
-    @Transactional
-    public void deleteCrewMemberByCrewId(Long crewId) {
-        crewMemberRepository.deleteByCrewId(crewId);
     }
 }
