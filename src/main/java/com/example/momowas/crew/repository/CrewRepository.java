@@ -11,4 +11,5 @@ import java.util.List;
 public interface CrewRepository extends JpaRepository<Crew, Long>, JpaSpecificationExecutor<Crew> {
     boolean existsByName(String name);
     List<Crew> findByCrewMembersUserId(Long userId);
+
 }
