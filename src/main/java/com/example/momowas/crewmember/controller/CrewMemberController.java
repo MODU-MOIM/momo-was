@@ -28,10 +28,10 @@ public class CrewMemberController {
     /* 특정 크루 멤버 강제 탈퇴 */
     @DeleteMapping("/{memberId}")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
-    public CommonResponse<String> removeCrewMember(@PathVariable Long crewId,
+    public CommonResponse<String> deleteCrewMember(@PathVariable Long crewId,
                                                    @PathVariable Long memberId,
                                                    @AuthenticationPrincipal Long userId) {
-        crewMemberService.removeCrewMember(memberId);
+        crewMemberService.deleteCrewMember(memberId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 

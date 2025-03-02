@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface CrewMemberRepository extends JpaRepository<CrewMember,Long> {
     Optional<CrewMember> findByCrewIdAndUserId(Long crewId, Long userId);
     boolean existsByCrewIdAndUserId(Long crewId, Long userId);
-    List<CrewMember> findByCrewId(Long crewId);
+    List<CrewMember> findByCrewIdAndDeletedAtIsNull(Long crewId);
 }

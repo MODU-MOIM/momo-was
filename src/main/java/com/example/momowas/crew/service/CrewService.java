@@ -7,6 +7,7 @@ import com.example.momowas.crew.dto.CrewListResDto;
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.crewmember.dto.CrewMemberListResDto;
 import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.crewregion.service.CrewRegionService;
 import com.example.momowas.recommend.service.RecommendService;
@@ -68,7 +69,8 @@ public class CrewService {
     public List<CrewListResDto> getCrewList() {
         return crewRepository.findAll().stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
-            return CrewListResDto.of(crew,regionDtos);
+            Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+            return CrewListResDto.of(crew,regionDtos,memberCount);
         }).collect(Collectors.toList());
 
     }
@@ -135,7 +137,8 @@ public class CrewService {
     public List<CrewListResDto> getCrewsByMe(Long userId){
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
-            return CrewListResDto.of(crew,regionDtos);
+            Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+            return CrewListResDto.of(crew,regionDtos, memberCount);
         }).collect(Collectors.toList());
     }
 

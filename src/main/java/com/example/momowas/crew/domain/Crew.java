@@ -138,7 +138,7 @@ public class Crew {
 
     /* 크루 정원이 초과했는지 */
     public boolean isCrewFull() {
-        return maxMembers!=null && Hibernate.size(crewRegions)>=maxMembers;
+        return maxMembers!=null && Hibernate.size(crewMembers)>=maxMembers;
     }
 
     public void updateScheduleCreatePermission(Role role) {
