@@ -4,6 +4,7 @@ import com.example.momowas.crew.domain.Category;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.region.dto.RegionDto;
 import com.example.momowas.user.domain.Gender;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public record CrewListResDto(Long crewId,
                          String name,
                          Category category,
+                         Integer memberCount,
                          Integer minMembers,
                          Integer maxMembers,
                          Integer minAge,
@@ -19,11 +21,12 @@ public record CrewListResDto(Long crewId,
                          String bannerImage,
                          List<RegionDto> regions,
                          LocalDateTime createdAt) {
-    public static CrewListResDto of(Crew crew, List<RegionDto> regions) {
+    public static CrewListResDto of(Crew crew, List<RegionDto> regions, Integer memberCount) {
         return new CrewListResDto(
                 crew.getId(),
                 crew.getName(),
                 crew.getCategory(),
+                memberCount,
                 crew.getMinMembers(),
                 crew.getMaxMembers(),
                 crew.getMinAge(),
