@@ -14,9 +14,5 @@ import java.util.Optional;
 public interface CrewMemberRepository extends JpaRepository<CrewMember,Long> {
     Optional<CrewMember> findByCrewIdAndUserId(Long crewId, Long userId);
     boolean existsByCrewIdAndUserId(Long crewId, Long userId);
-    List<CrewMember> findByCrewId(Long crewId);
-
-    @Modifying
-    @Query(value = "delete from crew_member cm where cm.crew_id = :crewId", nativeQuery = true)
-    void deleteByCrewId(@Param("crewId") Long crewId); //crew 삭제 시 crewMember를 hard delete 하기 위한 용
+    List<CrewMember> findByCrewIdAndDeletedAtIsNotNull(Long crewId);
 }

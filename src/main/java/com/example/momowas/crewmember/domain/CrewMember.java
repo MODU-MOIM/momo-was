@@ -1,6 +1,8 @@
 package com.example.momowas.crewmember.domain;
 
+import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,14 +15,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@SQLDelete(sql = "UPDATE crew_member SET is_deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
+//@SQLDelete(sql = "UPDATE crew_member SET is_deleted = true WHERE id = ?")
+//@Where(clause = "is_deleted = false")
 public class CrewMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +44,13 @@ public class CrewMember {
     @CreatedDate
     private LocalDateTime joinedAt;
 
-    private boolean isDeleted = false;
-
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "crewMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Notice> notices = new ArrayList<>();
+
+    @OneToMany(mappedBy = "crewMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Archive> archives = new ArrayList<>();
 
     @Builder
     private CrewMember(Crew crew, User user, Role role) {
