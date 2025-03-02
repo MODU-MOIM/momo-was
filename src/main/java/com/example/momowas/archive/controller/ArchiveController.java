@@ -37,7 +37,9 @@ public class ArchiveController {
     /* 기록 이미지 업로드 */
     @PostMapping("/images")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
-    public Map<String, Object> uploadArchiveImage(@RequestParam("archiveImage") MultipartFile file) throws IOException {
+    public Map<String, Object> uploadArchiveImage(@RequestParam("archiveImage") MultipartFile file,
+                                                  @PathVariable Long crewId,
+                                                  @AuthenticationPrincipal Long userId) throws IOException {
         String archiveImageUrl = s3Service.uploadImage(file, "archive");
         return Map.of("archiveImageUrl", archiveImageUrl);
     }
