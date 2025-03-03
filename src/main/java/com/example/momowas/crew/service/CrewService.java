@@ -74,7 +74,8 @@ public class CrewService {
     public CrewDetailResDto getCrewDetail(Long crewId) {
         Crew crew = findCrewById(crewId);
         List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
-        return CrewDetailResDto.of(crew,regionDtos);
+        Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+        return CrewDetailResDto.of(crew,regionDtos,memberCount);
     }
 
     /* 특정 크루 삭제 */
@@ -138,7 +139,8 @@ public class CrewService {
         return resultCrews.stream()
                 .map(crew -> {
                     List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
-                    return CrewDetailResDto.of(crew, regionDtos);
+                    Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+                    return CrewDetailResDto.of(crew, regionDtos,memberCount);
                 })
                 .collect(Collectors.toList());
     }
