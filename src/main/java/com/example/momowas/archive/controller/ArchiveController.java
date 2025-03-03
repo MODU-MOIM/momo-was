@@ -46,14 +46,12 @@ public class ArchiveController {
 
     /* 전체 기록 조회 */
     @GetMapping("")
-    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public List<ArchiveListResDto> getArchiveList(@PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
         return archiveService.getArchiveList();
     }
 
     /* 특정 기록 조회 */
     @GetMapping("/{archiveId}")
-    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
     public ArchiveDetailResDto getArchiveDetail(@PathVariable Long crewId,
                                                 @PathVariable Long archiveId,
                                                 @AuthenticationPrincipal Long userId) {
