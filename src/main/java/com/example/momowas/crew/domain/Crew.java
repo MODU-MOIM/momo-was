@@ -1,5 +1,6 @@
 package com.example.momowas.crew.domain;
 
+import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.crew.dto.CrewReqDto;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.domain.Role;
@@ -71,6 +72,9 @@ public class Crew {
 
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Feed> feeds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Archive> archives = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Role scheduleCreatePermission;

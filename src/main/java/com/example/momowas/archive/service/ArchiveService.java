@@ -46,10 +46,9 @@ public class ArchiveService {
 
     /* 전체 기록 조회 */
     @Transactional(readOnly = true)
-    public List<ArchiveListResDto> getArchiveList() {
-        return archiveRepository.findAll().stream()
-                .map(ArchiveListResDto::of)
-                .toList();
+    public List<ArchiveListResDto> getArchiveList(Long crewId) {
+        Crew crew = crewService.findCrewById(crewId);
+        return crew.getArchives().stream().map(ArchiveListResDto::of).toList();
     }
 
     /* 특정 피드 조회 */
@@ -61,7 +60,6 @@ public class ArchiveService {
 
         boolean isLiked = likeRepository.existsByArchiveAndCrewMember(archive, crewMember);
         return ArchiveDetailResDto.of(archive, writer,isLiked);
-
     }
 
     /* 기록 수정 */
