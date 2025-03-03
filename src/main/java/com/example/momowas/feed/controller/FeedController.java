@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class FeedController {
     public Map<String, Object> createFeed(@RequestPart FeedReqDto feedReqDto,
                                           @RequestPart(required = false, value = "photos") List<MultipartFile> files,
                                           @PathVariable Long crewId,
-                                          @AuthenticationPrincipal Long userId) throws IOException {
+                                          @AuthenticationPrincipal Long userId) throws IOException, NoSuchAlgorithmException {
         Long feedId = feedService.createFeed(feedReqDto, files, crewId, userId); //피드 저장
         return Map.of("feedId", feedId);
     }
@@ -57,7 +58,7 @@ public class FeedController {
                                              @RequestPart(required = false, value = "photos") List<MultipartFile> files,
                                              @PathVariable Long feedId,
                                              @PathVariable Long crewId,
-                                             @AuthenticationPrincipal Long userId) throws IOException {
+                                             @AuthenticationPrincipal Long userId) throws IOException, NoSuchAlgorithmException {
         feedService.updateFeed(feedReqDto, files, feedId, crewId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }

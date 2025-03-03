@@ -2,6 +2,7 @@ package com.example.momowas.photo.service;
 
 import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.feed.service.FeedService;
+import com.example.momowas.hash.HashUtil;
 import com.example.momowas.photo.domain.Photo;
 import com.example.momowas.photo.repository.PhotoRepository;
 import com.example.momowas.response.BusinessException;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -26,19 +29,22 @@ public class PhotoService {
 
     /* 피드 사진 생성 */
     @Transactional
-    public void createPhoto(List<MultipartFile> files, Feed feed) throws IOException {
-        AtomicInteger sequence = new AtomicInteger(0);
+    public void createPhoto(List<MultipartFile> files, Feed feed) throws IOException, NoSuchAlgorithmException {
+        List<Photo> photos=new ArrayList<>();
+        int seq=1;
 
-        List<Photo> photos = s3Service.uploadImages(files, "feed").stream()
-                .map(url -> Photo.of(url, sequence.incrementAndGet(), feed))
-                .collect(Collectors.toList());
+        for (MultipartFile file : files) {
+            String imageUrl = s3Service.uploadImage(file, "feed");
+            String imageHash = HashUtil.getFileHash(file);
+            photos.add(Photo.of(imageUrl, imageHash, seq++, feed));
+        }
 
         photoRepository.saveAll(photos);
     }
 
     /* 피드 사진 수정 */
     @Transactional
-    public void updatePhoto(List<MultipartFile> files, Feed feed) throws IOException {
+    public void updatePhoto(List<MultipartFile> files, Feed feed) throws IOException, NoSuchAlgorithmException {
         photoRepository.deleteByFeed(feed); //기존 사진 삭제
         if (files!=null && !files.isEmpty()) {
             createPhoto(files, feed); //새로운 사진으로 저장
