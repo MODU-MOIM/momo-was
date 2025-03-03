@@ -38,17 +38,6 @@ public class S3Service {
         return getPublicUrl(fileName);
     }
 
-    /* 다중 이미지 업로드 */
-    public List<String> uploadImages(List<MultipartFile> images, String dirName) throws IOException {
-        List<String> imageUrls=new ArrayList<>();
-
-        for(MultipartFile image:images){
-            String imageUrl = uploadImage(image, dirName);
-            imageUrls.add(imageUrl);
-        }
-        return imageUrls;
-    }
-
     private String getPublicUrl(String fileName) {
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, amazonS3.getRegionName(), fileName);
     }
