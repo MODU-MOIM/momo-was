@@ -28,6 +28,9 @@ public class UserService {
     public boolean isEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }
+    public boolean isNicknameExists(String nickName){
+        return userRepository.existsByNickname(nickName);
+    }
 
     public User findUserByEmail(String email){
         return userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(ExceptionCode.USER_NOT_FOUND));
@@ -62,7 +65,10 @@ public class UserService {
     @Transactional
     public UserDto updateMyInfo(Long userId, UserInfoUpdateReqDto userInfoUpdateReqDto){
         User user = findUserById(userId);
-
+        //닉네임 중복 확인
+        if(isNicknameExists(userInfoUpdateReqDto.getNickname())){
+            throw new BusinessException(ExceptionCode.ALREADY_EXISTS);
+        }
         user.updateUserInfo(
                 userInfoUpdateReqDto.getNickname(),
                 userInfoUpdateReqDto.getCp(),

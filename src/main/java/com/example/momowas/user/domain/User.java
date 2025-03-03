@@ -21,7 +21,7 @@ public class User {
     @Column
     private String password;
 
-    @Column
+    @Column(unique =true)
     private String nickname;
 
     @Column
