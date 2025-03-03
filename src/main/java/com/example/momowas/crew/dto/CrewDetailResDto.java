@@ -11,6 +11,7 @@ import java.util.List;
 public record CrewDetailResDto(Long crewId,
                                String name,
                                Category category,
+                               Integer memberCount,
                                String description,
                                Integer minMembers,
                                Integer maxMembers,
@@ -20,11 +21,12 @@ public record CrewDetailResDto(Long crewId,
                                String bannerImage,
                                List<RegionDto> regions,
                                LocalDateTime createdAt){
-    public static CrewDetailResDto of(Crew crew, List<RegionDto> regions) {
+    public static CrewDetailResDto of(Crew crew, List<RegionDto> regions, Integer memberCount) {
         return new CrewDetailResDto(
                 crew.getId(),
                 crew.getName(),
                 crew.getCategory(),
+                memberCount,
                 crew.getDescription(),
                 crew.getMinMembers(),
                 crew.getMaxMembers(),
