@@ -5,6 +5,7 @@ import com.example.momowas.chat.domain.ChatRoom;
 import com.example.momowas.chat.dto.ChatRoomReqDto;
 import com.example.momowas.chat.dto.ChatRoomResDto;
 import com.example.momowas.chat.repository.ChatRoomRepository;
+import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
@@ -24,13 +25,17 @@ public class ChatRoomService {
     private final ChatMemberService chatMemberService;
     private final UserService userService;
     private final CrewManager crewManager;
-
+    private final CrewService crewService;
 
     public List<ChatRoomResDto> findAllRoom() {
         return chatRoomRepository.findAll().stream()
-                .map(ChatRoomResDto::fromEntity)
+                .map(chatRoom -> ChatRoomResDto.fromEntity(
+                        chatRoom,
+                        crewService.findCrewById(chatRoom.getCrewId())
+                ))
                 .collect(Collectors.toList());
     }
+
 
     public ChatRoom findChatRoomById(Long chatRoomId){
         return chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
@@ -38,16 +43,22 @@ public class ChatRoomService {
 
     public ChatRoomResDto findById(Long chatRoomId) {
         ChatRoom chatRoom =  chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
-        return ChatRoomResDto.fromEntity(chatRoom);
+
+        return ChatRoomResDto.fromEntity(chatRoom, crewService.findCrewById(chatRoom.getCrewId()));
     }
 
     public List<ChatRoomResDto> findChatRoomsByMe(Long userId) {
         User user = userService.findUserById(userId);
         List<ChatRoom> chatRooms = chatMemberService.findChatRoomsByUser(user);
+
         return chatRooms.stream()
-                .map(ChatRoomResDto::fromEntity)
+                .map(chatRoom -> ChatRoomResDto.fromEntity(
+                        chatRoom,
+                        crewService.findCrewById(chatRoom.getCrewId())
+                ))
                 .collect(Collectors.toList());
     }
+
 
     public ChatRoomResDto createRoom(Long userId, ChatRoomReqDto chatRoomReqDto) {
         User user  = userService.findUserById(userId);
@@ -61,7 +72,7 @@ public class ChatRoomService {
                 .createdAt(LocalDateTime.now())
                 .build();
         chatRoomRepository.save(chatRoom);
-        return ChatRoomResDto.fromEntity(chatRoom);
+        return ChatRoomResDto.fromEntity(chatRoom, crewService.findCrewById(chatRoom.getCrewId()));
     }
 
     @Transactional
