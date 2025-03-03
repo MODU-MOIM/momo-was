@@ -47,7 +47,7 @@ public class ArchiveController {
     /* 전체 기록 조회 */
     @GetMapping("")
     public List<ArchiveListResDto> getArchiveList(@PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
-        return archiveService.getArchiveList();
+        return archiveService.getArchiveList(crewId);
     }
 
     /* 특정 기록 조회 */
