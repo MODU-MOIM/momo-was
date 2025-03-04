@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class FeedService {
 
     /* 피드 생성 */
     @Transactional
-    public Long createFeed(FeedReqDto feedReqDto, List<MultipartFile> files, Long crewId, Long userId) throws IOException {
+    public Long createFeed(FeedReqDto feedReqDto, List<MultipartFile> files, Long crewId, Long userId) throws IOException, NoSuchAlgorithmException {
         Crew crew = crewService.findCrewById(crewId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
@@ -56,9 +57,7 @@ public class FeedService {
         }
 
         feedTagService.createFeedTag(feedReqDto.tagNames(), feed); //태그 저장
-
         recommendService.handleCrewEvent(crewId, "addFeed", crew.getCrewMembers().size(), crew.getMaxMembers());
-
         return feed.getId();
     }
 
@@ -90,7 +89,7 @@ public class FeedService {
 
     /* 피드 수정 */
     @Transactional
-    public void updateFeed(FeedReqDto feedReqDto, List<MultipartFile> files, Long feedId, Long crewId, Long userId) throws IOException {
+    public void updateFeed(FeedReqDto feedReqDto, List<MultipartFile> files, Long feedId, Long crewId, Long userId) throws IOException, NoSuchAlgorithmException {
         Feed feed = findFeedById(feedId);
         validateWriter(crewId, userId, feed);
 
