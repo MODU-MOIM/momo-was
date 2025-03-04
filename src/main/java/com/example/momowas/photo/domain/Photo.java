@@ -65,4 +65,8 @@ public class Photo {
                 .build();
     }
 
+    public void updateSequence(int sequence) {
+        this.sequence= Objects.requireNonNull(sequence,"sequence는 null이 될 수 없습니다.");
+    }
+
 }
