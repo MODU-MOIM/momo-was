@@ -72,6 +72,10 @@ public class ChatRoomService {
                 .createdAt(LocalDateTime.now())
                 .build();
         chatRoomRepository.save(chatRoom);
+
+        // 채팅 참여자로 추가
+        chatMemberService.addParticipant(user, chatRoom);
+
         return ChatRoomResDto.fromEntity(chatRoom, crewService.findCrewById(chatRoom.getCrewId()));
     }
 
