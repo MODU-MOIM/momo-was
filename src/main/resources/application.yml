@@ -71,8 +71,6 @@ spring:
         shutdown-timeout: 200ms
 
   elasticsearch:
-    username: ${ELASTIC_USER}
-    password: ${ELASTIC_PW}
     uris: ${ELASTIC_URI}
 
 jwt:
