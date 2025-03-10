@@ -6,6 +6,7 @@ import com.example.momowas.chat.dto.ChatRoomReqDto;
 import com.example.momowas.chat.dto.ChatRoomResDto;
 import com.example.momowas.chat.repository.ChatRoomRepository;
 import com.example.momowas.crew.service.CrewService;
+import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
@@ -25,12 +26,14 @@ public class ChatRoomService {
     private final ChatMemberService chatMemberService;
     private final UserService userService;
     private final CrewManager crewManager;
+    private final CrewMemberService crewMemberService;
     private final CrewService crewService;
 
     public List<ChatRoomResDto> findAllRoom() {
         return chatRoomRepository.findAll().stream()
                 .map(chatRoom -> ChatRoomResDto.fromEntity(
                         chatRoom,
+                        crewMemberService.getCrewLeader(chatRoom.getCrewId()).getUser(),
                         crewService.findCrewById(chatRoom.getCrewId())
                 ))
                 .collect(Collectors.toList());
@@ -44,7 +47,7 @@ public class ChatRoomService {
     public ChatRoomResDto findById(Long chatRoomId) {
         ChatRoom chatRoom =  chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
 
-        return ChatRoomResDto.fromEntity(chatRoom, crewService.findCrewById(chatRoom.getCrewId()));
+        return ChatRoomResDto.fromEntity(chatRoom, crewMemberService.getCrewLeader(chatRoom.getCrewId()).getUser(), crewService.findCrewById(chatRoom.getCrewId()));
     }
 
     public List<ChatRoomResDto> findChatRoomsByMe(Long userId) {
@@ -54,6 +57,7 @@ public class ChatRoomService {
         return chatRooms.stream()
                 .map(chatRoom -> ChatRoomResDto.fromEntity(
                         chatRoom,
+                        crewMemberService.getCrewLeader(chatRoom.getCrewId()).getUser(),
                         crewService.findCrewById(chatRoom.getCrewId())
                 ))
                 .collect(Collectors.toList());
@@ -76,7 +80,7 @@ public class ChatRoomService {
         // 채팅 참여자로 추가
         chatMemberService.addParticipant(user, chatRoom);
 
-        return ChatRoomResDto.fromEntity(chatRoom, crewService.findCrewById(chatRoom.getCrewId()));
+        return ChatRoomResDto.fromEntity(chatRoom, crewMemberService.getCrewLeader(chatRoom.getCrewId()).getUser(),crewService.findCrewById(chatRoom.getCrewId()));
     }
 
     @Transactional

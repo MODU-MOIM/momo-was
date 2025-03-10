@@ -2,6 +2,7 @@ package com.example.momowas.chat.dto;
 
 import com.example.momowas.chat.domain.ChatRoom;
 import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,20 +15,22 @@ public class ChatRoomResDto {
     private String name;
     private String crewName;
     private String bannerImage;
+    private String profileImage;
     private int chatMemberNumbers;
     private LocalDateTime createdAt;
 
     @Builder
-    public ChatRoomResDto(Long roomId, String name, String crewName, String bannerImage, int chatMemberNumbers, LocalDateTime createdAt) {
+    public ChatRoomResDto(Long roomId, String name, String crewName, String bannerImage, String profileImage, int chatMemberNumbers, LocalDateTime createdAt) {
         this.roomId = roomId;
         this.name = name;
         this.crewName = crewName;
         this.bannerImage = bannerImage;
+        this.profileImage = profileImage;
         this.chatMemberNumbers = chatMemberNumbers;
         this.createdAt = createdAt;
     }
 
-    public static ChatRoomResDto fromEntity(ChatRoom chatRoom, Crew crew){
+    public static ChatRoomResDto fromEntity(ChatRoom chatRoom, User user, Crew crew){
         int memberNumbers = 0;
         if(chatRoom.getChatMembers()!=null){
             memberNumbers = chatRoom.getChatMembers().size();
@@ -37,6 +40,7 @@ public class ChatRoomResDto {
                 .name(chatRoom.getName())
                 .crewName(crew.getName())
                 .bannerImage(crew.getBannerImage())
+                .profileImage(user.getProfileImage())
                 .chatMemberNumbers(memberNumbers)
                 .createdAt(chatRoom.getCreatedAt())
                 .build();
