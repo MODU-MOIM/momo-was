@@ -46,7 +46,7 @@ public class ChatService {
 
         chatRepository.save(chat);
         Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
-        return ChatResDto.fromEntity(chat, user, role);
+        return ChatResDto.fromEntity(chat, userService.findUserById(chat.getSenderId()), role);
     }
 
     public ChatResDto createChat(Long chatRoomId, ChatReqDto chatReqDto, Long userId) {
@@ -64,7 +64,8 @@ public class ChatService {
 
         chatRepository.save(chat);
         Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
-        return ChatResDto.fromEntity(chat, user, role);
+
+        return ChatResDto.fromEntity(chat, userService.findUserById(chat.getSenderId()), role);
 
     }
 
@@ -79,11 +80,9 @@ public class ChatService {
         return chatRepository.findAllByChatRoomId(chatRoomId).stream()
                 .map(chat -> {
                     Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
-                    return ChatResDto.fromEntity(chat, user, role);
+                    return ChatResDto.fromEntity(chat, userService.findUserById(chat.getSenderId()), role);
                 })
                 .collect(Collectors.toList());
     }
-
-
 
 }
