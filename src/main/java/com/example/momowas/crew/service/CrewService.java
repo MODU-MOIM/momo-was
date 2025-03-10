@@ -1,7 +1,9 @@
 package com.example.momowas.crew.service;
 
 import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crew.domain.CrewDocument;
 import com.example.momowas.crew.dto.*;
+import com.example.momowas.crew.repository.CrewElasticRepository;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.dto.CrewMemberListResDto;
@@ -16,12 +18,15 @@ import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +40,7 @@ public class CrewService {
     private final UserService userService;
     private final S3Service s3Service;
     private final RecommendService recommendService;
+    private final CrewElasticRepository crewElasticRepository;
 
     /* 크루 id로 크루 조회 */
     @Transactional(readOnly = true)
@@ -145,6 +151,32 @@ public class CrewService {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> searchName(String name) {
+        SearchHits<CrewDocument> searchHits = crewElasticRepository.findByName(name);
+
+        List<Long> crewIdList = new ArrayList<>();
+
+        for (SearchHit<CrewDocument> hit : searchHits) {
+            CrewDocument crewDocument = hit.getContent();
+            Long crewId = crewDocument.getCrewId();
+            crewIdList.add(crewId);
+        }
+        return crewIdList;
+    }
+
+    @Transactional(readOnly = true)
+    public void indexAll() {
+        List<Crew> crews = crewRepository.findAll();
+
+        for (Crew crew : crews) {
+            CrewDocument crewDocument = CrewDocument.builder()
+                    .crewId(crew.getId())
+                    .name(crew.getName())
+                    .build();
+
+            crewElasticRepository.save(crewDocument);
+        }
+    }
     public List<CrewListResDto> getCrewsByMe(Long userId){
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
