@@ -65,6 +65,11 @@ public class CrewMemberService {
         return crewMemberRepository.findByCrewIdAndDeletedAtIsNull(crewId).stream().map(
                 CrewMemberListResDto::of).toList();
     }
+    @Transactional(readOnly = true)
+    public CrewMember getCrewLeader(Long crewId) {
+        return crewMemberRepository.findByCrewIdAndRole(crewId, Role.LEADER).orElseThrow(() ->
+                new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
+    }
 
     /* 특정 크루 멤버 강제 탈퇴 */
     @Transactional
