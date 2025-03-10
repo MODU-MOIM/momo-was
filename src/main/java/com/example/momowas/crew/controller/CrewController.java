@@ -136,12 +136,6 @@ public class CrewController {
         return crewService.search(spec);
     }
 
-    @PostMapping("/indexAll")
-    public CommonResponse<String> tmp(){
-        crewService.indexAll();
-        return CommonResponse.of(ExceptionCode.SUCCESS,"성공");
-    }
-
     @GetMapping("/me")
     public List<CrewListResDto> getCrewsByMe(HttpServletRequest request){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));

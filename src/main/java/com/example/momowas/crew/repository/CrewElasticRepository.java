@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CrewElasticRepository extends ElasticsearchRepository<CrewDocument, String> {
     SearchHits<CrewDocument> findByName(String name);
+    void deleteByCrewId(Long crewId);
 }

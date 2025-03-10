@@ -57,6 +57,7 @@ public class CrewService {
         String bannerImageUrl = s3Service.uploadImage(file, "crew");
 
         Crew crew = crewRepository.save(crewReqDto.toEntity(bannerImageUrl)); //크루 저장
+        this.indexCrew(crew); //인덱스에 크루 저장
         crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
@@ -88,7 +89,9 @@ public class CrewService {
     @Transactional
     public void deleteCrew(Long crewId) {
         Crew crew = findCrewById(crewId);
+
         crewRepository.delete(crew);
+        crewElasticRepository.deleteByCrewId(crewId);
     }
 
     /* 크루명 및 배너사진 수정 */
@@ -100,6 +103,8 @@ public class CrewService {
 
         crew.updateName(crewNameReqDto.name());
         crew.updateBannerImage(bannerImageUrl);
+
+        this.indexCrew(crew); //인덱스 크루 명 수정
     }
 
     /* 크루 소개 수정 */
@@ -133,7 +138,7 @@ public class CrewService {
 
     /* 크루명 중복 검증 */
     @Transactional(readOnly = true)
-    private void validateCrewName(String crewName) {
+    public void validateCrewName(String crewName) {
         if (crewRepository.existsByName(crewName)) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS_CREW);
         }
@@ -164,19 +169,14 @@ public class CrewService {
         return crewIdList;
     }
 
-    @Transactional(readOnly = true)
-    public void indexAll() {
-        List<Crew> crews = crewRepository.findAll();
-
-        for (Crew crew : crews) {
-            CrewDocument crewDocument = CrewDocument.builder()
-                    .crewId(crew.getId())
-                    .name(crew.getName())
-                    .build();
-
-            crewElasticRepository.save(crewDocument);
-        }
+    private void indexCrew(Crew crew) {
+        CrewDocument crewDocument = CrewDocument.builder()
+                .crewId(crew.getId())
+                .name(crew.getName())
+                .build();
+        crewElasticRepository.save(crewDocument);
     }
+
     public List<CrewListResDto> getCrewsByMe(Long userId){
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
