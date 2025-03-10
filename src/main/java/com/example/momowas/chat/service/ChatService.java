@@ -7,11 +7,7 @@ import com.example.momowas.chat.domain.MessageType;
 import com.example.momowas.chat.dto.ChatResDto;
 import com.example.momowas.chat.dto.ChatReqDto;
 import com.example.momowas.chat.repository.ChatRepository;
-import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.Role;
-import com.example.momowas.crew.service.CrewService;
-import com.example.momowas.crewmember.domain.CrewMember;
-import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
@@ -50,7 +46,7 @@ public class ChatService {
 
         chatRepository.save(chat);
         Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
-        return ChatResDto.fromEntity(chat, role);
+        return ChatResDto.fromEntity(chat, user, role);
     }
 
     public ChatResDto createChat(Long chatRoomId, ChatReqDto chatReqDto, Long userId) {
@@ -68,7 +64,7 @@ public class ChatService {
 
         chatRepository.save(chat);
         Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
-        return ChatResDto.fromEntity(chat, role);
+        return ChatResDto.fromEntity(chat, user, role);
 
     }
 
@@ -83,7 +79,7 @@ public class ChatService {
         return chatRepository.findAllByChatRoomId(chatRoomId).stream()
                 .map(chat -> {
                     Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
-                    return ChatResDto.fromEntity(chat, role);
+                    return ChatResDto.fromEntity(chat, user, role);
                 })
                 .collect(Collectors.toList());
     }
