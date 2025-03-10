@@ -1,7 +1,9 @@
 package com.example.momowas.crew.service;
 
 import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crew.domain.CrewDocument;
 import com.example.momowas.crew.dto.*;
+import com.example.momowas.crew.repository.CrewElasticRepository;
 import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.dto.CrewMemberListResDto;
@@ -16,12 +18,15 @@ import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +40,7 @@ public class CrewService {
     private final UserService userService;
     private final S3Service s3Service;
     private final RecommendService recommendService;
+    private final CrewElasticRepository crewElasticRepository;
 
     /* 크루 id로 크루 조회 */
     @Transactional(readOnly = true)
@@ -51,6 +57,7 @@ public class CrewService {
         String bannerImageUrl = s3Service.uploadImage(file, "crew");
 
         Crew crew = crewRepository.save(crewReqDto.toEntity(bannerImageUrl)); //크루 저장
+        this.indexCrew(crew); //인덱스에 크루 저장
         crewRegionService.createCrewRegion(crewReqDto.regions(), crew); //크루-지역 저장
         crewMemberService.createLeader(user, crew); //크루 멤버 저장
 
@@ -82,7 +89,9 @@ public class CrewService {
     @Transactional
     public void deleteCrew(Long crewId) {
         Crew crew = findCrewById(crewId);
+
         crewRepository.delete(crew);
+        crewElasticRepository.deleteByCrewId(crewId);
     }
 
     /* 크루명 및 배너사진 수정 */
@@ -94,6 +103,8 @@ public class CrewService {
 
         crew.updateName(crewNameReqDto.name());
         crew.updateBannerImage(bannerImageUrl);
+
+        this.indexCrew(crew); //인덱스 크루 명 수정
     }
 
     /* 크루 소개 수정 */
@@ -127,7 +138,7 @@ public class CrewService {
 
     /* 크루명 중복 검증 */
     @Transactional(readOnly = true)
-    private void validateCrewName(String crewName) {
+    public void validateCrewName(String crewName) {
         if (crewRepository.existsByName(crewName)) {
             throw new BusinessException(ExceptionCode.ALREADY_EXISTS_CREW);
         }
@@ -145,6 +156,39 @@ public class CrewService {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> searchName(String name) {
+        SearchHits<CrewDocument> searchHits = crewElasticRepository.findByName(name);
+
+        List<Long> crewIdList = new ArrayList<>();
+
+        for (SearchHit<CrewDocument> hit : searchHits) {
+            CrewDocument crewDocument = hit.getContent();
+            Long crewId = crewDocument.getCrewId();
+            crewIdList.add(crewId);
+        }
+        return crewIdList;
+    }
+
+    private void indexCrew(Crew crew) {
+        CrewDocument crewDocument = CrewDocument.builder()
+                .crewId(crew.getId())
+                .name(crew.getName())
+                .build();
+        crewElasticRepository.save(crewDocument);
+    }
+
+    public void indexAll() {
+        List<Crew> crews = crewRepository.findAll();
+
+        for (Crew crew : crews) {
+            CrewDocument crewDocument = CrewDocument.builder()
+                    .crewId(crew.getId())
+                    .name(crew.getName())
+                    .build();
+
+            crewElasticRepository.save(crewDocument);
+        }
+    }
     public List<CrewListResDto> getCrewsByMe(Long userId){
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());

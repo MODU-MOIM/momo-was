@@ -70,6 +70,9 @@ spring:
           max-wait: 10000ms
         shutdown-timeout: 200ms
 
+  elasticsearch:
+    uris: ${ELASTIC_URI}
+
 jwt:
   secret: ${JWT_SECRET}
   redirect: ${JWT_REDIRECT_URI}

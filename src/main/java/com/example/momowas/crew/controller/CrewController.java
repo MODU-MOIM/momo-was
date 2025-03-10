@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -114,10 +115,17 @@ public class CrewController {
                                                    @RequestParam(value = "category", required = false) Category category,
                                                    @RequestParam(value = "age-group", required = false) Integer ageGroup,
                                                    @RequestParam(value = "region", required = false) String depth1) {
-        Specification<Crew> spec = (root, query, criteriaBuilder) -> null;
 
-        if (name != null)
-            spec = spec.and(CrewSpecification.equalCrewName(name));
+        Specification<Crew> spec = Specification.where(null);
+
+        if (name != null) {
+            List<Long> crewIds = crewService.searchName(name);
+            if (!crewIds.isEmpty()) {
+                spec = spec.and(CrewSpecification.equalCrewIdIn(crewIds));
+            } else {
+                return new ArrayList<>();
+            }
+        }
         if (category != null)
             spec = spec.and(CrewSpecification.equalCategory(category));
         if (ageGroup != null)
@@ -126,6 +134,12 @@ public class CrewController {
             spec = spec.and(CrewSpecification.hasRegion(depth1));
 
         return crewService.search(spec);
+    }
+
+    @PostMapping("/indexAll")
+    public CommonResponse<String> tmp(){
+        crewService.indexAll();
+        return CommonResponse.of(ExceptionCode.SUCCESS,"성공");
     }
 
     @GetMapping("/me")

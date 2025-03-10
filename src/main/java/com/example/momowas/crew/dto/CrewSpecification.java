@@ -12,11 +12,12 @@ import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.xml.stream.Location;
+import java.util.List;
 
 public class CrewSpecification {
 
-    public static Specification<Crew> equalCrewName(String name) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name);
+    public static Specification<Crew> equalCrewIdIn(List<Long> ids) {
+        return (root, query, criteriaBuilder) -> root.get("id").in(ids);
     }
 
     public static Specification<Crew> equalCategory(Category category) {
