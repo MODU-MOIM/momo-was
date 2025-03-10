@@ -15,17 +15,17 @@ public class ChatRoomResDto {
     private String name;
     private String crewName;
     private String bannerImage;
-    private String profileImage;
+    private String leaderNickname;
     private int chatMemberNumbers;
     private LocalDateTime createdAt;
 
     @Builder
-    public ChatRoomResDto(Long roomId, String name, String crewName, String bannerImage, String profileImage, int chatMemberNumbers, LocalDateTime createdAt) {
+    public ChatRoomResDto(Long roomId, String name, String crewName, String bannerImage, String leaderNickname, int chatMemberNumbers, LocalDateTime createdAt) {
         this.roomId = roomId;
         this.name = name;
         this.crewName = crewName;
         this.bannerImage = bannerImage;
-        this.profileImage = profileImage;
+        this.leaderNickname = leaderNickname;
         this.chatMemberNumbers = chatMemberNumbers;
         this.createdAt = createdAt;
     }
@@ -40,7 +40,7 @@ public class ChatRoomResDto {
                 .name(chatRoom.getName())
                 .crewName(crew.getName())
                 .bannerImage(crew.getBannerImage())
-                .profileImage(user.getProfileImage())
+                .leaderNickname(user.getNickname())
                 .chatMemberNumbers(memberNumbers)
                 .createdAt(chatRoom.getCreatedAt())
                 .build();
