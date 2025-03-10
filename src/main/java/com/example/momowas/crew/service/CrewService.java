@@ -177,6 +177,18 @@ public class CrewService {
         crewElasticRepository.save(crewDocument);
     }
 
+    public void indexAll() {
+        List<Crew> crews = crewRepository.findAll();
+
+        for (Crew crew : crews) {
+            CrewDocument crewDocument = CrewDocument.builder()
+                    .crewId(crew.getId())
+                    .name(crew.getName())
+                    .build();
+
+            crewElasticRepository.save(crewDocument);
+        }
+    }
     public List<CrewListResDto> getCrewsByMe(Long userId){
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
