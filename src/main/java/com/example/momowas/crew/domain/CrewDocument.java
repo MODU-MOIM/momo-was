@@ -6,9 +6,6 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Getter
 @Setter
 @Document(indexName = "crew")
@@ -19,7 +16,7 @@ public class CrewDocument {
     @Field(type = FieldType.Long)
     private Long crewId;
 
-    @Field(type = FieldType.Text, analyzer = "standard")
+    @Field(type = FieldType.Text, analyzer = "nori")
     private String name;
 
     @Builder
