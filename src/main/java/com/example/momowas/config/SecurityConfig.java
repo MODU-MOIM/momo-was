@@ -65,7 +65,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000","http://13.124.54.225:8080", "https://modumoim.site","https://modumoim.site:8080","http://localhost:9200","https://modumoim.site:9200","http://172.22.41.212","http://172.22.41.212:3000"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000","http://13.124.54.225:8080", "https://modumoim.site","https://modumoim.site:8080","http://localhost:9200","https://modumoim.site:9200","http://172.22.41.212","http://172.22.41.212:3000","https://momo-web-nine.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true); // 인증 정보를 포함한 요청 허용
