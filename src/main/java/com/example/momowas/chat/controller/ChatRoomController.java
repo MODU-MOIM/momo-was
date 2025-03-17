@@ -49,7 +49,10 @@ public class ChatRoomController {
     }
 
     @GetMapping("")
-    public List<ChatRoomResDto> roomList() {
+    public List<ChatRoomResDto> roomList(@RequestParam(required = false) Long crewId) {
+        if (crewId != null) {
+            return chatRoomService.findRoomsByCrewId(crewId);
+        }
         return chatRoomService.findAllRoom();
     }
 
