@@ -39,7 +39,15 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
-
+    public List<ChatRoomResDto> findRoomsByCrewId(Long crewId) {
+        return chatRoomRepository.findByCrewId(crewId).stream()
+                .map(chatRoom -> ChatRoomResDto.fromEntity(
+                        chatRoom,
+                        crewMemberService.getCrewLeader(chatRoom.getCrewId()).getUser(),
+                        crewService.findCrewById(chatRoom.getCrewId())
+                ))
+                .collect(Collectors.toList());
+    }
     public ChatRoom findChatRoomById(Long chatRoomId){
         return chatRoomRepository.findById(chatRoomId).orElseThrow(()->new BusinessException(ExceptionCode.CHATROOM_NOT_FOUND));
     }
