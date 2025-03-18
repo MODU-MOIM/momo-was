@@ -56,6 +56,7 @@ public class SecurityConfig {
             "/chat/**",
             "/chat-rooms/{roomId}",
             "/index.html",
+            "/crews"
     };
     //비밀번호 암호화
     @Bean
