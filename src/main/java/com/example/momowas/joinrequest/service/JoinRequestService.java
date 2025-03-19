@@ -81,14 +81,23 @@ public class JoinRequestService {
     /* 사용자가 크루에 가입 가능한지 검증 */
     @Transactional(readOnly = true)
     private void validateCrewJoinEligibility(User user, Crew crew) {
-        //이미 사용자가 크루에 가입했는지 검증
+        //이미 사용자가 크루 멤버인지 검증
         if (crewMemberService.isCrewMemberExists(user.getId(), crew.getId())) {
+            CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(user.getId(), crew.getId());
+            if (crewMember.getDeletedAt() != null) { //탈퇴 전적 검증
+                throw new BusinessException(ExceptionCode.BANNED_FROM_CREW);
+            }
             throw new BusinessException(ExceptionCode.ALREADY_JOINED_CREW);
         }
-        //이미 사용자가 크루에 가입 요청을 했는지 검증
-        if (joinRequestRepository.existsByCrewIdAndUserId(crew.getId(), user.getId())) {
-            throw new BusinessException(ExceptionCode.ALREADY_REQUESTED_TO_JOIN_CREW);
-        }
+
+        //이미 사용자가 크루에 가입 요청을 했고 PENDING(수락 대기) 상태인지 검증
+        joinRequestRepository.findByCrewIdAndUserId(crew.getId(), user.getId())
+                .ifPresent(joinRequest -> {
+                    if(joinRequest.getRequestStatus()==RequestStatus.PENDING){
+                        throw new BusinessException(ExceptionCode.ALREADY_REQUESTED_TO_JOIN_CREW);
+                    }
+                });
+
         //크루 정원 초과인지 검증
         if(crew.isCrewFull()){
             throw new BusinessException(ExceptionCode.CREW_FULL);
