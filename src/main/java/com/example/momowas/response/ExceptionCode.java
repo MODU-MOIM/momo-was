@@ -70,6 +70,9 @@ public enum ExceptionCode {
     ALREADY_JOINED_CREW(409, "CM002", "이미 해당 크루에 가입한 사용자입니다."),
     INVALID_CREW_JOIN_CONDITION(409, "CM004", "크루 가입 조건에 맞지 않습니다."),
     ALREADY_REQUESTED_TO_JOIN_CREW(409, "CM002", "이미 해당 크루에 가입 요청을 했습니다."),
+    BANNED_FROM_CREW(403, "CM003", "탈퇴 이력이 있는 크루입니다."),
+
+
     NOT_FOUND_JOIN_REQUEST(409, "CM003","해당 크루 가입 요청을 찾을 수 없습니다."),
 
     //지역 관련 예외
