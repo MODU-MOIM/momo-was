@@ -71,8 +71,8 @@ public class CrewService {
     public List<CrewListResDto> getCrewList() {
         return crewRepository.findAll().stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
-            Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
-            return CrewListResDto.of(crew,regionDtos,memberCount);
+            Integer memberCount = crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+            return CrewListResDto.of(crew, regionDtos, memberCount);
         }).collect(Collectors.toList());
     }
 
@@ -81,8 +81,8 @@ public class CrewService {
     public CrewDetailResDto getCrewDetail(Long crewId) {
         Crew crew = findCrewById(crewId);
         List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
-        Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
-        return CrewDetailResDto.of(crew,regionDtos,memberCount);
+        Integer memberCount = crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+        return CrewDetailResDto.of(crew, regionDtos, memberCount);
     }
 
     /* 특정 크루 삭제 */
@@ -99,7 +99,7 @@ public class CrewService {
     public void updateCrewBasic(CrewNameReqDto crewNameReqDto, MultipartFile file, Long crewId) throws IOException {
         Crew crew = findCrewById(crewId);
         validateCrewName(crewNameReqDto.name());
-        String bannerImageUrl= s3Service.uploadImage(file, "crew");
+        String bannerImageUrl = s3Service.uploadImage(file, "crew");
 
         crew.updateName(crewNameReqDto.name());
         crew.updateBannerImage(bannerImageUrl);
@@ -109,10 +109,10 @@ public class CrewService {
 
     /* 크루 소개 수정 */
     @Transactional
-    public void updateCrewReport(CrewReportReqDto crewReportReqDto, Long crewId){
+    public void updateCrewReport(CrewReportReqDto crewReportReqDto, Long crewId) {
         Crew crew = findCrewById(crewId);
 
-        crewRegionService.updateCrewRegion(crew.getCrewRegions(),crewReportReqDto.regions(), crew);
+        crewRegionService.updateCrewRegion(crew.getCrewRegions(), crewReportReqDto.regions(), crew);
         crew.updateCategory(crewReportReqDto.category());
         crew.updateDescription(crewReportReqDto.description());
     }
@@ -122,7 +122,6 @@ public class CrewService {
     public void updateCrewHeadCount(CrewHeadcountReqDto crewHeadcountReqDto, Long crewId) {
         Crew crew = findCrewById(crewId);
 
-        crew.updateMinMembers(crewHeadcountReqDto.minMembers());
         crew.updateMaxMembers(crewHeadcountReqDto.maxMembers());
     }
 
@@ -144,14 +143,14 @@ public class CrewService {
         }
     }
 
-    public List<CrewDetailResDto> search(Specification<Crew> spec){
+    public List<CrewDetailResDto> search(Specification<Crew> spec) {
         List<Crew> resultCrews = crewRepository.findAll(spec);
 
         return resultCrews.stream()
                 .map(crew -> {
                     List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
-                    Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
-                    return CrewDetailResDto.of(crew, regionDtos,memberCount);
+                    Integer memberCount = crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+                    return CrewDetailResDto.of(crew, regionDtos, memberCount);
                 })
                 .collect(Collectors.toList());
     }
@@ -189,11 +188,12 @@ public class CrewService {
             crewElasticRepository.save(crewDocument);
         }
     }
-    public List<CrewListResDto> getCrewsByMe(Long userId){
+
+    public List<CrewListResDto> getCrewsByMe(Long userId) {
         return crewRepository.findByCrewMembersUserId(userId).stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
-            Integer memberCount=crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
-            return CrewListResDto.of(crew,regionDtos, memberCount);
+            Integer memberCount = crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
+            return CrewListResDto.of(crew, regionDtos, memberCount);
         }).collect(Collectors.toList());
     }
 

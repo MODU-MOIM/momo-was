@@ -11,7 +11,6 @@ public record CrewReqDto(
         String name,
         Category category,
         String description,
-        Integer minMembers,
         Integer maxMembers,
         Integer minAge,
         Integer maxAge,
@@ -23,7 +22,6 @@ public record CrewReqDto(
                 .name(name)
                 .category(category)
                 .description(description)
-                .minMembers(minMembers)
                 .maxMembers(maxMembers)
                 .minAge(minAge)
                 .maxAge(maxAge)
