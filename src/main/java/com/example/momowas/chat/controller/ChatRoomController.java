@@ -24,10 +24,15 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final JwtUtil jwtUtil;
 
-    @GetMapping("/{roomId}/history")
+    @GetMapping("/{roomId}/chat/history")
     public List<ChatResDto> chatHistory(HttpServletRequest request, @PathVariable Long roomId) {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         return chatService.findAllChatByRoomId(userId, roomId);
+    }
+    @GetMapping("/{roomId}/chat/recent")
+    public ChatResDto findRecentChatByRoomId(HttpServletRequest request, @PathVariable Long roomId) {
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return chatService.findRecentChatByRoomId(userId, roomId);
     }
 
     @GetMapping("/{roomId}")

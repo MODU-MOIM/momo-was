@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,6 +84,17 @@ public class ChatService {
                     return ChatResDto.fromEntity(chat, userService.findUserById(chat.getSenderId()), role);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public ChatResDto findRecentChatByRoomId(Long userId, Long chatRoomId){
+        ChatRoom chatRoom = chatRoomService.findChatRoomById(chatRoomId);
+        User user = userService.findUserById(userId);
+        if(!chatMemberService.isChatMemberExists(chatRoom, user)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
+        Chat chat = chatRepository.findFirstByChatRoomIdOrderBySendAtDesc(chatRoomId);
+        Role role = crewManager.findUserRoleInCrew(chatRoom.getCrewId(), chat.getSenderId());
+        return ChatResDto.fromEntity(chat, userService.findUserById(chat.getSenderId()), role);
     }
 
 }
