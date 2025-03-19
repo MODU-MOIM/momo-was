@@ -42,8 +42,6 @@ public class Crew {
     @Lob
     private String description;
 
-    private Integer minMembers;
-
     private Integer maxMembers;
 
     private Integer minAge; //'제한없음'은 null로 처리.
@@ -86,7 +84,6 @@ public class Crew {
     private Crew(String name,
                  Category category,
                  String description,
-                 Integer minMembers,
                  Integer maxMembers,
                  Integer minAge,
                  Integer maxAge,
@@ -102,7 +99,6 @@ public class Crew {
         this.name = name;
         this.category = Objects.requireNonNull(category, "category는 null이 될 수 없습니다.");
         this.description = description;
-        this.minMembers = Objects.requireNonNull(minMembers, "minMembers는 null이 될 수 없습니다.");
         this.maxMembers = Objects.requireNonNull(maxMembers, "maxMembers는 null이 될 수 없습니다.");
         this.minAge = minAge;
         this.maxAge = maxAge;
@@ -129,10 +125,6 @@ public class Crew {
 
     public void updateDescription(String description) {
         this.description = description;
-    }
-
-    public void updateMinMembers(Integer minMembers) {
-        this.minMembers = Objects.requireNonNull(minMembers, "minMembers는 null이 될 수 없습니다.");
     }
 
     public void updateMaxMembers(Integer maxMembers) {
