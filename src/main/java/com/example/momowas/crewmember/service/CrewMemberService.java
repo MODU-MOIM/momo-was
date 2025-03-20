@@ -65,6 +65,9 @@ public class CrewMemberService {
         return crewMemberRepository.findByCrewIdAndDeletedAtIsNull(crewId).stream().map(
                 CrewMemberListResDto::of).toList();
     }
+
+
+    /* 특정 크루의 리더 조회 */
     @Transactional(readOnly = true)
     public CrewMember getCrewLeader(Long crewId) {
         return crewMemberRepository.findByCrewIdAndRole(crewId, Role.LEADER).orElseThrow(() ->
