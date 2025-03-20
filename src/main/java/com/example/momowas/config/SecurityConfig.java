@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -55,8 +56,7 @@ public class SecurityConfig {
             "/error",
             "/chat/**",
             "/chat-rooms/{roomId}",
-            "/index.html",
-            "/crews"
+            "/index.html"
     };
     //비밀번호 암호화
     @Bean
@@ -86,6 +86,8 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
+                                .requestMatchers(HttpMethod.GET, "/crews").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/crews/{crewId}").permitAll()
                                 .requestMatchers(publicEndpoints).permitAll() // 공개 엔드포인트 설정
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
