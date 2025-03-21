@@ -64,6 +64,7 @@ public class RecommendService {
 
     private double calculateCrewScore(String eventType) {
         return switch (eventType) {
+            case "createCrew" -> 5;
             case "addSchedule" -> 10;
             case "removeSchedule" -> -10;
             case "addFeed" -> 8;
