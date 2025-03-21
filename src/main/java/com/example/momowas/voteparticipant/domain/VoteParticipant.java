@@ -19,7 +19,7 @@ public class VoteParticipant {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private AttendanceStatus status;
+    private VoteStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vote_id")
@@ -30,14 +30,14 @@ public class VoteParticipant {
     private CrewMember crewMember;
 
     @Builder
-    public VoteParticipant(AttendanceStatus status, Vote vote, CrewMember crewMember) {
+    public VoteParticipant(VoteStatus status, Vote vote, CrewMember crewMember) {
         this.status = Objects.requireNonNull(status, "status는 null이 될 수 없습니다.");
         this.vote = Objects.requireNonNull(vote, "vote는 null이 될 수 없습니다.");
         this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");
     }
 
     /* 재투표 */
-    public void revote(AttendanceStatus status) {
+    public void revote(VoteStatus status) {
         this.status = Objects.requireNonNull(status, "status는 null이 될 수 없습니다.");
     }
 }

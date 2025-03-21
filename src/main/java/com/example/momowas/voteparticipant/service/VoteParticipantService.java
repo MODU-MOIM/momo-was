@@ -51,7 +51,7 @@ public class VoteParticipantService {
     public void updateVoteParticipant(VoteParticipantReqDto voteParticipantReqDto, Long crewId, Long voteId, Long userId) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         VoteParticipant voteParticipant = findVoteParticipantByVoteAndCrewMember(voteId, crewMember.getId());
-        voteParticipant.revote(voteParticipantReqDto.attendanceStatus());
+        voteParticipant.revote(voteParticipantReqDto.voteStatus());
     }
 
     /* 크루 멤버의 투표 상태 조회 */
