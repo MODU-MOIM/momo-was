@@ -13,10 +13,12 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.vote.domain.Vote;
+import com.example.momowas.vote.domain.VoteType;
 import com.example.momowas.vote.dto.VoteListResDto;
 import com.example.momowas.vote.dto.VoteReqDto;
 import com.example.momowas.vote.dto.VoteDetailResDto;
 import com.example.momowas.vote.service.VoteService;
+import com.example.momowas.voteparticipant.domain.VoteStatus;
 import com.example.momowas.voteparticipant.service.VoteParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class NoticeService {
     /* 공지 생성 */
     @Transactional
     public Long createNotice(NoticeReqDto noticeReqDto, Long crewId, Long userId) {
-        Vote vote=null;
+        Vote vote = null;
         if (noticeReqDto.vote().isEnabled()) {
             vote = voteService.createVote(noticeReqDto.vote());
         }
@@ -62,11 +64,9 @@ public class NoticeService {
         List<NoticeListResDto> noticeListResDtos = crew.getNotices().stream().map((notice) -> {
             CrewMember crewMember = notice.getCrewMember();
             User user = crewMember.getUser();
-            Vote vote = notice.getVote();
-            VoteListResDto voteListResDto= vote !=null
-                    ? VoteListResDto.of(true, vote.countAttendingParticipants())
-                    : VoteListResDto.of(false, null) ;
-            return NoticeListResDto.of(user, crewMember, notice,voteListResDto);
+            VoteListResDto voteListResDto = VoteListResDto.of(notice.getVote());
+
+            return NoticeListResDto.of(user, crewMember, notice, voteListResDto);
         }).collect(Collectors.toList());
 
         return noticeListResDtos;
@@ -76,9 +76,18 @@ public class NoticeService {
     @Transactional(readOnly = true)
     public NoticeDetailResDto getNoticeDetail(Long crewId, Long noticeId, Long userId) {
         Notice notice = findNoticeById(noticeId);
-
+        Vote vote = notice.getVote();
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        VoteDetailResDto voteDetailResDto = voteParticipantService.getVoteDetail(notice.getVote(), crewMember);
+
+        VoteDetailResDto voteDetailResDto=null;
+
+        if (vote == null) {
+            voteDetailResDto=VoteDetailResDto.of();
+        }
+        else {
+            VoteStatus voteStatus = voteParticipantService.getVoteStatus(vote, crewMember);
+            voteDetailResDto =voteService.getVoteDetail(vote, voteStatus);
+        }
 
         CrewMember writer = notice.getCrewMember();
         return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteDetailResDto);
@@ -100,11 +109,11 @@ public class NoticeService {
         if (voteReqDto.isEnabled()) { //투표 활성화
             if (notice.getVote() != null) { //기존에 투표 존재 -> 수정
                 voteService.updateVote(notice.getVote(), voteReqDto);
-            }else{ //기존에 투표 존재x -> 생성
+            } else { //기존에 투표 존재x -> 생성
                 Vote vote = voteService.createVote(voteReqDto);
                 notice.updateVote(vote);
             }
-        }else{ //투표 활성화 x
+        } else { //투표 활성화 x
             if (notice.getVote() != null) { //기존에 투표 존재 -> 삭제
                 Vote vote = notice.getVote();
                 notice.deleteVote();
@@ -120,7 +129,7 @@ public class NoticeService {
         noticeRepository.delete(notice);
     }
 
-    /* 공지 상단 고정 또는 고정 되있으면 해제*/
+    /* 공지 상단 고정 또는 고정 되있으면 해제 */
     @Transactional
     public Long togglePinNotice(Long noticeId) {
         Notice notice = findNoticeById(noticeId);

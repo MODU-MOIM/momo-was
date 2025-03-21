@@ -6,8 +6,10 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.vote.domain.Vote;
 import com.example.momowas.vote.dto.VoteDetailResDto;
+import com.example.momowas.vote.repository.VoteRepository;
 import com.example.momowas.vote.service.VoteService;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
+import com.example.momowas.voteparticipant.domain.VoteStatus;
 import com.example.momowas.voteparticipant.dto.VoteParticipantReqDto;
 import com.example.momowas.voteparticipant.repository.VoteParticipantRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class VoteParticipantService {
     @Transactional()
     public VoteParticipant createVoteParticipant(VoteParticipantReqDto voteParticipantReqDto, Long crewId, Long voteId, Long userId) {
         Vote vote = voteService.findVoteById(voteId);
+
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         //이미 참여한 투표인지 검증
         if (isVoteParticipantExists(voteId, crewMember.getId())) {
@@ -56,11 +59,18 @@ public class VoteParticipantService {
 
     /* 크루 멤버의 투표 상태 조회 */
     @Transactional(readOnly = true)
-    public VoteDetailResDto getVoteDetail(Vote vote, CrewMember crewMember) {
-        if (vote == null) {
-            return VoteDetailResDto.of(false,null,null);
-        }
+    public VoteStatus getVoteStatus(Vote vote, CrewMember crewMember) {
+        VoteStatus voteStatus = null;
+
         VoteParticipant voteParticipant = voteParticipantRepository.findByVoteIdAndCrewMemberId(vote.getId(), crewMember.getId()).orElse(null);
-        return VoteDetailResDto.of(true, vote, voteParticipant);
+
+        if (voteParticipant == null) {
+            voteStatus = VoteStatus.NOT_VOTED;
+        }
+        else {
+            voteStatus = voteParticipant.getStatus();
+        }
+
+        return voteStatus;
     }
 }
