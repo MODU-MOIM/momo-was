@@ -42,13 +42,14 @@ public class CommentService {
         if (boardType.equals(BoardType.FEED)) {
             Feed feed = feedService.findFeedById(boardId);
             comment=commentReqDto.toEntity(feed, crewMember, parent);
-            //추천 로직
-            recommendService.handleFeedEvent(comment.getFeed().getId(), "comment");
         }
 
         if (boardType.equals(BoardType.ARCHIVE)) {
             Archive archive = archiveService.findArchiveById(boardId);
             comment = commentRepository.save(commentReqDto.toEntity(archive, crewMember, parent));
+
+            //추천 로직
+            recommendService.handleArchiveEvent(comment.getFeed().getId(), "comment");
         }
         return commentRepository.save(comment).getId();
     }
@@ -68,9 +69,9 @@ public class CommentService {
         validateWriter(crewId, userId, comment);
         commentRepository.delete(comment);
 
-        if (boardType.equals(BoardType.FEED)) {
+        if (boardType.equals(BoardType.ARCHIVE)) {
             //추천 로직
-            recommendService.handleFeedEvent(comment.getFeed().getId(), "deleteComment");
+            recommendService.handleArchiveEvent(comment.getFeed().getId(), "deleteComment");
         }
     }
 

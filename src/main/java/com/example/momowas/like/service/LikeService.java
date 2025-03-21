@@ -35,11 +35,9 @@ public class LikeService {
             Feed feed = feedService.findFeedById(boardId);
             if (likeRepository.existsByFeedAndCrewMember(feed, crewMember)) {
                 throw new BusinessException(ExceptionCode.ALREADY_LIKE_BOARD);
+
             }else{
                 like=Like.of(feed, crewMember);
-
-                //추천 로직
-                recommendService.handleFeedEvent(feed.getId(), "like");
             }
         }
         if (boardType.equals(BoardType.ARCHIVE)) {
@@ -48,6 +46,8 @@ public class LikeService {
                 throw new BusinessException(ExceptionCode.ALREADY_LIKE_BOARD);
             }else{
                 like=Like.of(archive, crewMember);
+                //추천 로직
+                recommendService.handleArchiveEvent(archive.getId(), "like");
             }
         }
         likeRepository.save(like);
@@ -64,13 +64,14 @@ public class LikeService {
             like = likeRepository.findByFeedAndCrewMember(feed, crewMember)
                     .orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_LIKE));
 
-            //추천 로직
-            recommendService.handleFeedEvent(feed.getId(), "unLike");
         }
         if (boardType.equals(BoardType.ARCHIVE)) {
             Archive archive = archiveService.findArchiveById(boardId);
             like = likeRepository.findByArchiveAndCrewMember(archive, crewMember)
                     .orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_LIKE));
+
+            //추천 로직
+            recommendService.handleArchiveEvent(archive.getId(), "unLike");
         }
 
         likeRepository.delete(like);

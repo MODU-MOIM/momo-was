@@ -19,9 +19,9 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     //반환형은.. 일단 나중에 생각/.
-    @GetMapping("/feeds/popular")
+    @GetMapping("/archives/popular")
     public CommonResponse<List<Long>> getTopFeeds(@RequestParam(value="limit") int limit){
-        return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopFeedIds(limit));
+        return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopArchiveIds(limit));
     }
 
     @GetMapping("/crews/popular")
