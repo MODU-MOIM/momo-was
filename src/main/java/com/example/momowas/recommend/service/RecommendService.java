@@ -16,15 +16,16 @@ public class RecommendService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     // 좋아요/댓글 이벤트 처리
-    public void handleFeedEvent(Long feedId, String eventType) {
-        String key = "PopularFeed";
+    public void handleArchiveEvent(Long archiveId, String eventType) {
+        String key = "PopularArchive";
         int score = calculateScore(eventType);
-        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(feedId), score);
+        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(archiveId), score);
     }
 
     // 가중치 설정
     private int calculateScore(String eventType) {
         return switch (eventType) {
+            case "createArchive" -> 5;
             case "like" -> 2;
             case "unLike" -> -2;
             case "comment" -> 3;
@@ -34,8 +35,8 @@ public class RecommendService {
     }
 
     // 상위 N개의 인기 피드 조회
-    public List<Long> getTopFeedIds(int limit) {
-        String key = "PopularFeed";
+    public List<Long> getTopArchiveIds(int limit) {
+        String key = "PopularArchive";
         return redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1).stream()
                 .map(id -> Long.parseLong(id.toString()))
                 .collect(Collectors.toList());
@@ -64,6 +65,7 @@ public class RecommendService {
 
     private double calculateCrewScore(String eventType) {
         return switch (eventType) {
+            case "createCrew" -> 5;
             case "addSchedule" -> 10;
             case "removeSchedule" -> -10;
             case "addFeed" -> 8;
