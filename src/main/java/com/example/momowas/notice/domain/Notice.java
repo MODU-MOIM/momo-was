@@ -2,6 +2,7 @@ package com.example.momowas.notice.domain;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.vote.domain.Vote;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -50,16 +51,23 @@ public class Notice {
     @ColumnDefault("NULL")
     private Vote vote;
 
+    @Enumerated(EnumType.STRING)
+    private NoticeType noticeType;
+
+    @OneToOne
+    @JoinColumn(name="schedule_id")
+    private Schedule schedule;
+
     @Builder
-    private Notice(String content, Crew crew, CrewMember crewMember, Vote vote) {
-        if (!StringUtils.hasText(content)) {
-            throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
-        }
+    private Notice(String content, Crew crew, CrewMember crewMember, Vote vote, NoticeType noticeType, Schedule schedule) {
         this.content=content;
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
         this.vote= vote;
         this.isPinned=false;
+        this.noticeType= Objects.requireNonNull(noticeType,"noticeType은 null이 될 수 없습니다.");
+        this.schedule= Objects.requireNonNull(schedule,"schedule은 null이 될 수 없습니다.");
+
     }
 
     public void updateContent(String content) {

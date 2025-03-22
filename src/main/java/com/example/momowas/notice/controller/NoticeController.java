@@ -1,6 +1,7 @@
 package com.example.momowas.notice.controller;
 
 import com.example.momowas.notice.domain.Notice;
+import com.example.momowas.notice.domain.NoticeType;
 import com.example.momowas.notice.dto.NoticeDetailResDto;
 import com.example.momowas.notice.dto.NoticeListResDto;
 import com.example.momowas.notice.dto.NoticeReqDto;
@@ -29,7 +30,7 @@ public class NoticeController {
     @PostMapping("")
     @PreAuthorize("isAuthenticated() and @crewManager.hasCrewLeaderPermission(#crewId, #userId)") //Leader 권한만 호출 가능하도록
     public Map<String,Object> createNotice(@RequestBody NoticeReqDto noticeReqDto, @PathVariable Long crewId, @AuthenticationPrincipal Long userId) {
-        Long noticeId = noticeService.createNotice(noticeReqDto, crewId, userId);
+        Long noticeId = noticeService.createGeneralNotice(noticeReqDto, crewId, userId);
         return Map.of("noticeId", noticeId);
     }
 

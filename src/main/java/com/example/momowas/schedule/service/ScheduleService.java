@@ -3,6 +3,7 @@ package com.example.momowas.schedule.service;
 import com.example.momowas.authorization.CrewManager;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
+import com.example.momowas.notice.service.NoticeService;
 import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -31,7 +32,9 @@ public class ScheduleService {
     private final CrewService crewService;
     private final RecommendService recommendService;
     private final CrewManager crewManager;
+    private final NoticeService noticeService;
 
+    @Transactional
     public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
         if(!crewManager.hasScheduleCreatePermission(crewId, userId)){
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
@@ -57,6 +60,10 @@ public class ScheduleService {
 
         //추천
         recommendService.handleCrewEvent(crewId, "addSchedule", crew.getCrewMembers().size(), crew.getMaxMembers());
+
+        //공지
+        noticeService.createScheduleNotice(schedule, crewId, userId);
+      
         return ScheduleDto.fromEntity(schedule);
     }
 

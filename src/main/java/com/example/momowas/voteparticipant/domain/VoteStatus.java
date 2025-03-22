@@ -1,7 +1,7 @@
 package com.example.momowas.voteparticipant.domain;
 
-public enum AttendanceStatus {
-    ATTENDING,
-    ABSENT,
+public enum VoteStatus {
+    POSITIVE,
+    NEGATIVE,
     NOT_VOTED
 }
