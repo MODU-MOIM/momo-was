@@ -53,8 +53,7 @@ public class Schedule {
     @Column
     String detailAddress;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name="schedule_id")
+    @OneToOne(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Notice notice;
 
     @Builder

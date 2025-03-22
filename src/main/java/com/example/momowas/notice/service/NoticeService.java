@@ -13,6 +13,7 @@ import com.example.momowas.notice.repository.NoticeRepository;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.schedule.domain.Schedule;
+import com.example.momowas.schedule.dto.ScheduleDto;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.vote.domain.Vote;
 import com.example.momowas.vote.domain.VoteType;
@@ -58,13 +59,13 @@ public class NoticeService {
         Crew crew = crewService.findCrewById(crewId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
-        Notice notice=null;
+        Notice notice = null;
 
-        switch (noticeType){
-            case GENERAL :
+        switch (noticeType) {
+            case GENERAL:
                 notice = noticeReqDto.toEntity(crew, crewMember, vote, noticeType, null);
                 break;
-            case SCHEDULE :
+            case SCHEDULE:
                 notice = noticeReqDto.toEntity(crew, crewMember, vote, noticeType, schedule);
                 break;
         }
@@ -75,7 +76,7 @@ public class NoticeService {
     /* 일반 공지 생성 */
     @Transactional
     public Long createGeneralNotice(NoticeReqDto noticeReqDto, Long crewId, Long userId) {
-        return createNotice(noticeReqDto, NoticeType.GENERAL, crewId, userId,null);
+        return createNotice(noticeReqDto, NoticeType.GENERAL, crewId, userId, null);
     }
 
     /* 일정 공지 생성 */
@@ -97,8 +98,22 @@ public class NoticeService {
             User user = crewMember.getUser();
             VoteListResDto voteListResDto = VoteListResDto.of(notice.getVote());
 
-            return NoticeListResDto.of(user, crewMember, notice, voteListResDto);
-        }).collect(Collectors.toList());
+            NoticeListResDto noticeListResDto = null;
+
+            switch (notice.getNoticeType()) {
+                case GENERAL:
+                    noticeListResDto = NoticeListResDto.of(user, crewMember, notice, voteListResDto);
+                    break;
+                case SCHEDULE:
+                    Schedule schedule = notice.getSchedule();
+                    System.out.println("schedule = " + schedule);
+                    ScheduleDto scheduleDto = ScheduleDto.fromEntity(notice.getSchedule());
+                    noticeListResDto=NoticeListResDto.of(user,crewMember,notice,voteListResDto, scheduleDto);
+                    break;
+            }
+
+            return noticeListResDto;
+        }).toList();
 
         return noticeListResDtos;
     }
@@ -120,7 +135,19 @@ public class NoticeService {
         }
 
         CrewMember writer = notice.getCrewMember();
-        return NoticeDetailResDto.of(writer.getUser(), writer, notice, voteDetailResDto);
+        NoticeDetailResDto noticeDetailResDto=null;
+
+        switch (notice.getNoticeType()) {
+            case GENERAL:
+                noticeDetailResDto=NoticeDetailResDto.of(writer.getUser(), writer, notice, voteDetailResDto);
+                break;
+            case SCHEDULE:
+                ScheduleDto scheduleDto = ScheduleDto.fromEntity(notice.getSchedule());
+                noticeDetailResDto=NoticeDetailResDto.of(writer.getUser(), writer, notice, voteDetailResDto, scheduleDto);
+                break;
+        }
+
+        return noticeDetailResDto;
     }
 
     /* 공지 수정 */

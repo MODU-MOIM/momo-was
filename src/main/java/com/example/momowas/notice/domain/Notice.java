@@ -54,14 +54,12 @@ public class Notice {
     @Enumerated(EnumType.STRING)
     private NoticeType noticeType;
 
-    @OneToOne(mappedBy = "schedule")
+    @OneToOne
+    @JoinColumn(name="schedule_id")
     private Schedule schedule;
 
     @Builder
     private Notice(String content, Crew crew, CrewMember crewMember, Vote vote, NoticeType noticeType, Schedule schedule) {
-        if (!StringUtils.hasText(content)) {
-            throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
-        }
         this.content=content;
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");

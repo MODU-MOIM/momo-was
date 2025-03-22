@@ -34,6 +34,7 @@ public class ScheduleService {
     private final CrewManager crewManager;
     private final NoticeService noticeService;
 
+    @Transactional
     public ScheduleDto createSchedule(Long userId, Long crewId, ScheduleReqDto scheduleReqDto){
         if(!crewManager.hasScheduleCreatePermission(crewId, userId)){
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
