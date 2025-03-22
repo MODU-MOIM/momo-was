@@ -1,7 +1,11 @@
 package com.example.momowas.recommend.service;
 
-import com.example.momowas.crew.domain.Category;
-import com.example.momowas.recommend.dto.HotPlaceResDto;
+import com.example.momowas.archive.domain.Archive;
+import com.example.momowas.archive.repository.ArchiveRepository;
+import com.example.momowas.archive.service.ArchiveService;
+import com.example.momowas.recommend.dto.ArchiveRecommendDto;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RecommendService {
-
+    private final ArchiveRepository archiveRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
     // 좋아요/댓글 이벤트 처리
@@ -35,10 +39,22 @@ public class RecommendService {
     }
 
     // 상위 N개의 인기 피드 조회
-    public List<Long> getTopArchiveIds(int limit) {
+    public List<ArchiveRecommendDto> getTopArchives(int limit) {
         String key = "PopularArchive";
-        return redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1).stream()
+        List<Long> archiveIds = redisTemplate.opsForZSet()
+                .reverseRange(key, 0, limit - 1)
+                .stream()
                 .map(id -> Long.parseLong(id.toString()))
+                .toList();
+
+        return archiveIds.stream()
+                .map(id -> {
+                    Archive archive = archiveRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_ARCHIVE));
+                    return  ArchiveRecommendDto.builder()
+                            .archiveId(archive.getId())
+                            .crewId(archive.getCrew().getId())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
