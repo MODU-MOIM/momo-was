@@ -82,5 +82,16 @@ public class RecommendService {
                 .collect(Collectors.toList());
     }
 
+    public void removeRecommendArchive(Long archiveId) {
+        String key = "PopularArchive";
+        redisTemplate.opsForZSet().remove(key, String.valueOf(archiveId));
+    }
+
+    public void removeRecommendCrew(Long crewId) {
+        String key = "PopularCrew";
+        redisTemplate.opsForZSet().remove(key, String.valueOf(crewId));
+    }
+
+
 
 }

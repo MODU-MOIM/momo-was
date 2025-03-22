@@ -93,6 +93,7 @@ public class CrewService {
 
         crewRepository.delete(crew);
         crewElasticRepository.deleteByCrewId(crewId);
+        recommendService.removeRecommendCrew(crewId);
     }
 
     /* 크루명 및 배너사진 수정 */

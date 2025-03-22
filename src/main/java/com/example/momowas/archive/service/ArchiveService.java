@@ -80,6 +80,8 @@ public class ArchiveService {
         Archive archive = findArchiveById(archiveId);
         validateWriter(crewId, userId, archive);
         archiveRepository.delete(archive);
+
+        recommendService.removeRecommendArchive(archiveId);
     }
 
     /* 사용자가 기록 작성자인지 검증 */
