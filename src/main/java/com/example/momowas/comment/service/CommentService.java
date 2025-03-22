@@ -49,7 +49,7 @@ public class CommentService {
             comment = commentRepository.save(commentReqDto.toEntity(archive, crewMember, parent));
 
             //추천 로직
-            recommendService.handleArchiveEvent(comment.getFeed().getId(), "comment");
+            recommendService.handleArchiveEvent(comment.getArchive().getId(), "comment");
         }
         return commentRepository.save(comment).getId();
     }
