@@ -19,7 +19,7 @@ public class MomoWasApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(MomoWasApplication.class, args);
+           SpringApplication.run(MomoWasApplication.class, args);
     }
 
 }
