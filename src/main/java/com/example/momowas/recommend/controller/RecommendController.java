@@ -29,8 +29,4 @@ public class RecommendController {
         return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopCrewIds(limit));
     }
 
-    @GetMapping("/regions/hot")
-    public List<HotPlaceResDto> getTopCrews(@RequestParam(value="limit") int limit, @RequestParam(value = "category") Category category){
-        return recommendService.getTopHotPlaces(category, limit);
-    }
 }

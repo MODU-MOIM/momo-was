@@ -82,30 +82,5 @@ public class RecommendService {
                 .collect(Collectors.toList());
     }
 
-    //핫플레이스(schedule 설정 시 언급 빈도)
-    public void incrementHotPlace(String detailAddress, Category category) {
-        String key = "HotPlace:" + category.name();
-        redisTemplate.opsForZSet().incrementScore(key, detailAddress, 1);
-    }
-
-    public void decrementHotPlace(String detailAddress, Category category) {
-        String key = "HotPlace:" + category.name();
-        Double score = redisTemplate.opsForZSet().score(key, detailAddress);
-        if (score > 1) {
-            redisTemplate.opsForZSet().incrementScore(key, detailAddress, -1);
-        } else {
-            redisTemplate.opsForZSet().remove(key, detailAddress);
-        }
-    }
-
-    public List<HotPlaceResDto> getTopHotPlaces(Category category, int limit) {
-        String key = "HotPlace:" + category.name();
-        return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1).stream()
-                .map(tuple ->  HotPlaceResDto.builder()
-                        .category(category)
-                        .detailAddress(tuple.getValue().toString())
-                        .build())
-                .collect(Collectors.toList());
-    }
 
 }
