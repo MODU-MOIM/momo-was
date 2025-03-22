@@ -1,6 +1,7 @@
 package com.example.momowas.schedule.domain;
 
 import com.example.momowas.chat.domain.ChatRoom;
+import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,6 +52,10 @@ public class Schedule {
 
     @Column
     String detailAddress;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name="schedule_id")
+    private Notice notice;
 
     @Builder
     public Schedule(LocalDate scheduleDate, LocalTime scheduleTime, String title, String description, Long crewId, Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isOnline, String detailAddress) {

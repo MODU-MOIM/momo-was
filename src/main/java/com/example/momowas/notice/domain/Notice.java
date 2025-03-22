@@ -2,6 +2,7 @@ package com.example.momowas.notice.domain;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.vote.domain.Vote;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -49,6 +50,9 @@ public class Notice {
     @JoinColumn(name="vote_id")
     @ColumnDefault("NULL")
     private Vote vote;
+
+    @OneToOne(mappedBy = "schedule")
+    private Schedule schedule;
 
     @Builder
     private Notice(String content, Crew crew, CrewMember crewMember, Vote vote) {
