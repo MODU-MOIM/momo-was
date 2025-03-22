@@ -4,6 +4,7 @@ package com.example.momowas.notice.dto;
 import com.example.momowas.crewmember.domain.Role;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.notice.domain.Notice;
+import com.example.momowas.notice.domain.NoticeType;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleDto;
 import com.example.momowas.user.domain.User;
@@ -18,6 +19,7 @@ public record NoticeListResDto(Long noticeId,
                                String profileImage,
                                LocalDateTime createdAt,
                                Object content,
+                               NoticeType noticeType,
                                VoteListResDto vote,
                                boolean isPinned
                                ) {
@@ -29,6 +31,7 @@ public record NoticeListResDto(Long noticeId,
                 user.getProfileImage(),
                 notice.getCreatedAt(),
                 notice.getContent(),
+                notice.getNoticeType(),
                 vote,
                 notice.getIsPinned()
         );
@@ -42,6 +45,7 @@ public record NoticeListResDto(Long noticeId,
                 user.getProfileImage(),
                 notice.getCreatedAt(),
                 scheduleDto,
+                notice.getNoticeType(),
                 vote,
                 notice.getIsPinned()
         );
