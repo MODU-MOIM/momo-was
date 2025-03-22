@@ -66,7 +66,7 @@ public class Notice {
         this.vote= vote;
         this.isPinned=false;
         this.noticeType= Objects.requireNonNull(noticeType,"noticeType은 null이 될 수 없습니다.");
-        this.schedule= Objects.requireNonNull(schedule,"schedule은 null이 될 수 없습니다.");
+        this.schedule= schedule;
 
     }
 
