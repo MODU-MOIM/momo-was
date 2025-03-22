@@ -1,7 +1,11 @@
 package com.example.momowas.recommend.service;
 
-import com.example.momowas.crew.domain.Category;
-import com.example.momowas.recommend.dto.HotPlaceResDto;
+import com.example.momowas.archive.domain.Archive;
+import com.example.momowas.archive.repository.ArchiveRepository;
+import com.example.momowas.archive.service.ArchiveService;
+import com.example.momowas.recommend.dto.ArchiveRecommendDto;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,19 +16,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RecommendService {
-
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final ArchiveRepository archiveRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     // 좋아요/댓글 이벤트 처리
-    public void handleFeedEvent(Long feedId, String eventType) {
-        String key = "PopularFeed";
+    public void handleArchiveEvent(Long archiveId, String eventType) {
+        String key = "PopularArchive";
         int score = calculateScore(eventType);
-        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(feedId), score);
+        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(archiveId), score);
     }
 
     // 가중치 설정
     private int calculateScore(String eventType) {
         return switch (eventType) {
+            case "createArchive" -> 5;
             case "like" -> 2;
             case "unLike" -> -2;
             case "comment" -> 3;
@@ -34,10 +39,22 @@ public class RecommendService {
     }
 
     // 상위 N개의 인기 피드 조회
-    public List<Long> getTopFeedIds(int limit) {
-        String key = "PopularFeed";
-        return redisTemplate.opsForZSet().reverseRange(key, 0, limit - 1).stream()
+    public List<ArchiveRecommendDto> getTopArchives(int limit) {
+        String key = "PopularArchive";
+        List<Long> archiveIds = redisTemplate.opsForZSet()
+                .reverseRange(key, 0, limit - 1)
+                .stream()
                 .map(id -> Long.parseLong(id.toString()))
+                .toList();
+
+        return archiveIds.stream()
+                .map(id -> {
+                    Archive archive = archiveRepository.findById(id).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_ARCHIVE));
+                    return  ArchiveRecommendDto.builder()
+                            .archiveId(archive.getId())
+                            .crewId(archive.getCrew().getId())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -64,6 +81,7 @@ public class RecommendService {
 
     private double calculateCrewScore(String eventType) {
         return switch (eventType) {
+            case "createCrew" -> 5;
             case "addSchedule" -> 10;
             case "removeSchedule" -> -10;
             case "addFeed" -> 8;
@@ -80,30 +98,16 @@ public class RecommendService {
                 .collect(Collectors.toList());
     }
 
-    //핫플레이스(schedule 설정 시 언급 빈도)
-    public void incrementHotPlace(String detailAddress, Category category) {
-        String key = "HotPlace:" + category.name();
-        redisTemplate.opsForZSet().incrementScore(key, detailAddress, 1);
+    public void removeRecommendArchive(Long archiveId) {
+        String key = "PopularArchive";
+        redisTemplate.opsForZSet().remove(key, String.valueOf(archiveId));
     }
 
-    public void decrementHotPlace(String detailAddress, Category category) {
-        String key = "HotPlace:" + category.name();
-        Double score = redisTemplate.opsForZSet().score(key, detailAddress);
-        if (score > 1) {
-            redisTemplate.opsForZSet().incrementScore(key, detailAddress, -1);
-        } else {
-            redisTemplate.opsForZSet().remove(key, detailAddress);
-        }
+    public void removeRecommendCrew(Long crewId) {
+        String key = "PopularCrew";
+        redisTemplate.opsForZSet().remove(key, String.valueOf(crewId));
     }
 
-    public List<HotPlaceResDto> getTopHotPlaces(Category category, int limit) {
-        String key = "HotPlace:" + category.name();
-        return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1).stream()
-                .map(tuple ->  HotPlaceResDto.builder()
-                        .category(category)
-                        .detailAddress(tuple.getValue().toString())
-                        .build())
-                .collect(Collectors.toList());
-    }
+
 
 }

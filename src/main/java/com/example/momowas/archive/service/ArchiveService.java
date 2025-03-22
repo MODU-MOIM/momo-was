@@ -11,6 +11,7 @@ import com.example.momowas.archive.dto.ArchiveReqDto;
 import com.example.momowas.archive.repository.ArchiveRepository;
 import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.like.repository.LikeRepository;
+import com.example.momowas.recommend.service.RecommendService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.user.domain.User;
@@ -27,6 +28,7 @@ public class ArchiveService {
     private final CrewService crewService;
     private final CrewMemberService crewMemberService;
     private final LikeRepository likeRepository;
+    private final RecommendService recommendService;
 
     /* 기록 id로 기록 조회 */
     @Transactional
@@ -41,6 +43,8 @@ public class ArchiveService {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
         Archive archive = archiveRepository.save(archiveReqDto.toEntity(crew, crewMember));
+
+        recommendService.handleArchiveEvent(archive.getId(), "createArchive");
         return archive.getId();
     }
 
@@ -76,6 +80,8 @@ public class ArchiveService {
         Archive archive = findArchiveById(archiveId);
         validateWriter(crewId, userId, archive);
         archiveRepository.delete(archive);
+
+        recommendService.removeRecommendArchive(archiveId);
     }
 
     /* 사용자가 기록 작성자인지 검증 */
