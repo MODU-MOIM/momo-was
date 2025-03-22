@@ -51,11 +51,14 @@ public class Notice {
     @ColumnDefault("NULL")
     private Vote vote;
 
+    @Enumerated(EnumType.STRING)
+    private NoticeType noticeType;
+
     @OneToOne(mappedBy = "schedule")
     private Schedule schedule;
 
     @Builder
-    private Notice(String content, Crew crew, CrewMember crewMember, Vote vote) {
+    private Notice(String content, Crew crew, CrewMember crewMember, Vote vote, NoticeType noticeType, Schedule schedule) {
         if (!StringUtils.hasText(content)) {
             throw new IllegalArgumentException("content는 null이거나 빈 문자열이 될 수 없습니다.");
         }
@@ -64,6 +67,9 @@ public class Notice {
         this.crewMember= Objects.requireNonNull(crewMember,"crewMember는 null이 될 수 없습니다.");
         this.vote= vote;
         this.isPinned=false;
+        this.noticeType= Objects.requireNonNull(noticeType,"noticeType은 null이 될 수 없습니다.");
+        this.schedule= Objects.requireNonNull(schedule,"schedule은 null이 될 수 없습니다.");
+
     }
 
     public void updateContent(String content) {
