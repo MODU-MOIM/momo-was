@@ -32,12 +32,11 @@ public class CrewReviewService {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         Schedule schedule = scheduleService.getScheduleByScheduleId(crewReviewReqDto.scheduleId());
 
-        CrewReview crewReview = crewReviewReqDto.toEntity(crew, crewMember, schedule);
-        crewReviewRepository.save(crewReview);
+        CrewReview crewReview = crewReviewRepository.save(crewReviewReqDto.toEntity(crew, crewMember, schedule)); //크루 리뷰 저장
 
         List<Keyword> keywords = crewReviewReqDto.keywords();
         for (Keyword keyword : keywords) {
-            crewReviewKeywordService.createCrewReviewKeyword(keyword, crewReview);
+            crewReviewKeywordService.createCrewReviewKeyword(keyword, crewReview); //크루 리뷰-키워드 저장
         }
 
         return crewReview.getId();
