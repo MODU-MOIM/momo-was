@@ -96,9 +96,13 @@ public enum ExceptionCode {
     NOT_FOUND_LIKE(404,"L002", "좋아요를 누른 적이 없습니다."),
 
     //기록 관련 예외
-    NOT_FOUND_ARCHIVE(404, "ARO001","해당 기록이 존재하지 않습니다.");
+    NOT_FOUND_ARCHIVE(404, "ARO001","해당 기록이 존재하지 않습니다."),
+
+    //리뷰 관련 예외
+    NOT_FOUND_REVIEW(404, "RE001","해당 리뷰가 존재하지 않습니다."),
 
 
+    ;
 
     private final int status;
     private final String code;

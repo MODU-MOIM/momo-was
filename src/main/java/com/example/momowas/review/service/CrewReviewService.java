@@ -4,6 +4,9 @@ import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
+import com.example.momowas.feed.domain.Feed;
+import com.example.momowas.response.BusinessException;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewReview;
 import com.example.momowas.review.domain.Keyword;
 import com.example.momowas.review.dto.CrewReviewReqDto;
@@ -25,6 +28,12 @@ public class CrewReviewService {
     private final ScheduleService scheduleService;
     private final CrewReviewKeywordService crewReviewKeywordService;
 
+    /* 평가 id로 크루 평가 조회 */
+    @Transactional(readOnly = true)
+    public CrewReview findCrewReviewById(Long crewReviewId) {
+        return crewReviewRepository.findById(crewReviewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_REVIEW));
+    }
+
     /* 크루 평가 생성 */
     @Transactional
     public Long createCrewReview(CrewReviewReqDto crewReviewReqDto, Long crewId, Long userId) {
@@ -34,11 +43,27 @@ public class CrewReviewService {
 
         CrewReview crewReview = crewReviewRepository.save(crewReviewReqDto.toEntity(crew, crewMember, schedule)); //크루 리뷰 저장
 
-        List<Keyword> keywords = crewReviewReqDto.keywords();
-        for (Keyword keyword : keywords) {
-            crewReviewKeywordService.createCrewReviewKeyword(keyword, crewReview); //크루 리뷰-키워드 저장
-        }
+        crewReviewKeywordService.createCrewReviewKeyword(crewReviewReqDto.keywords(),crewReview); //크루 리뷰-키워드 저장
 
         return crewReview.getId();
+    }
+
+    /* 크루 평가 수정 */
+    @Transactional
+    public void updateCrewReview(CrewReviewReqDto crewReviewReqDto, Long reviewId, Long crewId, Long userId) {
+        CrewReview crewReview = findCrewReviewById(reviewId);
+        validateWriter(crewId, userId, crewReview);
+
+        crewReview.updateComment(crewReviewReqDto.comment());
+        crewReview.updateRating(crewReviewReqDto.rating());
+        crewReviewKeywordService.updateCrewReviewKeyword(crewReviewReqDto.keywords(),crewReview);
+    }
+
+    /* 사용자가 리뷰 작성자인지 검증 */
+    private void validateWriter(Long crewId, Long userId, CrewReview crewReview) {
+        CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
+        if(!crewReview.isWriter(crewMember)){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
     }
 }

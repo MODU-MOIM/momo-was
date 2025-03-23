@@ -1,5 +1,7 @@
 package com.example.momowas.review.controller;
 
+import com.example.momowas.response.CommonResponse;
+import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.dto.CrewReviewReqDto;
 import com.example.momowas.review.service.CrewReviewService;
 import lombok.RequiredArgsConstructor;
@@ -24,4 +26,17 @@ public class CrewReviewController {
         Long crewReviewId = crewReviewService.createCrewReview(crewReviewReqDto, crewId, userId);
         return Map.of("reviewId", crewReviewId);
     }
+
+    /* 크루 평가 수정 */
+    @PutMapping("/{reviewId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> updateCrewReview(@RequestBody CrewReviewReqDto crewReviewReqDto,
+                                                   @PathVariable Long reviewId,
+                                                   @PathVariable Long crewId,
+                                                   @AuthenticationPrincipal Long userId) {
+        crewReviewService.updateCrewReview(crewReviewReqDto, reviewId, crewId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
+
+
 }

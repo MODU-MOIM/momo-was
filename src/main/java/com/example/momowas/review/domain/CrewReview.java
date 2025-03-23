@@ -60,4 +60,22 @@ public class CrewReview extends Review {
         this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");
         this.schedule = Objects.requireNonNull(schedule, "schedule는 null이 될 수 없습니다.");
     }
+
+    /* 작성자인지 검증 */
+    public boolean isWriter(CrewMember crewMember) {
+        return this.crewMember.getId()==crewMember.getId();
+    }
+
+    /* 리뷰 수정 */
+    public void updateComment(String comment) {
+        if (!StringUtils.hasText(comment)) {
+            throw new IllegalArgumentException("comment는 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.comment=comment;
+    }
+
+    /* 별점 수정 */
+    public void updateRating(Double rating) {
+        this.rating = Objects.requireNonNull(rating, "rating은 null이 될 수 없습니다.");
+    }
 }
