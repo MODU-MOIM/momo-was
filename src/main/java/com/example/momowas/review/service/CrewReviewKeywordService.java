@@ -18,13 +18,13 @@ public class CrewReviewKeywordService {
 
     private final CrewReviewKeywordRepository crewReviewKeywordRepository;
 
-    /* 크루 리뷰 id로 크루 리뷰-키워드 조회 */
+    /* 크루 평가 id로 크루 평가-키워드 조회 */
     @Transactional(readOnly = true)
     public List<CrewReviewKeyword> findCrewReviewKeywordById(Long crewReviewId) {
         return crewReviewKeywordRepository.findByCrewReviewId(crewReviewId);
     }
 
-    /* 크루 리뷰-키워드 생성 */
+    /* 크루 평가-키워드 생성 */
     @Transactional
     public void createCrewReviewKeyword(List<Keyword> keywords, CrewReview crewReview) {
 
@@ -40,7 +40,7 @@ public class CrewReviewKeywordService {
         }
     }
 
-    /* 크루 리뷰-키워드 수정 */
+    /* 크루 평가-키워드 수정 */
     @Transactional
     public void updateCrewReviewKeyword(List<Keyword> keywords, CrewReview crewReview) {
         List<CrewReviewKeyword> crewReviewKeywords = findCrewReviewKeywordById(crewReview.getId());
@@ -53,7 +53,6 @@ public class CrewReviewKeywordService {
                 crewReviewKeywordRepository.deleteByCrewReviewId(crewReview.getId());
                 createCrewReviewKeyword(keywords, crewReview);
             }
-
             //요청에 키워드가 존재 x -> 삭제
             else {
                 crewReviewKeywordRepository.deleteByCrewReviewId(crewReview.getId());
@@ -67,10 +66,8 @@ public class CrewReviewKeywordService {
             if (!keywords.isEmpty()) {
                 createCrewReviewKeyword(keywords, crewReview);
             }
-
             //요청에 키워드가 존재 x -> 아무 것도 하지 않음.
 
         }
-
     }
 }

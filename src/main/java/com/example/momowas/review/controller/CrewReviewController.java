@@ -38,5 +38,13 @@ public class CrewReviewController {
         return CommonResponse.of(ExceptionCode.SUCCESS,null);
     }
 
-
+    /* 크루 평가 삭제 */
+    @DeleteMapping("/{reviewId}")
+    @PreAuthorize("isAuthenticated() and @crewManager.hasCrewPermission(#crewId, #userId)") //크루 멤버인지 확인
+    public CommonResponse<String> deleteCrewReview(@PathVariable Long reviewId,
+                                                   @PathVariable Long crewId,
+                                                   @AuthenticationPrincipal Long userId) {
+        crewReviewService.deleteCrewReview(reviewId, crewId, userId);
+        return CommonResponse.of(ExceptionCode.SUCCESS,null);
+    }
 }

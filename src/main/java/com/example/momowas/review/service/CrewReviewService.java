@@ -59,7 +59,16 @@ public class CrewReviewService {
         crewReviewKeywordService.updateCrewReviewKeyword(crewReviewReqDto.keywords(),crewReview);
     }
 
-    /* 사용자가 리뷰 작성자인지 검증 */
+    /* 크루 평가 삭제 */
+    @Transactional
+    public void deleteCrewReview(Long reviewId, Long crewId, Long userId) {
+        CrewReview crewReview = findCrewReviewById(reviewId);
+        validateWriter(crewId, userId, crewReview);
+
+        crewReviewRepository.deleteById(crewReview.getId());
+    }
+
+    /* 사용자가 평가 작성자인지 검증 */
     private void validateWriter(Long crewId, Long userId, CrewReview crewReview) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         if(!crewReview.isWriter(crewMember)){
