@@ -24,6 +24,12 @@ public class CrewReviewKeywordService {
         return crewReviewKeywordRepository.findByCrewReviewId(crewReviewId);
     }
 
+    /* 크루 평가-키워드 리스트로 키워드 리스트 추출 */
+    public List<Keyword> extractKeywordList(List<CrewReviewKeyword> crewReviewKeywords) {
+        return crewReviewKeywords.stream()
+                .map(CrewReviewKeyword::getKeyword).toList();
+    }
+
     /* 크루 평가-키워드 생성 */
     @Transactional
     public void createCrewReviewKeyword(List<Keyword> keywords, CrewReview crewReview) {
@@ -53,6 +59,7 @@ public class CrewReviewKeywordService {
                 crewReviewKeywordRepository.deleteByCrewReviewId(crewReview.getId());
                 createCrewReviewKeyword(keywords, crewReview);
             }
+
             //요청에 키워드가 존재 x -> 삭제
             else {
                 crewReviewKeywordRepository.deleteByCrewReviewId(crewReview.getId());
@@ -66,6 +73,7 @@ public class CrewReviewKeywordService {
             if (!keywords.isEmpty()) {
                 createCrewReviewKeyword(keywords, crewReview);
             }
+
             //요청에 키워드가 존재 x -> 아무 것도 하지 않음.
 
         }

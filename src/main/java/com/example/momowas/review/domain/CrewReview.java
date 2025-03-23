@@ -6,6 +6,7 @@ import com.example.momowas.schedule.domain.Schedule;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @DiscriminatorValue("CREW")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class CrewReview extends Review {
 
     @OneToMany(mappedBy = "crewReview", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

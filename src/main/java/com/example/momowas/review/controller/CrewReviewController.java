@@ -2,6 +2,7 @@ package com.example.momowas.review.controller;
 
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
+import com.example.momowas.review.dto.CrewReviewListResDto;
 import com.example.momowas.review.dto.CrewReviewReqDto;
 import com.example.momowas.review.service.CrewReviewService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,6 +27,12 @@ public class CrewReviewController {
                                                 @AuthenticationPrincipal Long userId) {
         Long crewReviewId = crewReviewService.createCrewReview(crewReviewReqDto, crewId, userId);
         return Map.of("reviewId", crewReviewId);
+    }
+
+    /* 전체 크루 평가 조회 */
+    @GetMapping("")
+    public List<CrewReviewListResDto> getCrewReviewList(@PathVariable Long crewId) {
+        return crewReviewService.getCrewReviewList(crewId);
     }
 
     /* 크루 평가 수정 */

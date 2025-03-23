@@ -9,9 +9,11 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewReview;
 import com.example.momowas.review.domain.Keyword;
+import com.example.momowas.review.dto.CrewReviewListResDto;
 import com.example.momowas.review.dto.CrewReviewReqDto;
 import com.example.momowas.review.repository.CrewReviewRepository;
 import com.example.momowas.schedule.domain.Schedule;
+import com.example.momowas.schedule.dto.ScheduleInfoResDto;
 import com.example.momowas.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,12 @@ public class CrewReviewService {
         return crewReviewRepository.findById(crewReviewId).orElseThrow(() -> new BusinessException(ExceptionCode.NOT_FOUND_REVIEW));
     }
 
+    /* 크루 id로 크루 평가 조회 */
+    @Transactional(readOnly = true)
+    public List<CrewReview> findCrewReviewByCrewId(Long crewId) {
+        return crewReviewRepository.findByCrewId(crewId);
+    }
+
     /* 크루 평가 생성 */
     @Transactional
     public Long createCrewReview(CrewReviewReqDto crewReviewReqDto, Long crewId, Long userId) {
@@ -46,6 +54,21 @@ public class CrewReviewService {
         crewReviewKeywordService.createCrewReviewKeyword(crewReviewReqDto.keywords(),crewReview); //크루 리뷰-키워드 저장
 
         return crewReview.getId();
+    }
+
+    /* 전체 크루 평가 조회 */
+    @Transactional(readOnly = true)
+    public List<CrewReviewListResDto> getCrewReviewList(Long crewId) {
+        List<CrewReview> crewReviews = findCrewReviewByCrewId(crewId);
+
+        List<CrewReviewListResDto> crewReviewListResDtos = crewReviews.stream()
+                .map((crewReview) -> {
+                    List<Keyword> keywords = crewReviewKeywordService.extractKeywordList(crewReview.getCrewReviewKeywords());
+                    ScheduleInfoResDto scheduleInfoResDto = ScheduleInfoResDto.fromEntity(crewReview.getSchedule());
+                    return CrewReviewListResDto.of(crewReview, keywords, scheduleInfoResDto);
+                }).toList();
+
+        return crewReviewListResDtos;
     }
 
     /* 크루 평가 수정 */

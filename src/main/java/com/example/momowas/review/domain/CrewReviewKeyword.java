@@ -3,6 +3,7 @@ package com.example.momowas.review.domain;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Objects;
 /* 다대다 매핑 테이블 - 크루 평가, 키워드 */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class CrewReviewKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
