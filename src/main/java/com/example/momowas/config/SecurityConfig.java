@@ -47,7 +47,7 @@ public class SecurityConfig {
             "/auth/send-sms",
             "/auth/verify-code",
             "/crews/popular",
-            "/feeds/popular",
+            "/archives/popular",
             "/regions/hot",
             "/swagger-ui.html",
             "/swagger-ui/**",

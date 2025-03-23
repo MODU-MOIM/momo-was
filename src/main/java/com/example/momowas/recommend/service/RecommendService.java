@@ -3,6 +3,8 @@ package com.example.momowas.recommend.service;
 import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.archive.repository.ArchiveRepository;
 import com.example.momowas.archive.service.ArchiveService;
+import com.example.momowas.crew.domain.Crew;
+import com.example.momowas.crew.repository.CrewRepository;
 import com.example.momowas.recommend.dto.ArchiveRecommendDto;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecommendService {
     private final ArchiveRepository archiveRepository;
+    private final CrewRepository crewRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
     // 좋아요/댓글 이벤트 처리
@@ -108,6 +111,20 @@ public class RecommendService {
         redisTemplate.opsForZSet().remove(key, String.valueOf(crewId));
     }
 
+    public void inputData(){
+        List<Crew> crews = crewRepository.findAll();
+        String key = "PopularCrew";
+        for(Crew crew: crews){
+            redisTemplate.opsForZSet().add(key, String.valueOf(crew.getId()), 5);
+        }
 
+        List<Archive> archives = archiveRepository.findAll();
+        String key2 = "PopularArchive";
+        for(Archive archive: archives){
+            redisTemplate.opsForZSet().add(key2, String.valueOf(archive.getId()), 5);
+        }
+
+
+    }
 
 }
