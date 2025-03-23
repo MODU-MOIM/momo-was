@@ -16,11 +16,10 @@ public class CrewReviewKeyword {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crew_assessment_id")
+    @JoinColumn(name = "crew_review_id")
     private CrewReview crewReview;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyword_id")
+    @Enumerated(EnumType.STRING)
     private Keyword keyword;
 
     @Builder

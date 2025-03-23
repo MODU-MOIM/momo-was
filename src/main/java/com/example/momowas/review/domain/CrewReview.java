@@ -23,7 +23,7 @@ import java.util.Objects;
 @EntityListeners(AuditingEntityListener.class)
 public class CrewReview extends Review {
 
-    @OneToMany(mappedBy = "crewAssessment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "crewReview", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CrewReviewKeyword> crewReviewKeywords = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,7 +35,7 @@ public class CrewReview extends Review {
     private CrewMember crewMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="crew_member_id")
+    @JoinColumn(name="schedule_id")
     private Schedule schedule;
 
     @CreatedDate
