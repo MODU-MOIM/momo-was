@@ -6,6 +6,7 @@ import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,4 +29,9 @@ public class RecommendController {
         return CommonResponse.of(ExceptionCode.SUCCESS, recommendService.getTopCrewIds(limit));
     }
 
+    @PostMapping("/redis")
+    public CommonResponse<String> inputData(){
+        recommendService.inputData();
+        return CommonResponse.of(ExceptionCode.SUCCESS, "완료");
+    }
 }
