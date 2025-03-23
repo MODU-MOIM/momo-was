@@ -1,4 +1,4 @@
-package com.example.momowas.assessment.domain;
+package com.example.momowas.review.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
-public abstract class Assessment {
+public abstract class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    protected String review;
+    protected String comment;
 
     protected Double rating;
 

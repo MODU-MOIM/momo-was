@@ -1,4 +1,4 @@
-package com.example.momowas.assessment.domain;
+package com.example.momowas.review.domain;
 
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crewmember.domain.CrewMember;
@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
@@ -22,10 +21,10 @@ import java.util.Objects;
 @DiscriminatorValue("CREW")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class CrewAssessment extends Assessment{
+public class CrewReview extends Review {
 
     @OneToMany(mappedBy = "crewAssessment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<CrewAssessmentKeyword> crewAssessmentKeywords = new ArrayList<>();
+    private List<CrewReviewKeyword> crewReviewKeywords = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="crew_id")
@@ -46,16 +45,16 @@ public class CrewAssessment extends Assessment{
     private LocalDateTime modifiedAt;
 
     @Builder
-    private CrewAssessment(String review,
-                           Double rating,
-                           Crew crew,
-                           CrewMember crewMember,
-                           Schedule schedule) {
-        if (!StringUtils.hasText(review)) {
-            throw new IllegalArgumentException("review는 null이거나 빈 문자열이 될 수 없습니다.");
+    private CrewReview(String comment,
+                       Double rating,
+                       Crew crew,
+                       CrewMember crewMember,
+                       Schedule schedule) {
+        if (!StringUtils.hasText(comment)) {
+            throw new IllegalArgumentException("comment는 null이거나 빈 문자열이 될 수 없습니다.");
         }
 
-        this.review = review;
+        this.comment = comment;
         this.rating = Objects.requireNonNull(rating, "rating은 null이 될 수 없습니다.");
         this.crew = Objects.requireNonNull(crew, "crew는 null이 될 수 없습니다.");
         this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");

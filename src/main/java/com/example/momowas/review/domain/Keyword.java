@@ -1,4 +1,4 @@
-package com.example.momowas.assessment.domain;
+package com.example.momowas.review.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
