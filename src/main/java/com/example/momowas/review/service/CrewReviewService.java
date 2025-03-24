@@ -117,7 +117,7 @@ public class CrewReviewService {
 
     /* 모임 일정 다음 날 자정에 크루 리뷰 요청 알림 전송 */
     @Transactional
-    @Scheduled(cron = "0 0 0 1/1 * ? *") //매일 자정마다 실행
+    @Scheduled(cron = "0 0 0 1/1 * ?")  //매일 자정마다 실행
     //@Scheduled(cron = "0 0/1 * 1/1 * ?") //1분 주기(테스트)
     public void sendCrewReviewNotification() {
         LocalDate previousDay = LocalDate.now().minusDays(1);
