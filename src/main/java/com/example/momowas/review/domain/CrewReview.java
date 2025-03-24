@@ -6,6 +6,7 @@ import com.example.momowas.schedule.domain.Schedule;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @DiscriminatorValue("CREW")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class CrewReview extends Review {
 
     @OneToMany(mappedBy = "crewReview", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -59,5 +61,23 @@ public class CrewReview extends Review {
         this.crew = Objects.requireNonNull(crew, "crew는 null이 될 수 없습니다.");
         this.crewMember = Objects.requireNonNull(crewMember, "crewMember는 null이 될 수 없습니다.");
         this.schedule = Objects.requireNonNull(schedule, "schedule는 null이 될 수 없습니다.");
+    }
+
+    /* 작성자인지 검증 */
+    public boolean isWriter(CrewMember crewMember) {
+        return this.crewMember.getId()==crewMember.getId();
+    }
+
+    /* 리뷰 수정 */
+    public void updateComment(String comment) {
+        if (!StringUtils.hasText(comment)) {
+            throw new IllegalArgumentException("comment는 null이거나 빈 문자열이 될 수 없습니다.");
+        }
+        this.comment=comment;
+    }
+
+    /* 별점 수정 */
+    public void updateRating(Double rating) {
+        this.rating = Objects.requireNonNull(rating, "rating은 null이 될 수 없습니다.");
     }
 }

@@ -9,6 +9,8 @@ import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.joinrequest.domain.JoinRequest;
 import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.region.dto.RegionDto;
+import com.example.momowas.review.domain.CrewReview;
+import com.example.momowas.review.domain.CrewReviewKeyword;
 import com.example.momowas.user.domain.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,6 +76,9 @@ public class Crew {
 
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Archive> archives = new ArrayList<>();
+
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CrewReview> crewReviews = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Role scheduleCreatePermission;
@@ -143,16 +149,28 @@ public class Crew {
         this.genderRestriction = genderRestriction;
     }
 
-    /* 크루 정원이 초과했는지 */
-    public boolean isCrewFull() {
-        return maxMembers!=null && Hibernate.size(crewMembers)>=maxMembers;
-    }
-
     public void updateScheduleCreatePermission(Role role) {
         this.scheduleCreatePermission=role;
     }
 
     public void updateScheduleUpdatePermission(Role role) {
         this.scheduleUpdatePermission=role;
+    }
+
+    /* 크루 정원이 초과했는지 */
+    public boolean isCrewFull() {
+        return maxMembers!=null && Hibernate.size(crewMembers)>=maxMembers;
+    }
+
+    /* 크루 매너 점수 계산 */
+    public double countMannersRating() {
+        double mannersRating=36.5;
+
+        for (CrewReview crewReview : crewReviews) {
+            Double rating = crewReview.getRating();
+            mannersRating+=(rating-3);
+        }
+
+        return mannersRating;
     }
 }
