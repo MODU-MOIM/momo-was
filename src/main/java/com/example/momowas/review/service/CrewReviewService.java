@@ -4,14 +4,11 @@ import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
-import com.example.momowas.feed.domain.Feed;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewReview;
 import com.example.momowas.review.domain.Keyword;
-import com.example.momowas.review.dto.CrewReviewDetailResDto;
-import com.example.momowas.review.dto.CrewReviewListResDto;
-import com.example.momowas.review.dto.CrewReviewReqDto;
+import com.example.momowas.review.dto.*;
 import com.example.momowas.review.repository.CrewReviewRepository;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleInfoResDto;
@@ -59,9 +56,10 @@ public class CrewReviewService {
 
     /* 전체 크루 평가 조회 */
     @Transactional(readOnly = true)
-    public List<CrewReviewListResDto> getCrewReviewList(Long crewId) {
+    public CrewReviewTotalInfoResDto getCrewReviewList(Long crewId) {
         List<CrewReview> crewReviews = findCrewReviewByCrewId(crewId);
 
+        //전체 평가 리스트
         List<CrewReviewListResDto> crewReviewListResDtos = crewReviews.stream()
                 .map((crewReview) -> {
                     List<Keyword> keywords = crewReviewKeywordService.extractKeywordList(crewReview.getCrewReviewKeywords());
@@ -69,7 +67,14 @@ public class CrewReviewService {
                     return CrewReviewListResDto.of(crewReview, keywords, scheduleInfoResDto);
                 }).toList();
 
-        return crewReviewListResDtos;
+        //매너 점수
+        Crew crew = crewService.findCrewById(crewId);
+        double mannersRating = crew.countMannersRating();
+
+        //키워드별 개수
+        List<CrewReviewKeywordCountListResDto> crewReviewKeywordCountListResDtos = crewReviewKeywordService.countCrewReviewKeywords(crewId);
+
+        return CrewReviewTotalInfoResDto.of(mannersRating, crewReviewKeywordCountListResDtos, crewReviewListResDtos);
     }
 
     /* 특정 크루 평가 조회 */
