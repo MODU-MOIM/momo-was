@@ -2,6 +2,7 @@ package com.example.momowas.review.controller;
 
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
+import com.example.momowas.review.dto.CrewReviewDetailResDto;
 import com.example.momowas.review.dto.CrewReviewListResDto;
 import com.example.momowas.review.dto.CrewReviewReqDto;
 import com.example.momowas.review.service.CrewReviewService;
@@ -34,6 +35,13 @@ public class CrewReviewController {
     public List<CrewReviewListResDto> getCrewReviewList(@PathVariable Long crewId) {
         return crewReviewService.getCrewReviewList(crewId);
     }
+
+    /* 특정 크루 평가 조회 */
+    @GetMapping("/{reviewId}")
+    public CrewReviewDetailResDto getCrewReviewDetail(@PathVariable Long reviewId) {
+        return crewReviewService.getCrewReviewDetail(reviewId);
+    }
+
 
     /* 크루 평가 수정 */
     @PutMapping("/{reviewId}")

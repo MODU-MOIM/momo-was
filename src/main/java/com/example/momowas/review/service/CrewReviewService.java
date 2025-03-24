@@ -9,6 +9,7 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewReview;
 import com.example.momowas.review.domain.Keyword;
+import com.example.momowas.review.dto.CrewReviewDetailResDto;
 import com.example.momowas.review.dto.CrewReviewListResDto;
 import com.example.momowas.review.dto.CrewReviewReqDto;
 import com.example.momowas.review.repository.CrewReviewRepository;
@@ -69,6 +70,16 @@ public class CrewReviewService {
                 }).toList();
 
         return crewReviewListResDtos;
+    }
+
+    /* 특정 크루 평가 조회 */
+    @Transactional(readOnly = true)
+    public CrewReviewDetailResDto getCrewReviewDetail(Long reviewId){
+        CrewReview crewReview = findCrewReviewById(reviewId);
+
+        List<Keyword> keywords = crewReviewKeywordService.extractKeywordList(crewReview.getCrewReviewKeywords());
+        ScheduleInfoResDto scheduleInfoResDto = ScheduleInfoResDto.fromEntity(crewReview.getSchedule());
+        return CrewReviewDetailResDto.of(crewReview, keywords, scheduleInfoResDto);
     }
 
     /* 크루 평가 수정 */
