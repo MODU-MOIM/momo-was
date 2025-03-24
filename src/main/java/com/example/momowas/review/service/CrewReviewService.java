@@ -4,6 +4,7 @@ import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.crew.service.CrewService;
 import com.example.momowas.crewmember.domain.CrewMember;
 import com.example.momowas.crewmember.service.CrewMemberService;
+import com.example.momowas.notice.domain.Notice;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewReview;
@@ -13,10 +14,16 @@ import com.example.momowas.review.repository.CrewReviewRepository;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleInfoResDto;
 import com.example.momowas.schedule.service.ScheduleService;
+import com.example.momowas.sse.service.SseEmitterService;
+import com.example.momowas.vote.domain.Vote;
+import com.example.momowas.voteparticipant.domain.VoteParticipant;
+import com.example.momowas.voteparticipant.domain.VoteStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,6 +34,7 @@ public class CrewReviewService {
     private final CrewMemberService crewMemberService;
     private final ScheduleService scheduleService;
     private final CrewReviewKeywordService crewReviewKeywordService;
+    private final SseEmitterService sseEmitterService;
 
     /* 평가 id로 크루 평가 조회 */
     @Transactional(readOnly = true)
@@ -49,7 +57,7 @@ public class CrewReviewService {
 
         CrewReview crewReview = crewReviewRepository.save(crewReviewReqDto.toEntity(crew, crewMember, schedule)); //크루 리뷰 저장
 
-        crewReviewKeywordService.createCrewReviewKeyword(crewReviewReqDto.keywords(),crewReview); //크루 리뷰-키워드 저장
+        crewReviewKeywordService.createCrewReviewKeyword(crewReviewReqDto.keywords(), crewReview); //크루 리뷰-키워드 저장
 
         return crewReview.getId();
     }
@@ -79,7 +87,7 @@ public class CrewReviewService {
 
     /* 특정 크루 평가 조회 */
     @Transactional(readOnly = true)
-    public CrewReviewDetailResDto getCrewReviewDetail(Long reviewId){
+    public CrewReviewDetailResDto getCrewReviewDetail(Long reviewId) {
         CrewReview crewReview = findCrewReviewById(reviewId);
 
         List<Keyword> keywords = crewReviewKeywordService.extractKeywordList(crewReview.getCrewReviewKeywords());
@@ -95,7 +103,7 @@ public class CrewReviewService {
 
         crewReview.updateComment(crewReviewReqDto.comment());
         crewReview.updateRating(crewReviewReqDto.rating());
-        crewReviewKeywordService.updateCrewReviewKeyword(crewReviewReqDto.keywords(),crewReview);
+        crewReviewKeywordService.updateCrewReviewKeyword(crewReviewReqDto.keywords(), crewReview);
     }
 
     /* 크루 평가 삭제 */
@@ -107,10 +115,40 @@ public class CrewReviewService {
         crewReviewRepository.deleteById(crewReview.getId());
     }
 
+    /* 모임 일정 다음 날 자정에 크루 리뷰 요청 알림 전송 */
+    @Transactional
+    @Scheduled(cron = "0 0 0 1/1 * ? *") //매일 자정마다 실행
+    //@Scheduled(cron = "0 0/1 * 1/1 * ?") //1분 주기(테스트)
+    public void sendCrewReviewNotification() {
+        LocalDate previousDay = LocalDate.now().minusDays(1);
+        List<Schedule> schedules = scheduleService.getSchedulesByDate(previousDay);
+
+        schedules.stream()
+                .forEach((schedule) -> {
+
+                    Vote vote = schedule.getNotice().getVote();
+
+                    List<VoteParticipant> positiveParticipants = vote.getVoteParticipants().stream()
+                            .filter((voteParticipant) ->
+                                    voteParticipant.getStatus() == VoteStatus.POSITIVE
+                            ).toList(); //일정 공지 투표에 '참석'에 투표한 참여자들
+
+                    // 알림 전송
+                    Crew crew = crewService.findCrewById(schedule.getCrewId());
+
+                    ScheduleReviewEventResDto payload = ScheduleReviewEventResDto.of(crew, schedule);
+
+                    for (VoteParticipant participant : positiveParticipants) {
+                        Long userId = participant.getCrewMember().getUser().getId();
+                        sseEmitterService.broadcast("review", userId, payload);
+                    }
+                });
+    }
+
     /* 사용자가 평가 작성자인지 검증 */
     private void validateWriter(Long crewId, Long userId, CrewReview crewReview) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
-        if(!crewReview.isWriter(crewMember)){
+        if (!crewReview.isWriter(crewMember)) {
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
         }
     }
