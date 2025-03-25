@@ -82,7 +82,7 @@ public class NoticeService {
     /* 일정 공지 생성 */
     @Transactional
     public Long createScheduleNotice(Schedule schedule, Long crewId, Long userId) {
-        VoteReqDto voteReqDto = VoteReqDto.of(true, VoteType.ATTENDANCE, "정모 참여 투표 여부");
+        VoteReqDto voteReqDto = VoteReqDto.of(true, VoteType.ATTENDANCE, "정모 참여 여부");
         NoticeReqDto noticeReqDto = NoticeReqDto.of(null, voteReqDto);
 
         return createNotice(noticeReqDto, NoticeType.SCHEDULE, crewId, userId, schedule);
