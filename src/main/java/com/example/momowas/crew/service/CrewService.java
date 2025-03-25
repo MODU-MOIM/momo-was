@@ -27,8 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -68,12 +71,25 @@ public class CrewService {
 
     /* 전체 크루 조회 */
     @Transactional(readOnly = true)
-    public List<CrewListResDto> getCrewList() {
-        return crewRepository.findAll().stream().map(crew -> {
+    public List<CrewListResDto> getCrewList(String sortType) {
+        List<CrewListResDto> crewListResDtos = crewRepository.findAll().stream().map(crew -> {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId()); //크루 id로 지역 찾기
             Integer memberCount = crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
             return CrewListResDto.of(crew, regionDtos, memberCount);
-        }).collect(Collectors.toList());
+        }).toList();
+
+        switch (sortType) {
+            case "createdAt":
+                break;
+
+            case "rating":
+                crewListResDtos = crewListResDtos.stream()
+                        .sorted(Comparator.comparing(CrewListResDto::mannersRating).reversed())
+                        .toList();
+                break;
+        }
+
+        return crewListResDtos;
     }
 
     /* 특정 크루 조회 */
@@ -155,7 +171,7 @@ public class CrewService {
                     CrewMember crewLeader = crewMemberService.getCrewLeader(crew.getId());
                     return CrewDetailResDto.of(crew, regionDtos, memberCount, crewLeader);
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<Long> searchName(String name) {
@@ -197,7 +213,7 @@ public class CrewService {
             List<RegionDto> regionDtos = crewRegionService.findRegionByCrewId(crew.getId());
             Integer memberCount = crewMemberService.getCrewMemberList(crew.getId()).size(); //크루 멤버 수
             return CrewListResDto.of(crew, regionDtos, memberCount);
-        }).collect(Collectors.toList());
+        }).collect(toList());
     }
 
 }

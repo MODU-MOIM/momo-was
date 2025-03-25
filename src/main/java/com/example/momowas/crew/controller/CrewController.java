@@ -51,8 +51,8 @@ public class CrewController {
 
     /* 전체 크루 조회 */
     @GetMapping("")
-    public List<CrewListResDto> getCrewList() {
-        return crewService.getCrewList();
+    public List<CrewListResDto> getCrewList(@RequestParam(value = "sort", required = false) String sortType){
+        return crewService.getCrewList(sortType);
     }
 
     /* 특정 크루 조회 */
