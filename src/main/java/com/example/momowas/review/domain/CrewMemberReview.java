@@ -34,11 +34,10 @@ public class CrewMemberReview extends Review{
     private LocalDateTime modifiedAt;
 
     @Builder
-    public CrewMemberReview(CrewMember writer, CrewMember target, String comment, Double rating, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CrewMemberReview(CrewMember writer, CrewMember target, String comment, Double rating, LocalDateTime createdAt) {
         super(comment, rating);
         this.writer = writer;
         this.target = target;
         this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 }
