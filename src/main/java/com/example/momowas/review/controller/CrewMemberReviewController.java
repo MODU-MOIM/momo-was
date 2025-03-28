@@ -4,11 +4,13 @@ import com.example.momowas.jwt.util.JwtUtil;
 import com.example.momowas.response.CommonResponse;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.dto.CrewMemberReviewReqDto;
+import com.example.momowas.review.dto.CrewMemberReviewResDto;
 import com.example.momowas.review.service.CrewMemberReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,5 +32,10 @@ public class CrewMemberReviewController {
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         crewMemberReviewService.updateCrewReview(reviewId, userId, crewMemberReviewReqDto);
         return CommonResponse.of(ExceptionCode.SUCCESS,"업데이트 완료");
+    }
+
+    @GetMapping("/{memberId}/reviews")
+    public List<CrewMemberReviewResDto> getCrewMemberReviewByTargetId(@PathVariable Long crewId, @PathVariable Long memberId){
+        return crewMemberReviewService.getCrewMemberReviewByTargetId(crewId, memberId);
     }
 }

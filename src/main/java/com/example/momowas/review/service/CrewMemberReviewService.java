@@ -7,12 +7,16 @@ import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewMemberReview;
 import com.example.momowas.review.dto.CrewMemberReviewReqDto;
+import com.example.momowas.review.dto.CrewMemberReviewResDto;
 import com.example.momowas.review.repository.CrewMemberReviewRepository;
+import com.example.momowas.schedule.dto.ScheduleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +59,14 @@ public class CrewMemberReviewService {
             throw new BusinessException(ExceptionCode.ACCESS_DENIED);
         }
         crewMemberReview.updateReview(crewMemberReviewReqDto.getComment(), crewMemberReviewReqDto.getRating());
+    }
+
+    //target에게 달린 리뷰 조회
+    public List<CrewMemberReviewResDto> getCrewMemberReviewByTargetId(Long crewId, Long targetId){
+        CrewMember target = crewMemberService.findCrewMemberByCrewAndUser(targetId, crewId);
+
+        return crewMemberReviewRepository.findByTarget(target).stream()
+                .map(CrewMemberReviewResDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }

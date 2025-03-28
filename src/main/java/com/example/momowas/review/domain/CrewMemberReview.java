@@ -44,5 +44,6 @@ public class CrewMemberReview extends Review{
     public void updateReview(String comment, Double rating){
         this.comment = comment;
         this.rating = rating;
+        this.modifiedAt = LocalDateTime.now();
     }
 }
