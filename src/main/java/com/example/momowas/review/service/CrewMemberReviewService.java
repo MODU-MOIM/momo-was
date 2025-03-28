@@ -69,4 +69,13 @@ public class CrewMemberReviewService {
                 .map(CrewMemberReviewResDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    //리뷰 달았는지 여부 조회
+    public boolean isExistCrewMemberReview(Long crewId, Long userId, Long targetId){
+        CrewMember target = crewMemberService.findCrewMemberByCrewAndUser(targetId, crewId);
+        CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
+
+        return crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent();
+    }
+
 }

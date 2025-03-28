@@ -38,4 +38,10 @@ public class CrewMemberReviewController {
     public List<CrewMemberReviewResDto> getCrewMemberReviewByTargetId(@PathVariable Long crewId, @PathVariable Long memberId){
         return crewMemberReviewService.getCrewMemberReviewByTargetId(crewId, memberId);
     }
+
+    @GetMapping("/{memberId}/reviews/exist")
+    public Map<String, Object> isExistCrewMemberReview (HttpServletRequest request, @PathVariable Long crewId, @PathVariable Long memberId){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return Map.of("written",  crewMemberReviewService.isExistCrewMemberReview(crewId, userId, memberId));
+    }
 }
