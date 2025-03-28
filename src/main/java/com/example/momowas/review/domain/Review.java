@@ -16,5 +16,11 @@ public abstract class Review {
 
     protected Double rating;
 
+    public Review() {}
+
+    public Review(String comment, Double rating) {
+        this.comment = comment;
+        this.rating = rating;
+    }
 }
 
