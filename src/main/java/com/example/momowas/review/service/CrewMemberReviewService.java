@@ -6,6 +6,7 @@ import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.review.domain.CrewMemberReview;
+import com.example.momowas.review.domain.CrewReview;
 import com.example.momowas.review.dto.CrewMemberReviewReqDto;
 import com.example.momowas.review.dto.CrewMemberReviewResDto;
 import com.example.momowas.review.repository.CrewMemberReviewRepository;
@@ -55,10 +56,15 @@ public class CrewMemberReviewService {
     @Transactional
     public void updateCrewReview(Long reviewId, Long userId, CrewMemberReviewReqDto crewMemberReviewReqDto){
         CrewMemberReview crewMemberReview = crewMemberReviewRepository.findById(reviewId).orElseThrow(()->new BusinessException(ExceptionCode.NOT_FOUND_REVIEW));
-        if(crewMemberReview.getWriter().getUser().getId() != userId){
-            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
-        }
+        validateWriter(crewMemberReview.getWriter().getUser().getId(), userId);
         crewMemberReview.updateReview(crewMemberReviewReqDto.getComment(), crewMemberReviewReqDto.getRating());
+    }
+
+    @Transactional
+    public void deleteCrewMemberReview(Long reviewId, Long userId) {
+        CrewMemberReview crewMemberReview = crewMemberReviewRepository.findById(reviewId).orElseThrow(()->new BusinessException(ExceptionCode.NOT_FOUND_REVIEW));
+        validateWriter(crewMemberReview.getWriter().getUser().getId(), userId);
+        crewMemberReviewRepository.deleteById(crewMemberReview.getId());
     }
 
     //target에게 달린 리뷰 조회
@@ -76,6 +82,12 @@ public class CrewMemberReviewService {
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
         return crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent();
+    }
+
+    private void validateWriter(Long writerId, Long userId){
+        if(writerId != userId){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
     }
 
 }
