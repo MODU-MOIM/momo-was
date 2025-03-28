@@ -40,4 +40,9 @@ public class CrewMemberReview extends Review{
         this.target = target;
         this.createdAt = createdAt;
     }
+
+    public void updateReview(String comment, Double rating){
+        this.comment = comment;
+        this.rating = rating;
+    }
 }

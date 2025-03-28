@@ -10,6 +10,7 @@ import com.example.momowas.review.dto.CrewMemberReviewReqDto;
 import com.example.momowas.review.repository.CrewMemberReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -45,5 +46,14 @@ public class CrewMemberReviewService {
 
        return crewMemberReview.getId();
 
+    }
+
+    @Transactional
+    public void updateCrewReview(Long reviewId, Long userId, CrewMemberReviewReqDto crewMemberReviewReqDto){
+        CrewMemberReview crewMemberReview = crewMemberReviewRepository.findById(reviewId).orElseThrow(()->new BusinessException(ExceptionCode.NOT_FOUND_REVIEW));
+        if(crewMemberReview.getWriter().getUser().getId() != userId){
+            throw new BusinessException(ExceptionCode.ACCESS_DENIED);
+        }
+        crewMemberReview.updateReview(crewMemberReviewReqDto.getComment(), crewMemberReviewReqDto.getRating());
     }
 }
