@@ -3,6 +3,8 @@ package com.example.momowas.crewmember.domain;
 import com.example.momowas.archive.domain.Archive;
 import com.example.momowas.crew.domain.Crew;
 import com.example.momowas.notice.domain.Notice;
+import com.example.momowas.review.domain.CrewMemberReview;
+import com.example.momowas.review.domain.CrewReview;
 import com.example.momowas.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -52,6 +54,10 @@ public class CrewMember {
     @OneToMany(mappedBy = "crewMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Archive> archives = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "target", fetch = FetchType.LAZY)
+    private List<CrewMemberReview> crewMemberReviews = new ArrayList<>();
+
     @Builder
     private CrewMember(Crew crew, User user, Role role) {
         this.crew= Objects.requireNonNull(crew,"crew는 null이 될 수 없습니다.");
@@ -73,5 +79,15 @@ public class CrewMember {
 
     public void updateRole(Role role) {
         this.role=role;
+    }
+
+    public double countMannersRating() {
+        double mannersRating=36.5;
+
+        for (CrewMemberReview cmr : crewMemberReviews) {
+            Double rating = cmr.getRating();
+            mannersRating+=(rating-3);
+        }
+        return mannersRating;
     }
 }
