@@ -96,4 +96,9 @@ public class CrewMemberService {
         preLeader.updateRole(Role.MEMBER);
         postLeader.updateRole(Role.LEADER);
     }
+
+    @Transactional
+    public List<CrewMember> findCrewMemberByUser(User user){
+        return crewMemberRepository.findByUser(user);
+    }
 }
