@@ -1,7 +1,10 @@
 package com.example.momowas.user.service;
 
+import com.example.momowas.crewmember.domain.CrewMember;
+import com.example.momowas.crewmember.service.CrewMemberService;
 import com.example.momowas.response.BusinessException;
 import com.example.momowas.response.ExceptionCode;
+import com.example.momowas.review.domain.CrewMemberReview;
 import com.example.momowas.s3.service.S3Service;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.dto.UserDto;
@@ -13,12 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final CrewMemberService crewMemberService;
     private final S3Service s3Service;
 
     public void create(User user){
@@ -59,7 +65,8 @@ public class UserService {
 
     public UserDto getMyInfo(Long userId){
         User user = findUserById(userId);
-        return UserDto.fromEntity(user);
+        double mannerRating = calculateMannersRatingForUser(user);
+        return UserDto.fromEntity(user, mannerRating);
     }
 
     @Transactional
@@ -75,9 +82,23 @@ public class UserService {
                 userInfoUpdateReqDto.getGender(),
                 userInfoUpdateReqDto.getAge());
 
-        return UserDto.fromEntity(user);
+        double mannerRating = calculateMannersRatingForUser(user);
+        return UserDto.fromEntity(user, mannerRating);
 
     }
 
+
+    public double calculateMannersRatingForUser(User user) {
+        List<CrewMember> members = crewMemberService.findCrewMemberByUser(user);
+        if(members.isEmpty()){
+            return 36.5;
+        }
+        double result = 0.0;
+
+        for (CrewMember cm : members) {
+            result += cm.countMannersRating();
+        }
+        return result / members.size();
+    }
 
 }

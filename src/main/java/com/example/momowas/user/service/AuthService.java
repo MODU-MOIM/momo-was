@@ -52,7 +52,7 @@ public class AuthService {
                 .providerId(signUpReqDto.getEmail())
                 .build();
         userService.create(user);
-        return UserDto.fromEntity(user);
+        return UserDto.fromEntity(user, 36.5);
     }
 
     public void signIn(SignInReqDto signInReqDto, HttpServletResponse response){

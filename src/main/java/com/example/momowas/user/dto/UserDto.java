@@ -18,9 +18,10 @@ public class UserDto {
     private final Gender gender;
     private final int age;
     private final String profileImage;
+    private final double mannerRating;
 
     @Builder
-    public UserDto(Long id, String email, String nickname, String cp, double score, LocalDateTime createdAt, Gender gender, int age, String profileImage) {
+    public UserDto(Long id, String email, String nickname, String cp, double score, LocalDateTime createdAt, Gender gender, int age, String profileImage, double mannerRating) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -30,9 +31,10 @@ public class UserDto {
         this.gender = gender;
         this.age = age;
         this.profileImage = profileImage;
+        this.mannerRating = mannerRating;
     }
 
-    public static UserDto fromEntity(User user) {
+    public static UserDto fromEntity(User user, double mannerRating) {
         return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -43,6 +45,7 @@ public class UserDto {
                 .gender(user.getGender())
                 .age(user.getAge())
                 .profileImage(user.getProfileImage())
+                .mannerRating(mannerRating)
                 .build();
     }
 }
