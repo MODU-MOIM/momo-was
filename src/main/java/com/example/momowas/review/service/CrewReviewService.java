@@ -145,6 +145,11 @@ public class CrewReviewService {
                 });
     }
 
+    @Scheduled(cron = "0/30 * * * * ?") // 30초마다 실행
+    public void sendHeartBeatMessage() {
+        sseEmitterService.sendToClient("test", 1L, "test입니다.");
+    }
+
     /* 사용자가 평가 작성자인지 검증 */
     private void validateWriter(Long crewId, Long userId, CrewReview crewReview) {
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
