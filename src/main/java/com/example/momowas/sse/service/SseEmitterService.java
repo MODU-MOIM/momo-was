@@ -34,7 +34,7 @@ public class SseEmitterService {
         sendToClient(eventName, userId, scheduleReviewEventResDto);
     }
 
-    private void sendToClient(String eventName, Long userId, Object data) {
+    public void sendToClient(String eventName, Long userId, Object data) {
         SseEmitter sseEmitter = sseEmitterRepository.findById(userId);
         try {
             sseEmitter.send(
