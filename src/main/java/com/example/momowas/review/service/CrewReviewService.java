@@ -129,12 +129,6 @@ public class CrewReviewService {
         schedules.stream()
                 .forEach((schedule) -> {
 
-                    //테스트용
-                    for (Long userId : sseEmitterRepository.getAllUserIds()) {
-                        sseEmitterService.sendToClient("test", userId, "ping");
-                    }
-                    //
-
                     Vote vote = schedule.getNotice().getVote();
 
                     List<VoteParticipant> positiveParticipants = vote.getVoteParticipants().stream()
@@ -144,8 +138,13 @@ public class CrewReviewService {
 
                     // 알림 전송
                     Crew crew = crewService.findCrewById(schedule.getCrewId());
-
                     ScheduleReviewEventResDto payload = ScheduleReviewEventResDto.of(crew, schedule);
+
+                    //테스트용
+                    for (Long userId : sseEmitterRepository.getAllUserIds()) {
+                        sseEmitterService.sendToClient("test", userId, positiveParticipants);
+                    }
+                    //
 
                     for (VoteParticipant participant : positiveParticipants) {
                         Long userId = participant.getCrewMember().getUser().getId();
