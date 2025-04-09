@@ -141,10 +141,6 @@ public class CrewReviewService {
                         Crew crew = crewService.findCrewById(schedule.getCrewId());
                         ScheduleReviewEventResDto payload = ScheduleReviewEventResDto.of(crew, schedule);
 
-                        for (Long userId : sseEmitterRepository.getAllUserIds()) {
-                            sseEmitterService.sendToClient("test", userId, payload);
-                        }
-
                         for (VoteParticipant participant : positiveParticipants) {
                             Long userId = participant.getCrewMember().getUser().getId();
                             sseEmitterService.broadcast("review", userId, payload);
