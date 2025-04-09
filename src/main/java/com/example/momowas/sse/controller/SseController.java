@@ -31,4 +31,3 @@ public class SseController {
         return sseEmitterService.subscribe(userId);
     }
 }
-}
