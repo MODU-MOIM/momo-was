@@ -137,12 +137,14 @@ public class CrewReviewService {
                             ).toList(); //일정 공지 투표에 '참석'에 투표한 참여자들
 
                     // 알림 전송
-                    Crew crew = crewService.findCrewById(schedule.getCrewId());
-                    ScheduleReviewEventResDto payload = ScheduleReviewEventResDto.of(crew, schedule);
+                    if(!positiveParticipants.isEmpty()) {
+                        Crew crew = crewService.findCrewById(schedule.getCrewId());
+                        ScheduleReviewEventResDto payload = ScheduleReviewEventResDto.of(crew, schedule);
 
-                    for (VoteParticipant participant : positiveParticipants) {
-                        Long userId = participant.getCrewMember().getUser().getId();
-                        sseEmitterService.broadcast("review", userId, payload);
+                        for (VoteParticipant participant : positiveParticipants) {
+                            Long userId = participant.getCrewMember().getUser().getId();
+                            sseEmitterService.broadcast("review", userId, payload);
+                        }
                     }
                 });
     }
