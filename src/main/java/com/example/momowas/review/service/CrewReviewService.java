@@ -123,6 +123,9 @@ public class CrewReviewService {
     //@Scheduled(cron = "0 0 0 1/1 * ?")  //매일 자정마다 실행
     @Scheduled(cron = "0 0/1 * 1/1 * ?") //1분 주기(테스트)
     public void sendCrewReviewNotification() {
+        //테스트..
+        sendHeartBeatMessage();
+
         LocalDate previousDay = LocalDate.now().minusDays(1);
         List<Schedule> schedules = scheduleService.getSchedulesByDate(previousDay);
 
@@ -152,7 +155,6 @@ public class CrewReviewService {
     @Scheduled(cron = "0/30 * * * * ?") // 30초마다 실행
     public void sendHeartBeatMessage() {
         for (Long userId : sseEmitterRepository.getAllUserIds()) {
-            System.out.println("하트비트");
             sseEmitterService.sendToClient("heartbeat", userId, "ping");
         }
     }
