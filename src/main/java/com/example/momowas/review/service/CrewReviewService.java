@@ -140,16 +140,9 @@ public class CrewReviewService {
                     Crew crew = crewService.findCrewById(schedule.getCrewId());
                     ScheduleReviewEventResDto payload = ScheduleReviewEventResDto.of(crew, schedule);
 
-                    //테스트용
-                    for (Long userId : sseEmitterRepository.getAllUserIds()) {
-                        sseEmitterService.sendToClient("test", userId, payload);
-                    }
-                    //
-
                     for (VoteParticipant participant : positiveParticipants) {
                         Long userId = participant.getCrewMember().getUser().getId();
-                        //sseEmitterService.broadcast("review", userId, payload);
-                        sseEmitterService.sendToClient("review", userId, "test");
+                        sseEmitterService.broadcast("review", userId, payload);
                     }
                 });
     }
@@ -160,7 +153,6 @@ public class CrewReviewService {
             sseEmitterService.sendToClient("heartbeat", userId, "ping");
         }
     }
-
 
     /* 사용자가 평가 작성자인지 검증 */
     private void validateWriter(Long crewId, Long userId, CrewReview crewReview) {
