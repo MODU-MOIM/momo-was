@@ -143,7 +143,8 @@ public class CrewReviewService {
 
                     for (VoteParticipant participant : positiveParticipants) {
                         Long userId = participant.getCrewMember().getUser().getId();
-                        sseEmitterService.broadcast("review", userId, payload);
+                        //sseEmitterService.broadcast("review", userId, payload);
+                        sseEmitterService.sendToClient("review", userId, "test");
                     }
                 });
     }
