@@ -123,14 +123,17 @@ public class CrewReviewService {
     //@Scheduled(cron = "0 0 0 1/1 * ?")  //매일 자정마다 실행
     @Scheduled(cron = "0 0/1 * 1/1 * ?") //1분 주기(테스트)
     public void sendCrewReviewNotification() {
-        //테스트..
-        sendHeartBeatMessage();
-
         LocalDate previousDay = LocalDate.now().minusDays(1);
         List<Schedule> schedules = scheduleService.getSchedulesByDate(previousDay);
 
         schedules.stream()
                 .forEach((schedule) -> {
+
+                    //테스트용
+                    for (Long userId : sseEmitterRepository.getAllUserIds()) {
+                        sseEmitterService.sendToClient("test", userId, "ping");
+                    }
+                    //
 
                     Vote vote = schedule.getNotice().getVote();
 
