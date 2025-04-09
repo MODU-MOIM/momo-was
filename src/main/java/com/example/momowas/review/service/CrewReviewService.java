@@ -14,6 +14,7 @@ import com.example.momowas.review.repository.CrewReviewRepository;
 import com.example.momowas.schedule.domain.Schedule;
 import com.example.momowas.schedule.dto.ScheduleInfoResDto;
 import com.example.momowas.schedule.service.ScheduleService;
+import com.example.momowas.sse.repository.SseEmitterRepository;
 import com.example.momowas.sse.service.SseEmitterService;
 import com.example.momowas.vote.domain.Vote;
 import com.example.momowas.voteparticipant.domain.VoteParticipant;
@@ -35,6 +36,8 @@ public class CrewReviewService {
     private final ScheduleService scheduleService;
     private final CrewReviewKeywordService crewReviewKeywordService;
     private final SseEmitterService sseEmitterService;
+    private final SseEmitterRepository sseEmitterRepository;
+
 
     /* 평가 id로 크루 평가 조회 */
     @Transactional(readOnly = true)
@@ -147,8 +150,12 @@ public class CrewReviewService {
 
     @Scheduled(cron = "0/30 * * * * ?") // 30초마다 실행
     public void sendHeartBeatMessage() {
-        sseEmitterService.sendToClient("test", 1L, "test입니다.");
+        for (Long userId : sseEmitterRepository.getAllUserIds()) {
+            System.out.println("하트비트");
+            sseEmitterService.sendToClient("heartbeat", userId, "ping");
+        }
     }
+
 
     /* 사용자가 평가 작성자인지 검증 */
     private void validateWriter(Long crewId, Long userId, CrewReview crewReview) {
