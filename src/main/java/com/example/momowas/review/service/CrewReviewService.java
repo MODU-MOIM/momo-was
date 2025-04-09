@@ -142,7 +142,7 @@ public class CrewReviewService {
 
                     //테스트용
                     for (Long userId : sseEmitterRepository.getAllUserIds()) {
-                        sseEmitterService.sendToClient("test", userId, positiveParticipants);
+                        sseEmitterService.sendToClient("test", userId, payload);
                     }
                     //
 
