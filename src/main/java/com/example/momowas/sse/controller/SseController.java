@@ -30,4 +30,19 @@ public class SseController {
 
         return sseEmitterService.subscribe(userId);
     }
+
+
+    @GetMapping("/subscribe/test")
+    public SseEmitter subscribeTest(HttpServletResponse response) {
+        // SSE 관련 헤더 설정
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Connection", "keep-alive");
+        response.setHeader("X-Accel-Buffering", "no");
+
+        return sseEmitterService.subscribe(1L);
+    }
+
 }
