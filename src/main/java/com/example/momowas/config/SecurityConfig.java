@@ -70,7 +70,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true); // 인증 정보를 포함한 요청 허용
-        configuration.setExposedHeaders(List.of("Authorization")); //Authorization 헤더 노출
+        configuration.setExposedHeaders(List.of("Authorization","Content-Type", "Cache-Control", "X-Accel-Buffering")); //Authorization 헤더 노출
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
