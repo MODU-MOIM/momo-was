@@ -38,7 +38,6 @@ public class CrewReviewService {
     private final SseEmitterService sseEmitterService;
     private final SseEmitterRepository sseEmitterRepository;
 
-
     /* 평가 id로 크루 평가 조회 */
     @Transactional(readOnly = true)
     public CrewReview findCrewReviewById(Long crewReviewId) {
@@ -57,6 +56,11 @@ public class CrewReviewService {
         Crew crew = crewService.findCrewById(crewId);
         CrewMember crewMember = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
         Schedule schedule = scheduleService.getScheduleByScheduleId(crewReviewReqDto.scheduleId());
+
+        //한 사람이 일정당 평가를 한 번만 가능하도록
+        if (crewReviewRepository.existsByCrewMemberAndSchedule(crewMember, schedule)) {
+            throw new BusinessException(ExceptionCode.ALREADY_WRITE_REVIEW);
+        }
 
         CrewReview crewReview = crewReviewRepository.save(crewReviewReqDto.toEntity(crew, crewMember, schedule)); //크루 리뷰 저장
 
