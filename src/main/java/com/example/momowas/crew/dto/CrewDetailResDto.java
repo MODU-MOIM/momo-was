@@ -21,7 +21,7 @@ public record CrewDetailResDto(Long crewId,
                                Integer maxAge,
                                Gender genderRestriction,
                                String bannerImage,
-                               Double mannersRating,
+                               Double averageRatings,
                                List<RegionDto> regions,
                                LocalDateTime createdAt){
     public static CrewDetailResDto of(Crew crew, List<RegionDto> regions, Integer memberCount, CrewMember crewLeader) {
@@ -38,7 +38,7 @@ public record CrewDetailResDto(Long crewId,
                 crew.getMaxAge(),
                 crew.getGenderRestriction(),
                 crew.getBannerImage(),
-                crew.countMannersRating(),
+                crew.countAverageRating(),
                 regions,
                 crew.getCreatedAt()
         );

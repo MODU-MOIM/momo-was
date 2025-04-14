@@ -84,12 +84,12 @@ public class CrewReviewService {
 
         //매너 점수
         Crew crew = crewService.findCrewById(crewId);
-        double mannersRating = crew.countMannersRating();
+        double averageRatings = crew.countAverageRating();
 
         //키워드별 개수
         List<CrewReviewKeywordCountListResDto> crewReviewKeywordCountListResDtos = crewReviewKeywordService.countCrewReviewKeywords(crewId);
 
-        return CrewReviewTotalInfoResDto.of(mannersRating, crewReviewKeywordCountListResDtos, crewReviewListResDtos);
+        return CrewReviewTotalInfoResDto.of(averageRatings, crewReviewKeywordCountListResDtos, crewReviewListResDtos);
     }
 
     /* 특정 크루 평가 조회 */

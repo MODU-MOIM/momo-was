@@ -6,13 +6,13 @@ import java.util.List;
 
 @Builder
 public record CrewReviewTotalInfoResDto(
-        Double mannersRating,
+        Double averageRatings,
         List<CrewReviewKeywordCountListResDto> keywordCount,
         List<CrewReviewListResDto> crewReviewList
 ) {
-    public static CrewReviewTotalInfoResDto of(Double mannersRating, List<CrewReviewKeywordCountListResDto> keywordCount, List<CrewReviewListResDto> crewReviewList) {
+    public static CrewReviewTotalInfoResDto of(Double averageRatings, List<CrewReviewKeywordCountListResDto> keywordCount, List<CrewReviewListResDto> crewReviewList) {
         return CrewReviewTotalInfoResDto.builder()
-                .mannersRating(mannersRating)
+                .averageRatings(averageRatings)
                 .keywordCount(keywordCount)
                 .crewReviewList(crewReviewList)
                 .build();
