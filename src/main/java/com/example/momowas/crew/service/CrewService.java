@@ -16,6 +16,7 @@ import com.example.momowas.response.ExceptionCode;
 import com.example.momowas.s3.service.S3Service;
 import com.example.momowas.user.domain.User;
 import com.example.momowas.user.service.UserService;
+import io.jsonwebtoken.lang.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -78,15 +79,17 @@ public class CrewService {
             return CrewListResDto.of(crew, regionDtos, memberCount);
         }).toList();
 
-        switch (sortType) {
-            case "createdAt":
-                break;
+        if (Strings.hasText(sortType)) {
+            switch (sortType) {
+                case "createdAt":
+                    break;
 
-            case "rating":
-                crewListResDtos = crewListResDtos.stream()
-                        .sorted(Comparator.comparing(CrewListResDto::averageRatings).reversed())
-                        .toList();
-                break;
+                case "rating":
+                    crewListResDtos = crewListResDtos.stream()
+                            .sorted(Comparator.comparing(CrewListResDto::averageRatings).reversed())
+                            .toList();
+                    break;
+            }
         }
 
         return crewListResDtos;
