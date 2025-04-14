@@ -110,15 +110,15 @@ public class Crew {
         this.maxAge = maxAge;
         this.genderRestriction = genderRestriction;
         this.bannerImage = bannerImage;
-        this.scheduleCreatePermission=Role.LEADER;
-        this.scheduleUpdatePermission=Role.LEADER;
+        this.scheduleCreatePermission = Role.LEADER;
+        this.scheduleUpdatePermission = Role.LEADER;
     }
 
-    public void updateName(String name){
+    public void updateName(String name) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("name은 null이거나 빈 문자열이 될 수 없습니다.");
         }
-        this.name=name;
+        this.name = name;
     }
 
     public void updateBannerImage(String bannerImage) {
@@ -138,11 +138,11 @@ public class Crew {
     }
 
     public void updateMinAge(Integer minAge) {
-        this.minAge=minAge;
+        this.minAge = minAge;
     }
 
     public void updateMaxAge(Integer maxAge) {
-        this.maxAge=maxAge;
+        this.maxAge = maxAge;
     }
 
     public void updateGenderRestriction(Gender genderRestriction) {
@@ -150,27 +150,35 @@ public class Crew {
     }
 
     public void updateScheduleCreatePermission(Role role) {
-        this.scheduleCreatePermission=role;
+        this.scheduleCreatePermission = role;
     }
 
     public void updateScheduleUpdatePermission(Role role) {
-        this.scheduleUpdatePermission=role;
+        this.scheduleUpdatePermission = role;
     }
 
     /* 크루 정원이 초과했는지 */
     public boolean isCrewFull() {
-        return maxMembers!=null && Hibernate.size(crewMembers)>=maxMembers;
+        return maxMembers != null && Hibernate.size(crewMembers) >= maxMembers;
     }
 
-    /* 크루 매너 점수 계산 */
-    public double countMannersRating() {
-        double mannersRating=36.5;
+    /* 크루 평균 평점 계산 */
+    public double countAverageRating() {
+        double averageRatings = 0.0;
+        int crewReviewCounts = crewReviews.size();
 
-        for (CrewReview crewReview : crewReviews) {
-            Double rating = crewReview.getRating();
-            mannersRating+=(rating-3);
+        if (crewReviewCounts == 0) {
+            return 0.0;
         }
 
-        return mannersRating;
+        for (CrewReview crewReview : crewReviews) {
+            averageRatings += crewReview.getRating();
+        }
+
+        averageRatings = averageRatings / crewReviewCounts;
+        averageRatings = Math.round(averageRatings * 10.0) / 10.0;
+
+        System.out.println("averageRatings = " + averageRatings);
+        return averageRatings;
     }
 }

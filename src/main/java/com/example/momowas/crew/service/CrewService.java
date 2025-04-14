@@ -84,7 +84,7 @@ public class CrewService {
 
             case "rating":
                 crewListResDtos = crewListResDtos.stream()
-                        .sorted(Comparator.comparing(CrewListResDto::mannersRating).reversed())
+                        .sorted(Comparator.comparing(CrewListResDto::averageRatings).reversed())
                         .toList();
                 break;
         }
