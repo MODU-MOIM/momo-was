@@ -33,7 +33,7 @@ public class CrewMemberReviewService {
            throw new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
        }
        //이미 리뷰를 작성함 -> 수정해야함.
-        CrewMember target = crewMemberService.findCrewMemberByCrewAndUser(targetId, crewId);
+        CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(writerId, crewId);
 
         if(crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent()){
@@ -69,7 +69,7 @@ public class CrewMemberReviewService {
 
     //target에게 달린 리뷰 조회
     public List<CrewMemberReviewResDto> getCrewMemberReviewByTargetId(Long crewId, Long targetId){
-        CrewMember target = crewMemberService.findCrewMemberByCrewAndUser(targetId, crewId);
+        CrewMember target = crewMemberService.findCrewMemberById(targetId);
 
         return crewMemberReviewRepository.findByTarget(target).stream()
                 .map(CrewMemberReviewResDto::fromEntity)
@@ -78,7 +78,7 @@ public class CrewMemberReviewService {
 
     //리뷰 달았는지 여부 조회
     public boolean isExistCrewMemberReview(Long crewId, Long userId, Long targetId){
-        CrewMember target = crewMemberService.findCrewMemberByCrewAndUser(targetId, crewId);
+        CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
         return crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent();
