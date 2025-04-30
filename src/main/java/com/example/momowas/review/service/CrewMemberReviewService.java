@@ -28,13 +28,15 @@ public class CrewMemberReviewService {
     private final CrewMemberService crewMemberService;
 
     public Long createCrewMemberReview(Long crewId, Long writerId, Long targetId, CrewMemberReviewReqDto crewMemberReviewReqDto){
-        //같은 크루 멤버인지 확인
-       if(!crewManager.hasCrewPermission(crewId, writerId)|| !crewManager.hasCrewPermission(crewId, targetId)){
-           throw new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
-       }
+
        //이미 리뷰를 작성함 -> 수정해야함.
         CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(writerId, crewId);
+
+        //같은 크루 멤버인지 확인
+        if(!crewManager.hasCrewPermission(crewId, target.getUser().getId()) || !crewManager.hasCrewPermission(crewId, writerId)){
+            throw new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
+        }
 
         if(crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent()){
            throw new BusinessException(ExceptionCode.ALREADY_WRITE_REVIEW);
