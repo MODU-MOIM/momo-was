@@ -42,7 +42,7 @@ public class CrewMemberService {
     /* 크루 멤버 조회 */
     @Transactional(readOnly = true)
     public CrewMember findCrewMemberByCrewAndUser(Long userId, Long crewId) {
-        return crewMemberRepository.findByCrewIdAndUserId(crewId, userId).orElseThrow(() ->
+        return crewMemberRepository.findByCrewIdAndUserIdAndDeletedAtIsNull(crewId, userId).orElseThrow(() ->
             new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER));
     }
 
