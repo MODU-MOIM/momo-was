@@ -78,7 +78,17 @@ public class CrewMemberReviewService {
         CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
-        return crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent();
+        return !crewMemberReviewRepository.findByWriterAndTarget(writer, target).isEmpty();
+    }
+
+    //타겟에게 내가 적은 리뷰 내역 조회
+    public List<CrewMemberReviewResDto> getCrewMemberReviewsByTargetIdFromMe(Long crewId, Long writerId, Long targetId){
+        CrewMember target = crewMemberService.findCrewMemberById(targetId);
+        CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(writerId, crewId);
+
+        return crewMemberReviewRepository.findByWriterAndTarget(writer, target).stream()
+                .map(CrewMemberReviewResDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     private void validateWriter(Long writerId, Long userId){

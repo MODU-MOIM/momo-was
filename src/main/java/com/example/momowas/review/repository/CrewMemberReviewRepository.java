@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface CrewMemberReviewRepository extends JpaRepository<CrewMemberReview, Long> {
-    Optional<CrewMemberReview> findByWriterAndTarget(CrewMember writer, CrewMember target);
+    List<CrewMemberReview> findByWriterAndTarget(CrewMember writer, CrewMember target);
     List<CrewMemberReview> findByTarget(CrewMember target);
 }

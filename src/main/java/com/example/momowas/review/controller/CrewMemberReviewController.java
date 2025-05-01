@@ -51,4 +51,10 @@ public class CrewMemberReviewController {
         crewMemberReviewService.deleteCrewMemberReview(reviewId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,"리뷰 삭제 완료");
     }
+
+    @GetMapping("/{memberId}/reviews/me")
+    public List<CrewMemberReviewResDto> getCrewMemberReviewsByTargetIdFromMe (HttpServletRequest request,  @PathVariable Long crewId, @PathVariable Long memberId){
+        Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
+        return crewMemberReviewService.getCrewMemberReviewsByTargetIdFromMe(crewId, userId, memberId);
+    }
 }
