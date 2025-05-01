@@ -29,7 +29,6 @@ public class CrewMemberReviewService {
 
     public Long createCrewMemberReview(Long crewId, Long writerId, Long targetId, CrewMemberReviewReqDto crewMemberReviewReqDto){
 
-       //이미 리뷰를 작성함 -> 수정해야함.
         CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(writerId, crewId);
 
@@ -37,10 +36,6 @@ public class CrewMemberReviewService {
         if(!crewManager.hasCrewPermission(crewId, target.getUser().getId()) || !crewManager.hasCrewPermission(crewId, writerId)){
             throw new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
         }
-
-        if(crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent()){
-           throw new BusinessException(ExceptionCode.ALREADY_WRITE_REVIEW);
-       }
 
        CrewMemberReview crewMemberReview = CrewMemberReview.builder()
                .comment(crewMemberReviewReqDto.getComment())
