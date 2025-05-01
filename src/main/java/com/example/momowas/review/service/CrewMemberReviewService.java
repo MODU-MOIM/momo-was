@@ -29,7 +29,6 @@ public class CrewMemberReviewService {
 
     public Long createCrewMemberReview(Long crewId, Long writerId, Long targetId, CrewMemberReviewReqDto crewMemberReviewReqDto){
 
-       //이미 리뷰를 작성함 -> 수정해야함.
         CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(writerId, crewId);
 
@@ -37,10 +36,6 @@ public class CrewMemberReviewService {
         if(!crewManager.hasCrewPermission(crewId, target.getUser().getId()) || !crewManager.hasCrewPermission(crewId, writerId)){
             throw new BusinessException(ExceptionCode.NOT_FOUND_CREW_MEMBER);
         }
-
-        if(crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent()){
-           throw new BusinessException(ExceptionCode.ALREADY_WRITE_REVIEW);
-       }
 
        CrewMemberReview crewMemberReview = CrewMemberReview.builder()
                .comment(crewMemberReviewReqDto.getComment())
@@ -83,7 +78,17 @@ public class CrewMemberReviewService {
         CrewMember target = crewMemberService.findCrewMemberById(targetId);
         CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(userId, crewId);
 
-        return crewMemberReviewRepository.findByWriterAndTarget(writer, target).isPresent();
+        return !crewMemberReviewRepository.findByWriterAndTarget(writer, target).isEmpty();
+    }
+
+    //타겟에게 내가 적은 리뷰 내역 조회
+    public List<CrewMemberReviewResDto> getCrewMemberReviewsByTargetIdFromMe(Long crewId, Long writerId, Long targetId){
+        CrewMember target = crewMemberService.findCrewMemberById(targetId);
+        CrewMember writer = crewMemberService.findCrewMemberByCrewAndUser(writerId, crewId);
+
+        return crewMemberReviewRepository.findByWriterAndTarget(writer, target).stream()
+                .map(CrewMemberReviewResDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     private void validateWriter(Long writerId, Long userId){
