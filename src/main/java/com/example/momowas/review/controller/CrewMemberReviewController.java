@@ -46,7 +46,7 @@ public class CrewMemberReviewController {
     }
 
     @DeleteMapping("/{memberId}/reviews/{reviewId}")
-    public CommonResponse<String> deleteCrewMemberReview(HttpServletRequest request, @PathVariable Long reviewId, @RequestBody CrewMemberReviewReqDto crewMemberReviewReqDto ){
+    public CommonResponse<String> deleteCrewMemberReview(HttpServletRequest request, @PathVariable Long reviewId ){
         Long userId = jwtUtil.getUserIdFromToken(jwtUtil.resolveToken(request).substring(7));
         crewMemberReviewService.deleteCrewMemberReview(reviewId, userId);
         return CommonResponse.of(ExceptionCode.SUCCESS,"리뷰 삭제 완료");
